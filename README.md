@@ -22,11 +22,8 @@ Estas instrucciones te guiarán para obtener una copia de este proyecto en funci
 
 Lista de software y herramientas, incluyendo versiones, que necesitas para instalar y ejecutar este proyecto:
 
-- Sistema Operativo (por ejemplo, Ubuntu 20.04, Windows 10)
-- Lenguaje de programación (por ejemplo, Python 3.8)
-- Framework (por ejemplo, Django 3.1)
-- Base de datos (por ejemplo, PostgreSQL 12)
-- Otros...
+- Node
+- Base de datos (MySQLite)
 
 ### Instalación 🔧
 
@@ -71,7 +68,8 @@ Instrucciones sobre cómo desplegar esto en un sistema en vivo o ambiente de pro
 Explica qué tecnologías usaste para construir este proyecto. Aquí algunos ejemplos:
 
 - Javascript - El lenguaje utilizado
-- [Node](https://nodejs.org) - El framework web utilizado
+- [Node](https://nodejs.org) - El backend utilizado
+- [MySQLite](https://www.sqlite.org/index.html) - Base de datos
 - [React](https://react.dev) - Front-end
 
 
@@ -95,7 +93,10 @@ Usamos [Git](https://git-scm.com) para el versionado. Para las versiones disponi
 
 ## Autores ✒️
 
-- **Brayan Diaz C** - _Trabajo inicial_ - [Brayan Diaz C](https://github.com/brayandiazc)
+- **Simon Mersich** Backend - [mercho40](https://github.com/mercho40)
+- **Eitan Feldman** Frontend - [eitan-que](https://github.com/eitan-que)
+- **Oliver Jones** Fullstack - [OliverJones08](https://github.com/OliverJones08)
+- **Nicolás Krymkiewicz** TIMI - [nicokrym](https://github.com/nicokrym)
 
 Mira también la lista de [contribuidores](https://github.com/your/project/contributors) que han participado en este proyecto.
 
