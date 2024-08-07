@@ -5,7 +5,7 @@ import Menu from "./components/menu/menu";
 export default function App() {
   return (
     <div className="masterContainer">
-      <Menu/>
+      <h1>Pagina principal</h1>
     </div>
   );
 }
