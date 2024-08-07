@@ -1,4 +1,7 @@
+// Pantalla de seleccion de mesa, en caso de ingresar con enlace y no con QR
+
 import React from 'react'
+import './tableSelect.css'
 
 // Esta funcion es para cargar cada mesa, si esta ocupada, le pone la class occupied
 function TableCard({ number, isOccupied }) {
