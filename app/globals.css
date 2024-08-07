@@ -79,6 +79,7 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
+  justify-content: space-around;
   overflow: scroll;
 
   position: relative;
@@ -93,13 +94,13 @@ h1 {
 .blur-top {
   top: 0;
   left: 0;
-  background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+  background: linear-gradient(0deg, rgba(255,255,255,0) 50%, rgba(255,255,255,1) 100%);
 }
 
 .blur-bottom {
   bottom: 0;
   left: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 50%, rgba(255,255,255,1) 100%);
 }
 
 .tableCard {
