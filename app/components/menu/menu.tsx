@@ -12,11 +12,24 @@ function Menu() {
       <div className="header">{restaurantName}</div>
       <div className="content">
         <div className="section">
+          <h1 className="title">Productos recomendados</h1>
+          <div className="items">
             <div className="item" style={{"backgroundImage" : `url(${foodPhoto})`}}>
-                <h1>{foodName}</h1>
-                <p>${foodPrice}</p>
-                <div className="shadow-bottom"></div>
-            </div>
+                  <h1 className="foodTitle">{foodName}</h1>
+                  <p>${foodPrice}</p>
+                  <div className="shadow-bottom"></div>
+              </div>
+              <div className="item" style={{"backgroundImage" : `url(${foodPhoto})`}}>
+                  <h1 className="foodTitle">{foodName}</h1>
+                  <p>${foodPrice}</p>
+                  <div className="shadow-bottom"></div>
+              </div>
+              <div className="item" style={{"backgroundImage" : `url(${foodPhoto})`}}>
+                  <h1 className="foodTitle">{foodName}</h1>
+                  <p>${foodPrice}</p>
+                  <div className="shadow-bottom"></div>
+              </div>
+          </div>
         </div>
       </div>
     </div>
