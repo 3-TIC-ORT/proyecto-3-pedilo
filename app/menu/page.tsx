@@ -67,7 +67,7 @@ function Menu() {
     <div className='menuContainer'>
       <div className="header">{restaurantName}</div>
       <div className="content">
-        <div className="section" style={{"marginTop" : "284px"}}>
+        <div className="section">
           <h1 className="title">Productos recomendados</h1>
           <div className="items">
             {recomendedItems.map((item, index) => (
