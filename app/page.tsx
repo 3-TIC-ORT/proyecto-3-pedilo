@@ -1,7 +1,10 @@
 import Image from "next/image";
+import TableSelect from "./components/tableSelect/tableSelect";
 
-export default function Home() {
+export default function App() {
   return (
-    <div className="mainContainer"></div>
+    <div className="masterContainer">
+      <TableSelect />
+    </div>
   );
 }
