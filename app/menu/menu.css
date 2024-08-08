@@ -1,33 +1,6 @@
-.menuContainer {
-    width: 100%;
-    height: 100%;
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.header {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(3.75px);
-    -webkit-backdrop-filter: blur(3.75px);
-    border-bottom: 1px solid rgba(255, 255, 255, 1);
-
-    width: 100%;
-    height: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 20px;
-    text-transform: uppercase;
-}
-
 .content {
     margin-top: 8px;
-    width: 97%;
+    width: 100%;
     height: 100%;
     display: flex;
     gap: 8px;
@@ -123,9 +96,4 @@ p {
     .shadow-bottom {
         height: 50%;
     }
-}
-
-.help {
-    text-decoration: underline;
-    padding: 8px;
 }

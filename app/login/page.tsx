@@ -2,9 +2,13 @@ import React from 'react'
 import './login.css'
 
 function Login() {
+  
+  const restaurantName = 'Ejemplo';
+
   return (
     <div>
-      Login
+      <div className="loginContainer">
+      </div>
     </div>
   )
 }

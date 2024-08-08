@@ -34,7 +34,6 @@ function TableSelect() {
         </div>
         <div className="blur-bottom"></div>
       </div>
-      <div className="help">Necesitas ayuda?</div>
     </div>
   )
 }

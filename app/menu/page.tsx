@@ -11,6 +11,7 @@ interface MenuItem {
   category: string;
 }
 
+// Aca cargaria los datos de la db
 const menuItems: MenuItem[] = [
   {
     title: 'Ejemplo 1',
@@ -51,10 +52,10 @@ const menuItems: MenuItem[] = [
 ];
 
 function Menu() {
-  const restaurantName = 'Ejemplo';
 
-  const recomendedItems = menuItems.filter(item => item.rating > 4 || item.recomendado);
+  const recomendedItems = menuItems.filter(item => item.rating > 4 || item.recomendado); // Filtra los items recomendados, ya sea por su rating de 5 o su id rating
 
+  // Crea las categorias para cada uno de los items
   const categories = menuItems.reduce<Record<string, MenuItem[]>>((acc, item) => {
     if (!acc[item.category]) {
       acc[item.category] = [];
@@ -64,14 +65,25 @@ function Menu() {
   }, {});
 
   return (
-    <div className='menuContainer'>
-      <div className="header">{restaurantName}</div>
-      <div className="content">
-        <div className="section">
-          <h1 className="title">Productos recomendados</h1>
+    <div className="content">
+      <div className="section">
+        <h1 className="title">Productos recomendados</h1>
+        <div className="items">
+          {recomendedItems.map((item, index) => (
+            <div key={index} className="item" style={{ backgroundImage: `url(${item.photo})` }}>
+              <h1 className="foodTitle">{item.title}</h1>
+              <p>${item.price}</p>
+              <div className="shadow-bottom"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {Object.keys(categories).map((categoryName, index) => (
+        <div key={index} className="section">
+          <h1 className="title">{categoryName}</h1>
           <div className="items">
-            {recomendedItems.map((item, index) => (
-              <div key={index} className="item" style={{ backgroundImage: `url(${item.photo})` }}>
+            {categories[categoryName].map((item, itemIndex) => (
+              <div key={itemIndex} className="item" style={{ backgroundImage: `url(${item.photo})` }}>
                 <h1 className="foodTitle">{item.title}</h1>
                 <p>${item.price}</p>
                 <div className="shadow-bottom"></div>
@@ -79,22 +91,7 @@ function Menu() {
             ))}
           </div>
         </div>
-        {Object.keys(categories).map((categoryName, index) => (
-          <div key={index} className="section">
-            <h1 className="title">{categoryName}</h1>
-            <div className="items">
-              {categories[categoryName].map((item, itemIndex) => (
-                <div key={itemIndex} className="item" style={{ backgroundImage: `url(${item.photo})` }}>
-                  <h1 className="foodTitle">{item.title}</h1>
-                  <p>${item.price}</p>
-                  <div className="shadow-bottom"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="help">Necesitas ayuda?</div>
+      ))}
     </div>
   );
 }

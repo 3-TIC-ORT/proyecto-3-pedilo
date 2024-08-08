@@ -19,6 +19,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  display: flex;
+  flex-direction: column;
 
   background: rgb(255,194,0);
   background: radial-gradient(circle, rgba(255,194,0,1) 0%, rgba(255,117,0,1) 50%, rgba(255,77,77,1) 100%);
@@ -27,7 +29,7 @@ body {
 .masterContainer {
   width: 95%;
   height: 95%;
-
+  margin-top: 8px;
   background: rgba(255, 255, 255, 0.35);
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -39,4 +41,51 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+.header {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(3.75px);
+  -webkit-backdrop-filter: blur(3.75px);
+  border-bottom: 1px solid rgba(255, 255, 255, 1);
+
+  width: 100%;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.help-mozo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  padding: 8px;
+}
+
+.mozo {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(3.75px);
+  -webkit-backdrop-filter: blur(3.75px);
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.help {
+  text-decoration: underline;
+  padding: 8px;
+  cursor: pointer;
 }

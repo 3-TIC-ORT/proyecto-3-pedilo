@@ -1,13 +1,13 @@
 .tableSelect {
     width: 100%;
     height: 100%;
-    padding: 16px;
-    gap: 16px;
+    padding: 8px;
+    gap: 8px;
   
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
     flex-direction: row;
   }
   
@@ -21,7 +21,7 @@
   
   .tableCardsContent {
     width: 100%;
-    height: 75%;
+    height: 96%;
     position: relative;
     border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 1);
@@ -85,8 +85,4 @@
   .occupied {
     background: rgba(55, 55, 55, 0.5);
     position: relative;
-  }
-  
-  .help {
-    text-decoration: underline;
   }
