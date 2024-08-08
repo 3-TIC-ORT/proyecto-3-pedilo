@@ -15,7 +15,7 @@ form {
     flex-direction: column;
     height: 100%;
     width: 100%;
-    gap: 16px;
+    gap: 20px;
     padding: 8px;
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.1);
@@ -25,9 +25,14 @@ form {
     border: 1px solid rgba(255, 255, 255, 1);
 }
 
-input {
+.input-field {
+    position: relative;
     width: 75%;
-    padding: 8px;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 14px;
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -39,11 +44,45 @@ input {
 }
 
 input::placeholder {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.5);
     font-weight: 300;
+}
+
+.input-field label {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    transition: all .25s;
+}
+
+input:focus ~label {
+    top: 0;
+    left: 10px;
+    font-size: 18px;
+    color: #fff;
+    padding: 0 4px;
+    
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 1);
 }
 
 button {
     width: 75%;
-    padding: 8px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3.75px);
+    -webkit-backdrop-filter: blur(3.75px);
+    border: 1px solid rgba(255, 255, 255, 1);
+    color: #fff;
+    outline: none;
+    border-radius: 16px;
+    cursor: pointer;
 }

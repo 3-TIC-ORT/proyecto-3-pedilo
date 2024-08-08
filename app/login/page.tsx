@@ -8,8 +8,14 @@ function Login() {
   return (
     <div className="loginContainer">
       <form>
-        <input type="email" name="email" placeholder="Email" required />
-        <input type="password" name="password" placeholder="Password" required />
+        <div className="input-field">
+          <input type="text" name="usermane" placeholder="" required />
+          <label htmlFor="userman">Username</label>
+        </div>
+        <div className="input-field">
+          <input type="password" name="password" placeholder="" required />
+          <label htmlFor="password">Password</label>
+        </div>
         <button type="submit">Iniciar Sesión</button>
       </form>
     </div>
