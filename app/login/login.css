@@ -1,5 +1,44 @@
 
-.help {
-    text-decoration: underline;
+.loginContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+}
+
+form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 16px;
+    padding: 8px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3.75px);
+    -webkit-backdrop-filter: blur(3.75px);
+    border: 1px solid rgba(255, 255, 255, 1);
+}
+
+input {
+    width: 75%;
+    padding: 8px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(3.75px);
+    -webkit-backdrop-filter: blur(3.75px);
+    border: 1px solid rgba(255, 255, 255, 1);
+    color: #fff;
+    outline: none;
+}
+
+button {
+    width: 75%;
     padding: 8px;
 }

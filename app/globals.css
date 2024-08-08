@@ -59,6 +59,8 @@ body {
   font-weight: 800;
   font-size: 20px;
   text-transform: uppercase;
+  padding: 8px;
+  margin-bottom: 8px;
 }
 
 .help-mozo {
