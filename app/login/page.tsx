@@ -8,6 +8,7 @@ function Login() {
   return (
     <div className="loginContainer">
       <form>
+        <h1>Login</h1>
         <div className="input-field">
           <input type="text" name="usermane" placeholder="" required />
           <label htmlFor="userman">Username</label>

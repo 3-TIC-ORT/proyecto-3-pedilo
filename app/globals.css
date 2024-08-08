@@ -43,13 +43,13 @@ body {
   overflow: hidden;
 }
 
-.header {
+.header {/*
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(3.75px);
   -webkit-backdrop-filter: blur(3.75px);
   border-bottom: 1px solid rgba(255, 255, 255, 1);
-
+  margin-bottom: 8px; */
   width: 100%;
   height: 40px;
 
@@ -60,15 +60,15 @@ body {
   font-size: 20px;
   text-transform: uppercase;
   padding: 8px;
-  margin-bottom: 8px;
 }
 
 .help-mozo {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-direction: row;
   padding: 8px;
+  width: 100%;
 }
 
 .mozo {
