@@ -38,6 +38,11 @@ input {
     outline: none;
 }
 
+input::placeholder {
+    color: #fff;
+    font-weight: 300;
+}
+
 button {
     width: 75%;
     padding: 8px;
