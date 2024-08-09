@@ -1,5 +1,6 @@
 import React from 'react';
 import './menu.css';
+import Product from './product/product';
 
 interface MenuItem {
   title: string;
@@ -66,6 +67,7 @@ function Menu() {
 
   return (
     <div className="content">
+      <Product/>
       <div className="section">
         <h1 className="title">Productos recomendados</h1>
         <div className="items">
