@@ -24,7 +24,31 @@
     flex-direction: column;
 }
 
-.productContainer img {
+.backBtn {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    left: 0px;
+    top: 0px;
+    padding: 8px;
+    background: rgba(55, 55, 55, 0.35);
+    border-radius: 0 0 50% 0;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(13.5px);
+    -webkit-backdrop-filter: blur(13.5px);
+    border-top: 1px solid rgba(255, 255, 255, .5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.backBtn img {
+    rotate: 180deg;
+    width: 80%;
+    height: 80%;
+}
+
+.productContainer .img {
     width: 97%;
     height: 40%;
     background-size: cover;

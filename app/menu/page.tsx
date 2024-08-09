@@ -1,6 +1,6 @@
 import React from 'react';
 import './menu.css';
-import Product from './product/product';
+import Product from './[product]/page';
 
 interface MenuItem {
   title: string;
