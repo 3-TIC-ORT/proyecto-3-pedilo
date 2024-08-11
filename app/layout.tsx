@@ -17,7 +17,7 @@ export default function RootLayout({
       <body>
         <div className="header">{restaurantName}</div>
         {children}
-        <div className="help-mozo">
+        <div className="footer">
           <div className="help">Necesitas ayuda?</div>
           <div className="mozo">Llamar a un mozo</div>
         </div>

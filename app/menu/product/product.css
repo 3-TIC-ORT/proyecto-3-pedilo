@@ -1,0 +1,163 @@
+.container {
+    padding: 8px;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+}
+
+.product {
+    width: 100%;
+    height: calc(100% - 25px);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 1);
+    gap: 8px;
+    align-items: center;
+}
+
+.back-btn {
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 1);
+    padding-top: 0.5px;
+    padding-right: 1.5px;
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    cursor: pointer;
+}
+
+.back-btn img {
+    rotate: 180deg;
+    width: 70%;
+    height: 70%;
+}
+
+.headH1 {
+    font-size: 14px;
+
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.productImg {
+    width: 100%;
+    height: 30%;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 90%;
+    height: 100%;
+    gap: 2px;
+}
+
+.row1 {
+    display: flex;
+    width: 100%;
+    height: auto;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.foodTitle {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.foodPrice {
+    width: auto;
+}
+
+.row2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.subRow1 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.review {
+    display: flex;
+    flex-direction: row;
+}
+
+.star {
+    width: 16px;
+}
+
+.showDescription-btn {
+    height: 20px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 1);
+    padding-left: 1px;
+    left: 8px;
+    top: 8px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.showDescription-btn div {
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.showDescription-btn img {
+    rotate: 270deg;
+    width: 70%;
+    height: 70%;
+    transition: transform 0.5s ease;
+}
+
+.showDescription-btn p {
+    font-size: 11px;
+    width: 100%;
+}
+
+.subRow2 {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s ease;
+}
+
+.subRow2Container {
+    margin: 8px 0;
+    width: 100%;
+    padding: 8px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 1);
+    
+}
+
+.foodDescription {
+    font-size: 14px;
+}

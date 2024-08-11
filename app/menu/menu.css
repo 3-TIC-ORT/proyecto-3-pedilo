@@ -1,13 +1,28 @@
-.content {
-    width: 97%;
-    height: 100%;
-    display: flex;
-    gap: 8px;
+.container {
     padding: 8px;
     flex-direction: column;
+    gap: 4px;
+}
+
+.menu {
+    width: 100%;
+    height: 100%;
+    gap: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
     overflow-y: scroll;
-    border-radius: 16px;
+    position: relative;
+    border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 1);
+}
+
+.headH1 {
+    font-size: 14px;
+
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
 }
 
 .section {
@@ -41,8 +56,9 @@
     justify-content: space-between;
     padding: 8px;
 
-    width: 50%;
-    min-width: 50%;
+    width: 60%;
+    max-width: 230px;
+    min-width: 130px;
     height: 100%;
 
     border-radius: 8px;
@@ -56,15 +72,16 @@
 }
 
 .title {
-    font-size: 18px;
     width: auto;
-    font-weight: 600;
+    font-weight: 800;
     text-align: start;
+    font-size: 13px;
+    text-transform: uppercase;
 }
 
 .foodTitle {
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     text-align: start;
     z-index: 1;
     max-width: 60%;
@@ -74,7 +91,7 @@
 }
 
 p {
-    font-size: 10px;
+    font-size: 11px;
     width: auto;
     font-weight: 600;
     text-align: end;
@@ -85,7 +102,7 @@ p {
     background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%);
     position: absolute;
     width: 100%;
-    height: 25%;
+    height: 35%;
     bottom: 0;
     left: 0;
     transition: all 1s;
@@ -96,3 +113,50 @@ p {
         height: 50%;
     }
 }
+
+.scroll-btn {
+    width: 50px;
+    height: 50px;
+  
+    bottom: 8px;
+    left: calc(50% - 25px);
+    cursor: pointer;
+    position: absolute;
+  
+    border-radius: 50%;
+    background: rgba(55, 55, 55, 0.5);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8.5px);
+    -webkit-backdrop-filter: blur(8.5px);
+    border: 1px solid rgba(255, 255, 255, 1);
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    padding-top: 4px;
+    transition: 1s all;
+  }
+  
+  .scroll-btn img {
+    rotate: 90deg;
+    height: 50%;
+    width: 70%;
+    animation: bounce 2s infinite ease-in-out;
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateX(-2.5);
+    }
+    50% {
+      transform: translateX(2.5px);
+    }
+  }
+  
+  .rotated {
+    padding-top: 0px;
+    padding-bottom: 4px;
+    transform: rotate(180deg);
+  }
+  
