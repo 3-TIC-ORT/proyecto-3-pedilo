@@ -1,31 +1,9 @@
-
-.loginContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    padding: 8px;
-}
-
-form {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.form {
     flex-direction: column;
-    height: 100%;
-    width: 100%;
     gap: 20px;
-    padding: 8px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(3.75px);
-    -webkit-backdrop-filter: blur(3.75px);
-    border: 1px solid rgba(255, 255, 255, 1);
 }
 
-h1 {
+.headH1 {
     font-size: 18px;
     
     font-weight: 800;
@@ -44,8 +22,6 @@ h1 {
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(3.75px);
-    -webkit-backdrop-filter: blur(3.75px);
     border: 1px solid rgba(255, 255, 255, 1);
     color: #fff;
     outline: none;
@@ -64,6 +40,9 @@ input::placeholder {
     color: rgba(255, 255, 255, 0.5);
     pointer-events: none;
     transition: all .25s;
+
+    border-radius: 8px;
+    border: 0px solid rgba(255, 255, 255, 0);
 }
 
 input:focus ~label {
@@ -72,12 +51,8 @@ input:focus ~label {
     font-size: 18px;
     color: #fff;
     padding: 0 4px;
-    
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+
+    background: rgba(255, 255, 255, 0.5);
     border: 1px solid rgba(255, 255, 255, 1);
 }
 
