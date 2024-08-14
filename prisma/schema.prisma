@@ -11,8 +11,96 @@ generator client {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  name     String?
-  email    String   @unique
-  password String
+  id       Int       @id @default(autoincrement())
+  username String    @unique
+  hash     String
+  name     String
+  surname  String
+  Cart     Cart[]
+  Orders   Order[]
+  Chefs    Chef[]
+  Waiters  Waiter[]
+  Managers Manager[]
+  Tables   Table[]
+}
+
+model Item {
+  id          Int         @id @default(autoincrement())
+  title       String
+  description String
+  ingredients String
+  photo       String?
+  price       Float
+  rating      Float
+  recommended Boolean
+  category    String
+  Cart        Cart[]
+  OrderItems  OrderItem[]
+}
+
+model Cart {
+  itemId Int
+  userId Int
+  amount Int @default(1)
+
+  User User @relation(fields: [userId], references: [id])
+  Item Item @relation(fields: [itemId], references: [id])
+
+  @@id([itemId, userId])
+}
+
+model OrderItem {
+  orderId  Int
+  itemId   Int
+  quantity Int
+  status   String @default("Pending")
+
+  Order Order @relation(fields: [orderId], references: [orderId])
+  Item  Item  @relation(fields: [itemId], references: [id])
+
+  @@id([orderId, itemId])
+}
+
+model Order {
+  orderId     Int      @id @default(autoincrement())
+  userId      Int
+  orderDate   DateTime @default(now())
+  totalAmount Float
+  status      String   @default("Pending")
+  tableNumber Int?
+
+  User       User        @relation(fields: [userId], references: [id])
+  OrderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model Chef {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  User   User @relation(fields: [userId], references: [id])
+}
+
+model Waiter {
+  id     Int     @id @default(autoincrement())
+  userId Int
+  User   User    @relation(fields: [userId], references: [id])
+  Table  Table[]
+}
+
+model Manager {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  User   User @relation(fields: [userId], references: [id])
+}
+
+model Table {
+  tableNumber Int  @id @unique
+  userId      Int?
+  waiterId    Int?
+
+  User   User?   @relation(fields: [userId], references: [id])
+  Waiter Waiter? @relation(fields: [waiterId], references: [id])
+
+  @@map("tables")
 }
