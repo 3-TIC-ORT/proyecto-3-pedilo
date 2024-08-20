@@ -3,16 +3,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import './menu.css';
 
 interface MenuItem {
+  id: number;
   title: string;
   description: string;
+  ingredients: string;
   photo: string;
-  price: string;
+  price: number;
   rating: number;
-  recomendado: boolean;
+  recommended: boolean;
   category: string;
 }
 
-function Menu() {
+export function useMenuItems() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);  // Para manejar el estado de carga
 
@@ -33,7 +35,13 @@ function Menu() {
     fetchMenuItems();
   }, []);
 
-  const recomendedItems = menuItems.filter(item => item.rating > 4 || item.recomendado);
+  return { menuItems, isLoading };
+}
+
+function Menu() {
+  const { menuItems, isLoading } = useMenuItems();
+
+  const recomendedItems = menuItems.filter(item => item.rating > 4 || item.recommended);
 
   const categories = menuItems.reduce<Record<string, MenuItem[]>>((acc, item) => {
     if (!acc[item.category]) {
@@ -85,7 +93,10 @@ function Menu() {
   };
 
   if (isLoading) {
-    return <div className="masterContainer container">Cargando menú...</div>;
+    return <div className="masterContainer container">
+      <div className="loader"></div>
+      Cargando menú...
+      </div>;
   }
   
   return (
