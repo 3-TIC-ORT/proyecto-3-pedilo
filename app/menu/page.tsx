@@ -56,25 +56,23 @@ function Menu() {
   const [isRotated, setIsRotated] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (menuRef.current) {
+    if (menuRef.current) {
+      const handleScroll = () => {
         const scrollTop = menuRef.current.scrollTop;
         const maxScrollTop = menuRef.current.scrollHeight - menuRef.current.clientHeight;
         const scrollPercentage = (scrollTop / maxScrollTop) * 100;
-
+  
         setIsRotated(scrollPercentage > 75);
-      }
-    };
-    if (menuRef.current) {
+      };
+  
       menuRef.current.addEventListener('scroll', handleScroll);
+  
+      // Cleanup function to remove the event listener
+      return () => {
+        menuRef.current?.removeEventListener('scroll', handleScroll);
+      };
     }
-
-    return () => {
-      if (menuRef.current) {
-        menuRef.current.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, []);
+  }, [menuRef.current]); // Dependencia de `menuRef.current`  
 
   const handleButtonClick = () => {
     if (menuRef.current) {
