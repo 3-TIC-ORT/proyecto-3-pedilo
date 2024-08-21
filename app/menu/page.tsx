@@ -22,7 +22,7 @@ export function useMenuItems() {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await fetch('/api/items');
+        const response = await fetch('/api/item');
         const data = await response.json();
         setMenuItems(data);
       } catch (error) {
@@ -61,12 +61,12 @@ function Menu() {
         const scrollTop = menuRef.current.scrollTop;
         const maxScrollTop = menuRef.current.scrollHeight - menuRef.current.clientHeight;
         const scrollPercentage = (scrollTop / maxScrollTop) * 100;
-  
+
         setIsRotated(scrollPercentage > 75);
       };
-  
+
       menuRef.current.addEventListener('scroll', handleScroll);
-  
+
       // Cleanup function to remove the event listener
       return () => {
         menuRef.current?.removeEventListener('scroll', handleScroll);
@@ -94,9 +94,9 @@ function Menu() {
     return <div className="masterContainer container">
       <div className="loader"></div>
       Cargando menú...
-      </div>;
+    </div>;
   }
-  
+
   return (
     <div className="masterContainer container">
       <h1 className='headH1'>Menu</h1>
@@ -129,7 +129,7 @@ function Menu() {
         ))}
       </div>
       <div className={`scroll-btn ${isRotated ? 'rotated' : ''}`} onClick={handleButtonClick}>
-        <img src="/media/arrow.svg"/>
+        <img src="/media/arrow.svg" />
       </div>
     </div>
   );
