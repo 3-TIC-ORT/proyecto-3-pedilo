@@ -2,39 +2,60 @@ import React from 'react';
 import './menu.css';
 
 interface MenuItem {
+  id: number;
   title: string;
   description: string;
+  ingredients: string;
   photo: string;
-  price: string;
+  price: number;
   rating: number;
-  recomendado: boolean;
+  recommended: boolean;
   category: string;
 }
-let menuItems: MenuItem[];
-const fetchAll = async()=>{
-  let response =await fetch("https://localhost:3000/api/items")
-  let data = await response.json();
 
-  for (let i = 0; i < data.length; i++) {
-    menuItems.push({
-      category:data[i].category,
-      description: data[i].description,
-      photo:data[i].photo,
-      price:data[i].price,
-      rating:data[i].rating,
-      recomendado:data[i].recomendado,
-      title:data[i].title,
-    })
-      
-    console.log(menuItems)
-    
+// Aca cargaria los datos de la db
+const menuItems: MenuItem[] = [
+  {
+    title: 'Ejemplo 1',
+    description: 'Descripción del ejemplo 1',
+    photo: '/media/milanesa.webp',
+    price: '00,000',
+    rating: 3,
+    recomendado: true,
+    category: 'Milanesas'
+  },
+  {
+    title: 'Ejemplo 2',
+    description: 'Descripción del ejemplo 2',
+    photo: '/media/milanesa.webp',
+    price: '00,000',
+    rating: 5,
+    recomendado: false,
+    category: 'Carnes'
+  },
+  {
+    title: 'Ejemplo 3',
+    description: 'Descripción del ejemplo 3',
+    photo: '/media/milanesa.webp',
+    price: '00,000',
+    rating: 3,
+    recomendado: false,
+    category: 'Pollos'
+  },
+  {
+    title: 'Ejemplo 4',
+    description: 'Descripción del ejemplo 4',
+    photo: '/media/milanesa.webp',
+    price: '00,000',
+    rating: 5,
+    recomendado: false,
+    category: 'Ensaladas'
   }
-}
+];
 
 function Menu() {
-  const restaurantName = 'Ejemplo';
 
-  const recomendedItems = menuItems.filter(item => item.rating > 4 || item.recomendado);
+  const recomendedItems = menuItems.filter(item => item.rating > 4 || item.recomendado); // Filtra los items recomendados, ya sea por su rating de 5 o su id rating
 
   const categories = menuItems.reduce<Record<string, MenuItem[]>>((acc, item) => {
     if (!acc[item.category]) {
@@ -43,6 +64,47 @@ function Menu() {
     acc[item.category].push(item);
     return acc;
   }, {});
+
+  //Para el btn de scroll
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [isRotated, setIsRotated] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (menuRef.current) {
+        const scrollTop = menuRef.current.scrollTop;
+        const maxScrollTop = menuRef.current.scrollHeight - menuRef.current.clientHeight;
+        const scrollPercentage = (scrollTop / maxScrollTop) * 100;
+
+        setIsRotated(scrollPercentage > 75);
+      }
+    };
+    if (menuRef.current) {
+      menuRef.current.addEventListener('scroll', handleScroll);
+    }
+
+    return () => {
+      if (menuRef.current) {
+        menuRef.current.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
+  const handleButtonClick = () => {
+    if (menuRef.current) {
+      if (isRotated) {
+        menuRef.current.scrollBy({
+          top: -999,
+          behavior: 'smooth',
+        });
+      } else {
+        menuRef.current.scrollBy({
+          top: 150,
+          behavior: 'smooth',
+        });
+      }
+    }
+  };
+  //aca termina lo del btn scroll
 
   return (
     <div className='menuContainer'>
@@ -75,7 +137,9 @@ function Menu() {
           </div>
         ))}
       </div>
-      <div className="help">Necesitas ayuda?</div>
+      <div className={`scroll-btn ${isRotated ? 'rotated' : ''}`} onClick={handleButtonClick}>
+        <img src="/media/arrow.svg"/>
+      </div>
     </div>
   );
 }
