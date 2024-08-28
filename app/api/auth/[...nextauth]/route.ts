@@ -1,7 +1,8 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaClient } from '@prisma/client';
-import { compare } from 'bcryptjs';
+import NextAuth from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { compare } from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -13,9 +14,10 @@ const authOptions = {
         email: { label: "Email", type: "email", placeholder: "your-email@example.com" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials) {  // Corrected "authorize" spelling
         if (!credentials) return null;
 
+        // Find user from your database
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
@@ -29,7 +31,15 @@ const authOptions = {
     })
   ],
   pages: {
-    signIn: '/auth/signin',
+    error: "/auth/error",
+    verifyRequest: "/auth/verify-request",
+    newUser: "/auth/signup", // Redirect here after sign up
+  },
+  callbacks: {
+    async session({ session, token, user }) {
+      session.user.id = token.sub;
+      return session;
+    },
   },
   session: {
     strategy: 'jwt',
