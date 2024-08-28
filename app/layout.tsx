@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import LogoutButton from "@/components/LogoutButton";
 
 export const metadata: Metadata = {
   title: "Pedilo",
@@ -15,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="header">{restaurantName}</div>
+        <div className="header">{restaurantName} <LogoutButton/></div>
         {children}
         <div className="footer">
           <div className="help">Necesitas ayuda?</div>

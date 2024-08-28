@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import { compare } from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -14,7 +14,7 @@ const handler = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials) {  // Corrected "authorize" spelling
         if (!credentials) return null;
 
         // Find user from your database
@@ -31,13 +31,12 @@ const handler = NextAuth({
         return null;
       },
     }),
-  ], adapter: PrismaAdapter(prisma),
+  ],
+  adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/auth/signin",
-    signOut: "/auth/signout",
     error: "/auth/error",
     verifyRequest: "/auth/verify-request",
     newUser: "/auth/signup", // Redirect here after sign up
