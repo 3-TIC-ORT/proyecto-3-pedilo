@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { useState, useEffect, useRef } from 'react';
 import './menu.css';
 
 interface MenuItem {
@@ -12,7 +14,6 @@ interface MenuItem {
   recommended: boolean;
   category: string;
 }
-
 // Aca cargaria los datos de la db
 const menuItems: MenuItem[] = [
   {
