@@ -1,9 +1,8 @@
 "use client";
-import React from 'react'
-import './login.css'
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import React, { useState } from 'react';
+import './login.css';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -13,6 +12,7 @@ export default function SignInPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null); // Clear previous errors
 
     const result = await signIn("credentials", {
       redirect: false,
@@ -27,47 +27,34 @@ export default function SignInPage() {
     }
   };
 
-  const restaurantName = 'Ejemplo';
-
   return (
-    <div>
-      <h1>Sign In</h1>
+    <div className="signin-container">
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Sign In</button>
+        <h1 className='headH1'>Login</h1>
+        <div className="input-field">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <label htmlFor="email">Email</label>
+        </div>
+        <div className="input-field">
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <label htmlFor="password">Password</label>
+        </div>
+        <button type="submit">Iniciar Sesión</button>
       </form>
     </div>
   );
 }
-
-//
-//   return (
-//     <form className="masterContainer form">
-//       <h1 className='headH1'>Login</h1>
-//       <div className="input-field">
-//         <input type="text" name="email" placeholder="" required />
-//         <label htmlFor="email">Email</label>
-//       </div>
-//       <div className="input-field">
-//         <input type="password" name="password" placeholder="" required />
-//         <label htmlFor="password">Password</label>
-//       </div>
-//       <button type="submit">Iniciar Sesión</button>
-//     </form>
-//   )
-// }
-//
