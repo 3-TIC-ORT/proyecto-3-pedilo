@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import './menu.css';
 
 interface MenuItem {
@@ -16,9 +17,8 @@ interface MenuItem {
 
 export function useMenuItems() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);  // Para manejar el estado de carga
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Cargar los datos desde la API
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
@@ -40,6 +40,7 @@ export function useMenuItems() {
 
 function Menu() {
   const { menuItems, isLoading } = useMenuItems();
+  const router = useRouter();
 
   const recomendedItems = menuItems.filter(item => item.rating > 4 || item.recommended);
 
@@ -51,7 +52,6 @@ function Menu() {
     return acc;
   }, {});
 
-  // Para el botón de scroll
   const menuRef = useRef<HTMLDivElement>(null);
   const [isRotated, setIsRotated] = useState(false);
 
@@ -61,18 +61,16 @@ function Menu() {
         const scrollTop = menuRef.current.scrollTop;
         const maxScrollTop = menuRef.current.scrollHeight - menuRef.current.clientHeight;
         const scrollPercentage = (scrollTop / maxScrollTop) * 100;
-  
         setIsRotated(scrollPercentage > 75);
       };
-  
+
       menuRef.current.addEventListener('scroll', handleScroll);
-  
-      // Cleanup function to remove the event listener
+
       return () => {
         menuRef.current?.removeEventListener('scroll', handleScroll);
       };
     }
-  }, [menuRef.current]); // Dependencia de `menuRef.current`  
+  }, [menuRef.current]);
 
   const handleButtonClick = () => {
     if (menuRef.current) {
@@ -90,13 +88,17 @@ function Menu() {
     }
   };
 
+  const handleProductClick = (item: MenuItem) => {
+    router.push(`/menu/product/${item.title}-${item.id}`);
+  };
+
   if (isLoading) {
     return <div className="masterContainer container">
       <div className="loader"></div>
       Cargando menú...
-      </div>;
+    </div>;
   }
-  
+
   return (
     <div className="masterContainer container">
       <h1 className='headH1'>Menu</h1>
@@ -104,8 +106,9 @@ function Menu() {
         <div className="section">
           <h1 className="title">Productos recomendados</h1>
           <div className="items">
-            {recomendedItems.map((item, index) => (
-              <div key={index} className="item" style={{ backgroundImage: `url(${item.photo})` }}>
+            {recomendedItems.map((item) => (
+              <div key={item.id} className="item" style={{ backgroundImage: `url(${item.photo})` }}
+                onClick={() => handleProductClick(item)}>
                 <h1 className="foodTitle">{item.title}</h1>
                 <p>${item.price}</p>
                 <div className="shadow-bottom"></div>
@@ -113,12 +116,13 @@ function Menu() {
             ))}
           </div>
         </div>
-        {Object.keys(categories).map((categoryName, index) => (
-          <div key={index} className="section">
+        {Object.keys(categories).map((categoryName) => (
+          <div key={categoryName} className="section">
             <h1 className="title">{categoryName}</h1>
             <div className="items">
-              {categories[categoryName].map((item, itemIndex) => (
-                <div key={itemIndex} className="item" style={{ backgroundImage: `url(${item.photo})` }}>
+              {categories[categoryName].map((item) => (
+                <div key={item.id} className="item" style={{ backgroundImage: `url(${item.photo})` }}
+                  onClick={() => handleProductClick(item)}>
                   <h1 className="foodTitle">{item.title}</h1>
                   <p>${item.price}</p>
                   <div className="shadow-bottom"></div>
