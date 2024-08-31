@@ -98,7 +98,7 @@ function Product() {
                 ))}
               </div>
               <div className="showInfo-btn" onClick={handleToggleDescription}>
-                <p>Mostrar información</p>
+                <p>{isExpanded ? "Ocultar información" : "Mostrar información"}</p>
                 <div>
                   <img 
                     src="/media/arrow.svg" 
@@ -122,6 +122,12 @@ function Product() {
           <div className="row3">
             <label htmlFor="orderNotes">Agregar notas</label>
             <textarea className="orderNotes" name="orderNotes" id="orderNotes" placeholder=""></textarea>
+          </div>
+          <div className="row4">
+            <div className="addToCart-btn">
+              <p>Agregar al carrito</p>
+              <img src="/media/cart.svg" alt="" className="cartIcon"/>
+            </div>
           </div>
         </div>
       </div>
