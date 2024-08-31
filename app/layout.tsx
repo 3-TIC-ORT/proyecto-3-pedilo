@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="header">{restaurantName} <LogoutButton/></div>
+        <div className="header">{restaurantName}</div>
         {children}
         <div className="footer">
           <div className="help">Necesitas ayuda?</div>
