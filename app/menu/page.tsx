@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation'; // Importa el hook de navegación
 import './menu.css';
 
 interface MenuItem {
@@ -16,13 +17,12 @@ interface MenuItem {
 
 export function useMenuItems() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);  // Para manejar el estado de carga
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Cargar los datos desde la API
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await fetch('/api/item');
+        const response = await fetch('/api/item'); // Asegúrate de que esta ruta esté correcta
         const data = await response.json();
         setMenuItems(data);
       } catch (error) {
@@ -90,11 +90,20 @@ function Menu() {
     }
   };
 
+  const router = useRouter(); // Hook de navegación de Next.js
+
+  const handleProductClick = (item: MenuItem) => {
+    const productUrl = `/menu/product/${item.title}-${item.id}`;
+    router.push(productUrl); // Navega a la página del producto
+  };
+
   if (isLoading) {
-    return <div className="masterContainer container">
-      <div className="loader"></div>
-      Cargando menú...
-    </div>;
+    return (
+      <div className="masterContainer container">
+        <div className="loader"></div>
+        Cargando menú...
+      </div>
+    );
   }
 
   return (
@@ -105,7 +114,12 @@ function Menu() {
           <h1 className="title">Productos recomendados</h1>
           <div className="items">
             {recomendedItems.map((item, index) => (
-              <div key={index} className="item" style={{ backgroundImage: `url(${item.photo})` }}>
+              <div 
+                key={index} 
+                className="item" 
+                style={{ backgroundImage: `url(${item.photo})` }} 
+                onClick={() => handleProductClick(item)} // Agregamos el manejador de clic
+              >
                 <h1 className="foodTitle">{item.title}</h1>
                 <p>${item.price}</p>
                 <div className="shadow-bottom"></div>
@@ -118,7 +132,12 @@ function Menu() {
             <h1 className="title">{categoryName}</h1>
             <div className="items">
               {categories[categoryName].map((item, itemIndex) => (
-                <div key={itemIndex} className="item" style={{ backgroundImage: `url(${item.photo})` }}>
+                <div 
+                  key={itemIndex} 
+                  className="item" 
+                  style={{ backgroundImage: `url(${item.photo})` }} 
+                  onClick={() => handleProductClick(item)} // Agregamos el manejador de clic
+                >
                   <h1 className="foodTitle">{item.title}</h1>
                   <p>${item.price}</p>
                   <div className="shadow-bottom"></div>
@@ -129,7 +148,7 @@ function Menu() {
         ))}
       </div>
       <div className={`scroll-btn ${isRotated ? 'rotated' : ''}`} onClick={handleButtonClick}>
-        <img src="/media/arrow.svg" />
+        <img src="/media/arrow.svg"/>
       </div>
     </div>
   );

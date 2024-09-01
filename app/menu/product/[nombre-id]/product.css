@@ -54,6 +54,7 @@
     min-height: 100px;
     border-radius: 16px;
     object-fit: cover;
+    background-color: #fff;
 }
 
 .content {
@@ -76,10 +77,10 @@
 .foodTitle {
     font-size: 18px;
     font-weight: 700;
-    text-align: left;
 }
 
 .foodPrice {
+    font-size: 15px;
     width: auto;
 }
 
@@ -106,7 +107,7 @@
     width: 16px;
 }
 
-.showDescription-btn {
+.showInfo-btn {
     height: 20px;
     width: auto;
     display: flex;
@@ -121,7 +122,7 @@
     padding: 4px;
 }
 
-.showDescription-btn div {
+.showInfo-btn div {
     height: 20px;
     width: 20px;
     display: flex;
@@ -129,14 +130,14 @@
     justify-content: center;
 }
 
-.showDescription-btn img {
+.showInfo-btn img {
     rotate: 270deg;
     width: 70%;
     height: 70%;
     transition: transform 0.5s ease;
 }
 
-.showDescription-btn p {
+.showInfo-btn p {
     font-size: 11px;
     width: 100%;
 }
@@ -151,15 +152,87 @@
 }
 
 .subRow2Container {
-    margin: 8px 0;
     width: 100%;
     padding: 8px;
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 1);
-    
+    border: 1px solid rgba(255, 255, 255, 1);   
 }
 
-.foodDescription {
+.foodInfo {
     font-size: 14px;
+    text-align: start;
+}
+
+.foodInfo strong {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.row3 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+    gap: 4px;
+}
+
+.orderNotes {
+    width: 100%;
+    min-height: auto;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 1);
+    color: #fff;
+
+    &:focus {
+        outline: 1px solid rgba(255, 255, 255, 1);
+    }
+}
+
+.orderNotes::placeholder {
+    color: rgba(255, 255, 255, .75);
+}
+
+.row4 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: auto;
+    gap: 4px;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: auto;
+}
+
+.addToCart-btn {
+    margin: 8px 0;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 1);
+    color: #fff;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8.5px);
+    gap: 4px;
+    padding: 0 16px;
+}
+
+.addToCart-btn p {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.cartIcon {
+    width: 24px;
+    height: auto;
 }
