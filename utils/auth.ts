@@ -1,26 +1,25 @@
-import { getSession } from "next-auth/react";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest } from 'next/server';
+import { getToken } from "next-auth/jwt";
 
-export async function isAuthenticated(req: NextApiRequest, res: NextApiResponse) {
-  // Attempt to retrieve the session using the request
-  console.log("hola")
-  const session = await getSession({ req });
+export async function isAuthenticated(req: NextRequest) {
+  console.log("isAuthenticated: start");
 
-  // Check if a valid session exists
-  if (session && session.user) {
-    // User is authenticated
-    console.log("authenticated")
+  const secret = process.env.NEXTAUTH_SECRET;
+  // Use JWT token from NextAuth.js for checking authentication
+  const token = await getToken({ req: req, secret: secret });
+  console.log(token);
+  if (token) {
+    console.log("authenticated");
     return {
       isAuthenticated: true,
-      user: session.user,
-      
+      user: token,  // Use the decoded JWT token as user info
     };
   }
 
-  // User is not authenticated
-console.log("not authenticated")
+  console.log("not authenticated");
   return {
     isAuthenticated: false,
     user: null,
   };
 }
+
