@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { isAuthenticated } from "@/utils/auth";
+import { isAuthenticated } from "@/lib/auth";
 
 const protectedRoutes = ["/admin*", "/profile*"];
 
