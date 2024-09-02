@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { isAuthenticated } from "@/lib/auth";
 
-const protectedRoutes = ["/admin*", "/profile*"];
+const protectedRoutes = ["/cart", "/api/cart"];
 
 export async function middleware(req: NextRequest) {
   console.log("middleware: start");
@@ -21,7 +21,7 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-// export const config = {
-//   matcher: ['/', '/menu']
-// }
-//
+export const config = {
+  matcher: ['/cart', '/api/cart']
+}
+
