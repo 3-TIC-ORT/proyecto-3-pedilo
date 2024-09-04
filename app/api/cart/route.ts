@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getSession, isAuthenticated } from '@/lib/auth'; // Assume this function gets the user session
+import { isAuthenticated } from '@/lib/auth'; // Assume this function gets the user session
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
-  const session = await getSession(request);
+  const session = await isAuthenticated(request);
   if (!session || !session.user) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
