@@ -1,9 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 generator client {
@@ -11,18 +9,83 @@ generator client {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
-  password String
-  name     String?
-  surname  String?
-  Cart     Cart[]
-  Orders   Order[]
-  Chefs    Chef[]
-  Waiters  Waiter[]
-  Managers Manager[]
-  Tables   Table[]
+  id            String          @id @default(cuid())
+  name          String?
+  surname       String?
+  email         String          @unique
+  emailVerified DateTime?
+  password      String?         // Optional: If storing passwords
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  Cart          Cart[]
+  Orders        Order[]
+  Chefs         Chef[]
+  Waiters       Waiter[]
+  Managers      Manager[]
+  Tables        Table[]
+  Authenticator Authenticator[] // Optional for WebAuthn support
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+// Additional application-specific models
 
 model Item {
   id          Int         @id @default(autoincrement())
@@ -40,7 +103,7 @@ model Item {
 
 model Cart {
   itemId Int
-  userId Int
+  userId String
   amount Int @default(1)
 
   User User @relation(fields: [userId], references: [id])
@@ -63,7 +126,7 @@ model OrderItem {
 
 model Order {
   orderId     Int      @id @default(autoincrement())
-  userId      Int
+  userId      String
   orderDate   DateTime @default(now())
   totalAmount Float
   status      String   @default("Pending")
@@ -77,26 +140,26 @@ model Order {
 
 model Chef {
   id     Int  @id @default(autoincrement())
-  userId Int
+  userId String
   User   User @relation(fields: [userId], references: [id])
 }
 
 model Waiter {
   id     Int     @id @default(autoincrement())
-  userId Int
+  userId String
   User   User    @relation(fields: [userId], references: [id])
   Table  Table[]
 }
 
 model Manager {
   id     Int  @id @default(autoincrement())
-  userId Int
+  userId String
   User   User @relation(fields: [userId], references: [id])
 }
 
 model Table {
   tableNumber Int  @id @unique
-  userId      Int?
+  userId      String?
   waiterId    Int?
 
   User   User?   @relation(fields: [userId], references: [id])
@@ -104,3 +167,4 @@ model Table {
 
   @@map("tables")
 }
+
