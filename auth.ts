@@ -6,12 +6,13 @@ import { compare } from "bcryptjs";
 import { prisma } from "@/prisma"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import Google from "next-auth/providers/google"
-
+import Passkey from "next-auth/providers/passkey"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     Google,
+    Passkey,
     Credentials({
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
@@ -55,4 +56,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  experimental: { enableWebAuthn: true },
 })
