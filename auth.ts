@@ -3,13 +3,13 @@ import { ZodError } from "zod"
 import Credentials from "next-auth/providers/credentials"
 import { signInSchema } from "@/lib/definitions"
 import { compare } from "bcryptjs";
-import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/prisma"
+import Google from "next-auth/providers/google"
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // adapter: PrismaAdapter(prisma),
   providers: [
+    Google,
     Credentials({
       // You can specify which fields should be submitted, by adding keys to the `credentials` object.
       // e.g. domain, username, password, 2FA token, etc.
@@ -38,6 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 
           if (!user) {
+            console.log("User not found.")
             throw new Error("User not found.")
           }
 
