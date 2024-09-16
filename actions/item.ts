@@ -9,7 +9,6 @@ export async function getItems(itemId?: number) {
           id: itemId,
         },
       });
-      console.log(item);
       return item;
     }
     const items = await prisma.item.findMany();
