@@ -7,6 +7,7 @@ import { prisma } from "@/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import Passkey from "next-auth/providers/passkey";
+import Mailgun from "next-auth/providers/mailgun"
 import DefaultUser from 'next-auth';
 
 
@@ -26,6 +27,10 @@ declare module "next-auth" {
        */
     } & DefaultSession["user"]
   }
+  interface User {
+    // Add your additional properties here:
+    role: string | null
+  }
 }
 declare module "@auth/core/adapters" {
   interface AdapterUser {
@@ -38,6 +43,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   debug: true,
   providers: [
+    Mailgun({
+      // If your environment variable is named differently than default
+      server: process.env.AUTH_MAILGUN_SERVER,
+      from: "hola@sandboxcd00035390e648f9b6542e8674295a42.mailgun.org"
+    }),
     Google({
       profile(profile) {
         return {
