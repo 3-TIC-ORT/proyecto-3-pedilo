@@ -7,6 +7,7 @@ import { prisma } from "@/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import Passkey from "next-auth/providers/passkey";
+import Resend from "next-auth/providers/resend"
 import Mailgun from "next-auth/providers/mailgun"
 import DefaultUser from 'next-auth';
 
@@ -43,10 +44,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   debug: true,
   providers: [
-    Mailgun({
+    // Mailgun(
+    //   // If your environment variable is named differently than default
+    //   server: process.env.AUTH_MAILGUN_SERVER,
+    //   from: "hola@sandboxcd00035390e648f9b6542e8674295a42.mailgun.org"
+    // }),
+    Resend({
       // If your environment variable is named differently than default
-      server: process.env.AUTH_MAILGUN_SERVER,
-      from: "hola@sandboxcd00035390e648f9b6542e8674295a42.mailgun.org"
+      apiKey: process.env.AUTH_RESEND_KEY,
+      from: "verification@pedilo.tech"
     }),
     Google({
       profile(profile) {
