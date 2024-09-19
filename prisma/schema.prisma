@@ -17,6 +17,7 @@ model User {
   emailVerified DateTime?
   password      String?         // Optional: If storing passwords
   image         String?
+  role          String?
   accounts      Account[]
   sessions      Session[]
   Cart          Cart[]
@@ -147,7 +148,7 @@ model Chef {
 
 model Waiter {
   id     Int     @id @default(autoincrement())
-  userId String
+  userId String @unique
   User   User    @relation(fields: [userId], references: [id])
   Table  Table[]
 }

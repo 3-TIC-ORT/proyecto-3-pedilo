@@ -8,13 +8,12 @@ interface ProductItem {
   title: string;
   description: string;
   ingredients: string;
-  photo: string;
+  photo: string | null;
   price: number;
   rating: number;
   recommended: boolean;
   category: string;
 }
-
 interface ProductClientProps {
   product: ProductItem | null;
 }
@@ -50,7 +49,11 @@ function ProductClient({ product }: ProductClientProps) {
       </a>
       <h1 className='headH1'>{product.title}</h1>
       <div className="product">
-        <img src={product.photo} className='productImg' alt={product.title} />
+        {product.photo ? (
+          <img src={product.photo} className='productImg' alt={product.title} />
+        ) : (
+          <img src='/default-photo.png' className='productImg' alt={product.title} /> // Placeholder image
+        )}
         <div className="content">
           <div className="row1">
             <h1 className='foodTitle'>{product.title}</h1>

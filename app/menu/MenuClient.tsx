@@ -8,7 +8,7 @@ interface MenuItem {
   title: string;
   description: string;
   ingredients: string;
-  photo: string;
+  photo: string | null;
   price: number;
   rating: number;
   recommended: boolean;

@@ -4,12 +4,19 @@ import React, { useEffect, useRef, useState } from 'react'
 import './tables.css'
 
 // Esta funcion es para cargar cada mesa, si esta ocupada, le pone la class occupied
-function Card({ number, isOccupied }) {
+// Define the type for Card props
+interface CardProps {
+  number: number;
+  isOccupied?: boolean; // Optional boolean prop
+}
+
+// Esta funcion es para cargar cada mesa, si esta ocupada, le pone la class occupied
+function Card({ number, isOccupied = false }: CardProps) {
   return (
     <div className={`card ${isOccupied ? 'occupied' : ''}`}>
       Mesa {number}
     </div>
-  )
+  );
 }
 const tables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // Todas las mesas que van a estar guardadas en la DB
 const occupiedTables = [3, 5, 11, 13]; // Las mesas que estan ocupadas, tambien guardadas en la DB
@@ -63,15 +70,15 @@ function Tables() {
       <h1 className='headH1'>Por favor selecciona una mesa</h1>
       <div className="tables">
         <div className="cards" ref={cardsRef}>
-            {availableTables.map((number) => (
+          {availableTables.map((number) => (
             <Card key={number} number={number} />
-            ))}
-            {occupiedTables.map((number) => (
+          ))}
+          {occupiedTables.map((number) => (
             <Card key={number} number={number} isOccupied />
-            ))}
+          ))}
         </div>
         <div className={`scroll-btn ${isRotated ? 'rotated' : ''}`} onClick={handleButtonClick}>
-          <img src="/media/arrow.svg"/>
+          <img src="/media/arrow.svg" />
         </div>
       </div>
     </div>

@@ -1,26 +1,52 @@
 'use client';
 
 import { signup } from '@/actions/signup';
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
+
+interface SignupErrors {
+  name?: string | string[];
+  surname?: string | string[];
+  email?: string | string[];
+  password?: string | string[];
+  general?: string;
+}
+
+interface SignupFormState {
+  errors: SignupErrors;
+  isSubmitting: boolean;
+}
 
 export default function SignupForm() {
-  const [state, setState] = useState({
+  const [state, setState] = useState<SignupFormState>({
     errors: {},
     isSubmitting: false
   });
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setState({ ...state, isSubmitting: true });
 
-    const formData = new FormData(event.target);
+    const formData = new FormData(event.currentTarget);
 
     try {
-      const result = await signup(undefined, formData); // Pass formData directly
+      const result = await signup(undefined, formData);
+
+      // Normalize error data to match SignupErrors
+      const normalizedErrors: SignupErrors = {};
+      if (result?.errors) {
+        for (const [key, value] of Object.entries(result.errors)) {
+          // If the error is an array, join into a single string
+          if (Array.isArray(value)) {
+            normalizedErrors[key as keyof SignupErrors] = value.join(', ');
+          } else {
+            normalizedErrors[key as keyof SignupErrors] = value;
+          }
+        }
+      }
 
       // If there are validation errors, update the state
-      if (result?.errors) {
-        setState({ errors: result.errors, isSubmitting: false });
+      if (Object.keys(normalizedErrors).length > 0) {
+        setState({ errors: normalizedErrors, isSubmitting: false });
       } else {
         // Handle success (e.g., redirect or show success message)
         setState({ errors: {}, isSubmitting: false });
@@ -32,7 +58,6 @@ export default function SignupForm() {
       setState({ errors: { general: 'An error occurred. Please try again.' }, isSubmitting: false });
     }
   };
-
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col gap-2">
@@ -40,7 +65,7 @@ export default function SignupForm() {
           <label htmlFor="name">Name</label>
           <input id="name" name="name" placeholder="John" />
         </div>
-        {state.errors?.name && (
+        {state.errors.name && (
           <p className="text-sm text-red-500">{state.errors.name}</p>
         )}
 
@@ -48,7 +73,7 @@ export default function SignupForm() {
           <label htmlFor="surname">Surname</label>
           <input id="surname" name="surname" placeholder="Doe" />
         </div>
-        {state.errors?.surname && (
+        {state.errors.surname && (
           <p className="text-sm text-red-500">{state.errors.surname}</p>
         )}
 
@@ -56,7 +81,7 @@ export default function SignupForm() {
           <label htmlFor="email">Email</label>
           <input id="email" name="email" placeholder="john@example.com" />
         </div>
-        {state.errors?.email && (
+        {state.errors.email && (
           <p className="text-sm text-red-500">{state.errors.email}</p>
         )}
 
@@ -64,15 +89,22 @@ export default function SignupForm() {
           <label htmlFor="password">Password</label>
           <input id="password" name="password" type="password" />
         </div>
-        {state.errors?.password && (
+        {state.errors.password && (
           <div className="text-sm text-red-500">
             <p>Password must:</p>
             <ul>
-              {state.errors.password.map((error) => (
-                <li key={error}>- {error}</li>
-              ))}
-            </ul>
+              {Array.isArray(state.errors.password) ? (
+                state.errors.password.map((error, index) => (
+                  <li key={index}>- {error}</li>
+                ))
+              ) : (
+                <li>- {state.errors.password}</li>
+              )}   </ul>
           </div>
+        )}
+
+        {state.errors.general && (
+          <p className="text-sm text-red-500">{state.errors.general}</p>
         )}
 
         <SignupButton isSubmitting={state.isSubmitting} />
@@ -81,7 +113,11 @@ export default function SignupForm() {
   );
 }
 
-export function SignupButton({ isSubmitting }) {
+interface SignupButtonProps {
+  isSubmitting: boolean;
+}
+
+export function SignupButton({ isSubmitting }: SignupButtonProps) {
   return (
     <button aria-disabled={isSubmitting} type="submit" className="mt-2 w-full">
       {isSubmitting ? 'Submitting...' : 'Sign Up'}

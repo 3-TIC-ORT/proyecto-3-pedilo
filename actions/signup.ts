@@ -2,7 +2,7 @@
 
 import { SignupFormSchema, FormState } from '@/lib/definitions';
 import { redirect } from 'next/navigation';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { signIn } from '@/auth';
 import { prisma } from "@/prisma"
 
