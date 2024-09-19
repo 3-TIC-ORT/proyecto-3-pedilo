@@ -8,7 +8,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import Passkey from "next-auth/providers/passkey";
 import Resend from "next-auth/providers/resend"
-import Mailgun from "next-auth/providers/mailgun"
 import DefaultUser from 'next-auth';
 
 
@@ -20,22 +19,14 @@ declare module "next-auth" {
       surname: string | null
       email: string
       role: string | null
-      /**
-       * By default, TypeScript merges new interface properties and overwrites existing ones.
-       * In this case, the default session user properties will be overwritten,
-       * with the new ones defined above. To keep the default session user properties,
-       * you need to add them back into the newly declared interface.
-       */
     } & DefaultSession["user"]
   }
   interface User {
-    // Add your additional properties here:
     role: string | null
   }
 }
 declare module "@auth/core/adapters" {
   interface AdapterUser {
-    // Add your additional properties here:
     role: string | null
   }
 }
@@ -44,13 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
   debug: true,
   providers: [
-    // Mailgun(
-    //   // If your environment variable is named differently than default
-    //   server: process.env.AUTH_MAILGUN_SERVER,
-    //   from: "hola@sandboxcd00035390e648f9b6542e8674295a42.mailgun.org"
-    // }),
     Resend({
-      // If your environment variable is named differently than default
       apiKey: process.env.AUTH_RESEND_KEY,
       from: "verification@pedilo.tech"
     }),
@@ -66,31 +51,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
     Passkey({
-      //   profile(profile) {
-      //     return {
-      //       id: profile.sub,
-      //       name: profile.name,
-      //       email: profile.email,
-      //       image: profile.picture,
-      //       role: profile.role ?? "user",
-      //     };
-      //   },
     }),
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      // profile(profile) {
-      //   return {
-      //     id: profile.sub,
-      //     name: profile.name,
-      //     email: profile.email,
-      //     image: profile.picture,
-      //     role: profile.role ?? "user",
-      //   };
-      // },
-      //
       authorize: async (credentials) => {
         try {
           const { email, password } = await signInSchema.parseAsync(credentials);
@@ -106,7 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               id: user.id,
               name: user.name,
               email: user.email,
-              role: user.role, // assuming user has a role field
+              role: user.role,
             };
           }
 
