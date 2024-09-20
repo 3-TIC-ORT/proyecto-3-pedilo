@@ -1,3 +1,4 @@
+"use server"
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from 'next-auth';

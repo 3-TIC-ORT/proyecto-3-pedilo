@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'; // Correct import for App Directory
+import { getCart, addToCart, removeFromCart } from '@/actions/cart'; // Import the new actions
 
 interface CartItem {
   itemId: number;
@@ -9,12 +10,6 @@ interface CartItem {
   title: string;
   price: string;
   total: string;
-}
-
-interface CartResponse {
-  items: CartItem[];
-  total: string;
-  error?: string;
 }
 
 const CartPage: React.FC = () => {
@@ -27,17 +22,15 @@ const CartPage: React.FC = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const response = await fetch('/api/cart');
-        const data: CartResponse = await response.json();
+        const data = await getCart(); // Use the new getCart function
 
-        if (response.ok) {
+        if (data) {
           setCart(data.items);
           setTotal(data.total);
-        } else {
-          setError(data.error || 'Failed to fetch cart items.');
         }
       } catch (err) {
         console.error('Error fetching cart:', err);
+        console.log(err);
         setError('An error occurred while fetching the cart.');
       } finally {
         setLoading(false);
@@ -49,65 +42,28 @@ const CartPage: React.FC = () => {
 
   const handleAddToCart = async (itemId: number) => {
     try {
-      const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ itemId }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const updatedCartResponse = await fetch('/api/cart');
-        const updatedCart: CartResponse = await updatedCartResponse.json();
-
-        if (updatedCartResponse.ok) {
-          setCart(updatedCart.items);
-          setTotal(updatedCart.total);
-        }
-      } else {
-        alert(data.error || 'Failed to add item to cart.');
-      }
+      await addToCart(itemId); // Use the new addToCart function
+      // Refetch the cart after adding an item
+      const updatedCart = await getCart();
+      setCart(updatedCart.items);
+      setTotal(updatedCart.total);
     } catch (err) {
       console.error('Error adding item to cart:', err);
+      alert('Failed to add item to cart.');
     }
   };
 
   const handleDeleteFromCart = async (itemId: number) => {
     try {
-      const response = await fetch('/api/cart', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ itemId }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const updatedCartResponse = await fetch('/api/cart');
-        const updatedCart: CartResponse = await updatedCartResponse.json();
-
-        if (updatedCartResponse.ok) {
-          setCart(updatedCart.items);
-          setTotal(updatedCart.total);
-        }
-      } else {
-        alert(data.error || 'Failed to delete item from cart.');
-      }
+      await removeFromCart(itemId); // Use the new removeFromCart function
+      // Refetch the cart after removing an item
+      const updatedCart = await getCart();
+      setCart(updatedCart.items);
+      setTotal(updatedCart.total);
     } catch (err) {
       console.error('Error deleting item from cart:', err);
+      alert('Failed to delete item from cart.');
     }
-  };
-
-  const formatUSD = (amount: number): string => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
   };
 
   if (loading) return <p>Loading...</p>;
