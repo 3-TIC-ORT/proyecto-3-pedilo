@@ -5,7 +5,7 @@ import '../orders.css';
 interface Order {
   id: number;
   table: string;
-  items: { name: string; price: number; notes: string }[]; // Agregar campo notes
+  items: { name: string; price: number; notes: string; goesToKitchen: boolean }[];
   total: number;
   state: string;
   createdAt: string;
@@ -21,8 +21,13 @@ function Page() {
       try {
         const response = await fetch('/api/orders'); // Asegúrate de que esta ruta esté correcta
         const data = await response.json();
+        // Filtrar los items que no vayan a la cocina
+        const filteredOrders = data.map((order: Order) => ({
+          ...order,
+          items: order.items.filter(item => item.goesToKitchen)
+        }));
         // Ordenar los pedidos por fecha de creación
-        const sortedOrders = data.sort((a: Order, b: Order) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        const sortedOrders = filteredOrders.sort((a: Order, b: Order) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         setOrders(sortedOrders);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -30,7 +35,7 @@ function Page() {
         setIsLoading(false);
       }
     };
-
+  
     fetchOrders();
   }, []);
 
@@ -82,7 +87,7 @@ function Page() {
 
   return (
     <div className='masterContainer container'>
-      <h1 className='headH1'>Ordenes (Mozos)</h1>
+      <h1 className='headH1'>Ordenes (Cocina)</h1>
       <div className="orders">
         {orders.map(order => (
           <div key={order.id} className="order">

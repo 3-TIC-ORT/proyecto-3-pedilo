@@ -155,15 +155,19 @@
 }
   
 .orderState.cooking::after {
-    top: 35%;
+    top: 29%;
 }
 
 .orderState.ready::after {
-    top: 64%;
+    top: 51%;
 }
 
 .orderState.delivered::after {
-    top: 88%;
+    top: 71%;
+}
+
+.orderState.paid::after {
+    top: 91%;
 }
 
 .orderHeader {
@@ -243,6 +247,18 @@
 }
 
 .orderItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 1);
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.orderItemsTitlePrice {
     display: flex;
     flex-direction: row;
     gap: 4px;
