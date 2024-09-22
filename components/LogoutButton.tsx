@@ -1,18 +1,19 @@
-"use client"
-import { signOut } from "next-auth/react";
-import { isAuthenticated } from "@/Utils/Auth";
+import { signOut, auth } from "@/auth"
 
-export default async function LogoutButton() {
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/" }); // Redirect to home page after logout
-  };
+export default function LogoutButton() {
 
-  // const authResult = await isAuthenticated(req);
-  //
-  // if (!authResult)
+  // const session = await auth();
+  // if (!session.user) {
+  //   return null
+  // }
   return (
-    <button onClick={handleLogout}>
-      Logout
-    </button>
-  );
+    <form
+      action={async () => {
+        "use server"
+        await signOut()
+      }}
+    >
+      <button type="submit">Sign Out</button>
+    </form>
+  )
 }

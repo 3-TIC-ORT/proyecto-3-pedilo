@@ -1,87 +1,21 @@
-"use client";
-
-// import { useSession } from "next-auth/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-
-
-export default function SignupPage() {
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-// const { data: session, status } = useSession();
-// const user = session.user.name
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name, surname }),
-    });
-
-     if (res.ok) {
-      // Automatically sign the user in after successful signup
-      const signInResult = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
-      });
-
-      if (signInResult?.ok) {
-        router.push("/"); // Redirect to the home page or another protected page
-      } else {
-        setError("Failed to sign in after signup.");
-      }
-    } else {
-      const data = await res.json();
-      setError(data.error);
-    }
-  };
-
-
+import Link from 'next/link';
+import SignupForm from '@/components/signupForm';
+export default function Page() {
   return (
-    <div>
-      <h1>Sign Up</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="name"
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="surname"
-          placeholder="Surname"
-          value={surname}
-          onChange={(e) => setSurname(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Sign Up</button>
-      </form>
+    <div className="flex flex-col p-4 lg:w-1/3">
+      <div className="text-center">
+        <h1 className="text-3xl font-bold">Create an account</h1>
+        <p className="text-gray-500">Enter your information to get started</p>
+      </div>
+      <div className="mt-6">
+        <SignupForm />
+      </div>
+      <div className="mt-6 text-center text-sm">
+        Already have an account?{' '}
+        <Link className="underline" href="/login">
+          Login
+        </Link>
+      </div>
     </div>
   );
 }
-

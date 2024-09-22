@@ -1,27 +1,21 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { isAuthenticated } from "@/utils/auth";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+// import { auth } from "@/auth";
 
-const protectedRoutes = ["/admin*", "/profile*"];
+const protectedRoutes = ["/admin", "/profile"];
 
 export async function middleware(req: NextRequest) {
-  console.log("middleware: start");
-
-  // Check if the user is authenticated
-  const authResult = await isAuthenticated(req);
-  console.log(authResult.isAuthenticated);
-
-  if (!authResult.isAuthenticated && protectedRoutes.includes(req.nextUrl.pathname)) {
-    console.log("middleware: not Authenticated");
-    const loginUrl = new URL('/auth/signin', req.url);  // Specify your login page or authentication route
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Continue with the request if authenticated
+  // const session = await auth();
+  // const isProtected = protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route));
+  // if (isProtected && (!session || !session.user)) {
+  //   console.log("middleware: not Authenticated");
+  //   return NextResponse.redirect(new URL('/auth/signin', req.url));
+  // }
   return NextResponse.next();
 }
 
-// export const config = {
-//   matcher: ['/', '/menu']
-// }
-//
+// Apply middleware to these routes
+export const config = {
+  matcher: ['/admin/:path*', '/profile/:path*']  // Protect /admin/* and /profile/* routes
+}
+

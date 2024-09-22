@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import LogoutButton from "@/components/LogoutButton";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "Pedilo",
