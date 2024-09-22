@@ -34,6 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Passkey({
     }),
     Credentials({
+      id: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
@@ -68,6 +69,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
           throw error;
         }
+      },
+    }),
+    Credentials({
+      id: "guest",
+      name: "Guest",
+      credentials: {
+        name: { label: "Name", type: "text" }
+      },
+      async authorize(credentials, req) {
+        if (!credentials?.name || typeof credentials.name !== 'string') {
+          throw new Error("Name is required for guest sign-in");
+        }
+
+        // Create a new guest user
+        const guestUser = await prisma.user.create({
+          data: {
+            name: credentials.name,
+            email: `guest_${Date.now()}@example.com`, // Unique email
+            role: "guest",
+          },
+        });
+
+        return {
+          id: guestUser.id,
+          email: guestUser.email,
+          name: guestUser.name,
+          role: guestUser.role,
+        };
       },
     }),
   ],
