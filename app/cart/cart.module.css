@@ -1,0 +1,120 @@
+/* Back button */
+.button {
+  padding: 10px 15px;
+  font-size: 14px;
+  background-color: #0070f3;
+  color: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.button:hover {
+  background-color: #005bb5;
+}
+
+.button:active {
+  background-color: #004499;
+}
+
+/* Styles for the cart table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th, .table td { /* Applies to .table class */
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #FFA500;
+  font-weight: bold;
+}
+
+.table tr:hover {
+  background-color: #FF9999;
+}
+
+/* Style for the cart heading */
+.h1_yourCart {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Style for the total price display */
+.total {
+  font-size: 1.5rem;
+  margin-top: 20px;
+}
+
+/* Styles for action buttons inside the table */
+.actionButton {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 3px;
+}
+
+.actionButton:hover {
+  background-color: #ff4c4c;
+}
+
+.actionButton:active {
+  background-color: #e64545;
+}
+
+/* Style for the "Go to Payment" button */
+.paymentButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 20px auto; /* Centering horizontally */
+  display: block;    /* Makes the button take the full width of its container */
+  text-align: center;
+}
+
+.paymentButton:hover {
+  background-color: #218838;
+}
+
+.paymentButton:active {
+  background-color: #1e7e34;
+}
+ 
+ 
+ /* Position and style for the image */
+ .cartImage {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 2.5vh;
+  right: 2.5vh;
+}
+
+ /* Styles for the h1 element */
+ .h1_yourCart {
+  font-size: 2rem;
+  color: #FFFFFF;
+  text-align: center;
+}

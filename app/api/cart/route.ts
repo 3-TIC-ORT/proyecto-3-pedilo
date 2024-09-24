@@ -25,12 +25,12 @@ export async function GET(request: Request) {
       itemId: item.itemId,
       title: item.Item.title,
       amount: item.amount,
-      total: formatUSD(itemTotal),
-      price: formatUSD(item.Item.price),
+      total: itemTotal,
+      price: item.Item.price,
     };
   });
 
-  return NextResponse.json({ items: formattedItems, total: formatUSD(total) });
+  return NextResponse.json({ items: formattedItems, total: total });
 }
 
 export async function POST(request: Request) {
@@ -104,10 +104,9 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'Failed to delete item from cart' }, { status: 500 });
   }
 }
-function formatUSD(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
-}
-
+// function formatUSD(amount: number): string {
+//   return new Intl.NumberFormat('en-US', {
+//     style: 'currency',
+//     currency: 'USD',
+//   }).format(amount);
+// }

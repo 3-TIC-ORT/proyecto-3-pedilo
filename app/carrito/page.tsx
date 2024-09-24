@@ -1,106 +1,155 @@
-import { useState } from 'react'
-import { ShoppingCart, Trash2 } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+"use client"; // Client Component
 
-import { useState } from 'react'
-import { ShoppingCart, Trash2 } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation'; // Correct import for App Directory
 
 interface CartItem {
-  id: number
-  name: string
-  price: number
-  quantity: number
+  itemId: number;
+  amount: number;
+  title: string;
+  price: string;
+  total: string;
 }
 
-export default function Component() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    { id: 1, name: "Product 1", price: 19.99, quantity: 2 },
-    { id: 2, name: "Product 2", price: 29.99, quantity: 1 },
-  ])
+interface CartResponse {
+  items: CartItem[];
+  total: string;
+  error?: string;
+}
 
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+const CartPage: React.FC = () => {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [total, setTotal] = useState<string>('0');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter(); // Correct usage with App Directory
 
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter(item => item.id !== id))
-  }
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const response = await fetch('/api/cart');
+        const data: CartResponse = await response.json();
 
-  const updateQuantity = (id: number, newQuantity: number) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: Math.max(0, newQuantity) } : item
-    ))
-  }
+        if (response.ok) {
+          setCart(data.items);
+          setTotal(data.total);
+        } else {
+          setError(data.error || 'Failed to fetch cart items.');
+        }
+      } catch (err) {
+        console.error('Error fetching cart:', err);
+        setError('An error occurred while fetching the cart.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCart();
+  }, []);
+
+  const handleAddToCart = async (itemId: number) => {
+    try {
+      const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ itemId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const updatedCartResponse = await fetch('/api/cart');
+        const updatedCart: CartResponse = await updatedCartResponse.json();
+
+        if (updatedCartResponse.ok) {
+          setCart(updatedCart.items);
+          setTotal(updatedCart.total);
+        }
+      } else {
+        alert(data.error || 'Failed to add item to cart.');
+      }
+    } catch (err) {
+      console.error('Error adding item to cart:', err);
+    }
+  };
+
+  const handleDeleteFromCart = async (itemId: number) => {
+    try {
+      const response = await fetch('/api/cart', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ itemId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        const updatedCartResponse = await fetch('/api/cart');
+        const updatedCart: CartResponse = await updatedCartResponse.json();
+
+        if (updatedCartResponse.ok) {
+          setCart(updatedCart.items);
+          setTotal(updatedCart.total);
+        }
+      } else {
+        alert(data.error || 'Failed to delete item from cart.');
+      }
+    } catch (err) {
+      console.error('Error deleting item from cart:', err);
+    }
+  };
+
+  const formatUSD = (amount: number): string => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
-    <div className="flex justify-end p-4">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="relative">
-            <ShoppingCart className="h-5 w-5" />
-            {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                {totalItems}
-              </span>
-            )}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-80">
-          <div className="grid gap-4">
-            <h3 className="font-semibold text-lg">Your Cart</h3>
-            {cartItems.length === 0 ? (
-              <p className="text-muted-foreground">Your cart is empty</p>
-            ) : (
-              <>
-                {cartItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      >
-                        -
-                      </Button>
-                      <span>{item.quantity}</span>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      >
-                        +
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => removeItem(item.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                <div className="flex justify-between items-center pt-4 border-t">
-                  <span className="font-semibold">Total:</span>
-                  <span className="font-semibold">${totalPrice.toFixed(2)}</span>
-                </div>
-                <Button className="w-full">Checkout</Button>
-                <Button className="w-full">Ver Carrito</Button>
-
-              </>
-            )}
-          </div>
-        </PopoverContent>
-      </Popover>
+    <div>
+      <h1>Your Cart</h1>
+      {cart.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Amount</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cart.map((item) => (
+                <tr key={item.itemId}>
+                  <td>{item.title}</td>
+                  <td>{item.amount}</td>
+                  <td>{item.price}</td>
+                  <td>{item.total}</td>
+                  <td>
+                    <button onClick={() => handleAddToCart(item.itemId)}>Add More</button>
+                    <button onClick={() => handleDeleteFromCart(item.itemId)}>Remove</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <h2>Total: {total}</h2>
+        </>
+      )}
     </div>
-  )
-}
+  );
+};
+
+export default CartPage;
