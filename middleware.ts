@@ -8,11 +8,10 @@ const protectedRoutes = ["/admin", "/profile"];
 
 const { auth } = NextAuth(authConfig)
 
-export default auth(async function middleware(req: NextRequest) {
-  // Your custom middleware logic goes here
- const session = await auth();
+export default auth((req) => {
+ const session = !!req.auth;
   const isProtected = protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route));
-  if (isProtected && (!session || !session.user)) {
+  if (isProtected && (!session || !session)) {
     console.log("middleware: not Authenticated");
     return NextResponse.redirect(new URL('/auth/signin', req.url));
   }
