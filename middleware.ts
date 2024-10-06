@@ -9,9 +9,10 @@ const protectedRoutes = ["/admin", "/profile"];
 const { auth } = NextAuth(authConfig)
 
 export default auth((req) => {
- const session = !!req.auth;
+  const session = !!req.auth;
+  console.log(session);
   const isProtected = protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route));
-  if (isProtected && (!session || !session)) {
+  if (isProtected && !session) {
     console.log("middleware: not Authenticated");
     return NextResponse.redirect(new URL('/auth/signin', req.url));
   }
