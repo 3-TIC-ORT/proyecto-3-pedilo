@@ -2,20 +2,12 @@ import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "./auth.config"
 import Google from "next-auth/providers/google";
-import Passkey from "next-auth/providers/passkey";
 import Resend from "next-auth/providers/resend"
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/prisma";
 import { ZodError } from "zod";
 import { signInSchema } from "@/lib/definitions";
-import DefaultUser from 'next-auth';
-import {
-  genSaltSync,
-  hashSync,
-  compareSync,
-  getRounds,
-  getSaltSync,
-} from 'bcrypt-edge';
+import { compareSync } from 'bcrypt-edge';
 
 
 
