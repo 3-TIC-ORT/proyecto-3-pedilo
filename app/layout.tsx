@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import LogoutButton from "@/components/LogoutButton";
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { getTables } from "@/actions/tables"
+import {auth} from "@/auth"
+
+const sesion = auth();
+let mesa = getTables(sesion.userId);
 
 export const metadata: Metadata = {
   title: "Pedilo",
@@ -17,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="header">{restaurantName} </div><LogoutButton />
+        <div className="header">{restaurantName} </div><LogoutButton /><div className="tableNumber"> {mesa} </div>
         {children}
         <div className="footer">
           <div className="help">Necesitas ayuda?</div>
