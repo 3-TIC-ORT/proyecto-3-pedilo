@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+// import { NextResponse } from 'next/server';
+// import type { NextRequest } from 'next/server';
 // import { auth } from "@/auth";
 import NextAuth from "next-auth"
 import authConfig from "./auth.config"
 
 export const { auth: middleware } = NextAuth(authConfig)
-const protectedRoutes = ["/admin", "/profile"];
+// const protectedRoutes = ["/admin", "/profile"];
 
 //
 // export default auth((req) => {
@@ -23,7 +23,7 @@ const protectedRoutes = ["/admin", "/profile"];
 
 
 // Apply middleware to these routes
-export const config = {
-  matcher: ['/admin/:path*', '/profile/:path*']  // Protect /admin/* and /profile/* routes
-}
-
+// export const config = {
+//   matcher: ['/admin/:path*', '/profile/:path*']  // Protect /admin/* and /profile/* routes
+// }
+//
