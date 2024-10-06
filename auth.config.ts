@@ -12,5 +12,5 @@ export default {
       return session;
     },
   },
-  providers: [Google, Credentials],
+  providers: [Resend, Google, Credentials],
 } satisfies NextAuthConfig
