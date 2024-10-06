@@ -20,7 +20,7 @@ import {
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    ...authConfig, 
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
   debug: true,
   providers: [
@@ -38,8 +38,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: profile.role ?? "user",
         };
       },
-    }),
-    Passkey({
     }),
     Credentials({
       id: "credentials",
@@ -109,14 +107,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
 
-  // callbacks: {
-  //   session({ session, user }) {
-  //     if (session.user) {
-  //       session.user.role = user.role; // Assign role to session user
-  //     }
-  //     return session;
-  //   },
-  // },
-  experimental: { enableWebAuthn: true },
+  callbacks: {
+    session({ session, user }) {
+      if (session.user) {
+        session.user.role = user.role; // Assign role to session user
+      }
+      return session;
+    },
+  },
 });
 
