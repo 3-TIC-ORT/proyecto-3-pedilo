@@ -11,7 +11,6 @@ export default function App() {
         <li><a href="/autn/signup">/autn/signup</a></li>
         <li><a href="/cart">/cart</a></li>
         <li><a href="/tables">/tables</a></li>
-        
       </ul>
     </main>
   );

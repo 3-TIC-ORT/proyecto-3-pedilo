@@ -23,7 +23,7 @@ export default function RootLayout({
         <footer>
           <button>Llamar Mozo</button>
           <nav>
-            <a href="/">
+            <a href="/menu">
               <img src="/media/homeIcon.svg" alt="homeIcon" />
               <p>Inicio</p>
             </a>
