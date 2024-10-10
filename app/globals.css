@@ -1,7 +1,8 @@
+/*
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+*/
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 :root {
@@ -25,14 +26,14 @@
 body {
   width: 100%;
   height: 100dvh;
-  display: flex !important;
+  display: flex;
   flex-direction: column;
 }
 
 header {
   width: 100%;
   height: auto;
-  display: flex !important;
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -48,7 +49,7 @@ header {
 main {
   width: 100%;
   height: 100%;
-  display: flex !important;
+  display: flex;
   overflow-y: scroll;
   overflow-x: hidden;
   flex-direction: column;
@@ -57,7 +58,7 @@ main {
 footer {
   width: 100%;
   height: auto;
-  display: flex !important;
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
@@ -77,12 +78,12 @@ footer {
   nav {
     width: 100%;
     height: auto;
-    display: flex !important;
+    display: flex;
     flex-direction: row;
     justify-content: space-around;
 
     a {
-      display: flex !important;
+      display: flex;
       align-items: center;
       flex-direction: column;
 
