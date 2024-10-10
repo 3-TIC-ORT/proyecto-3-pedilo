@@ -73,18 +73,22 @@ function MenuClient({ menuItems: initialMenuItems = [] }: MenuClientProps) {
 
   return (
     <>
-      <div className="filters">
-        <button className="filter active">Filtro</button>
-        <button className="filter">Filtro</button>
-        <button className="filter">Filtro</button>
-        <button className="filter">Filtro</button>
-        <button className="filter">Filtro</button>
-        <button className="filter">Filtro</button>
-        <button className="filter">Filtro</button>
+      <div className="sectionsScroller">
+        {Object.keys(categories).map((categoryName, index) => (
+          <button
+            key={index}
+            className="sectionScrollerBtn"
+            onClick={() => {
+              document.getElementById(categoryName)?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            {categoryName}
+          </button>
+        ))}
       </div>
       <div className="products">
         {Object.keys(categories).map((categoryName, index) => (
-          <section key={index}>
+          <section key={index} id={categoryName}>
             <h1>{categoryName}</h1>
             <div className="categoryProducts">
               {categories[categoryName].map((item, itemIndex) => (
