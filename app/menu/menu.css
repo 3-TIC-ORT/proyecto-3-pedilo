@@ -1,5 +1,5 @@
 .sectionsScroller {
-    display: flex;
+    display: flex !important;
     flex-direction: row;
     align-items: center;
     width: 100%;
@@ -14,7 +14,7 @@
     .sectionScrollerBtn {
         background-color: var(--white);
         border: 2px solid var(--black);
-        display: flex;
+        display: flex !important;
         flex-direction: row;
         align-items: center;
         justify-content: center;
@@ -31,14 +31,14 @@
 }
 
 .products {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     overflow-y: scroll;
     height: auto;
 }
 
 section {
-    display: flex;
+    display: flex !important;
     justify-content: center;
     flex-direction: column;
     padding: .5rem 1rem;
@@ -51,7 +51,7 @@ section {
     }
 
     .categoryProducts {
-        display: flex;
+        display: flex !important;
         flex-direction: row;
         gap: 1rem;
         overflow-x: scroll;
@@ -68,7 +68,7 @@ section {
             cursor: pointer;
     
             .name {
-                display: flex;
+                display: flex !important;
                 flex-direction: row;
                 padding: .5rem 1rem;
                 background-color: var(--gray);
@@ -79,7 +79,7 @@ section {
             }
     
             .price-tag {
-                display: flex;
+                display: flex !important;
                 flex-direction: row;
                 align-items: flex-end;
                 justify-content: space-between;
@@ -97,7 +97,7 @@ section {
             }
     
             .btns {
-                display: flex;
+                display: flex !important;
                 flex-direction: row;
                 justify-content: space-between;
                 padding: .5rem 1rem;
@@ -109,7 +109,7 @@ section {
                     border-radius: .5rem;
                     color: var(--light-blue);
                     font-weight: 600;
-                    display: flex;
+                    display: flex !important;
                     flex-direction: row;
                     align-items: center;
                     justify-content: center;
@@ -125,7 +125,7 @@ section {
                 }
     
                 .quantitySelector {
-                    display: flex;
+                    display: flex !important;
                     flex-direction: row;
                     gap: 0.5rem;
     
@@ -133,7 +133,7 @@ section {
                         color: var(--light-blue);
                         width: auto;
                         height: auto;
-                        display: flex;
+                        display: flex !important;
                         flex-direction: row;
                         align-items: center;
                         justify-content: center;
@@ -141,7 +141,7 @@ section {
                     }
     
                     .quantityBtns {
-                        display: flex;
+                        display: flex !important;
                         flex-direction: row;
                         border-radius: .5rem;
                         border: 2px solid var(--light-blue);

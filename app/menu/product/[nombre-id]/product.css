@@ -5,7 +5,7 @@
     width: 3rem;
     height: 3rem;
     cursor: pointer;
-    display: flex;
+    display: flex !important;
     flex-direction: row;
     align-items: center;
     justify-content: center;
@@ -17,13 +17,13 @@
 }
 
 .productContainer {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     margin: .5rem;
     align-items: center;
 
     .name {
-        display: flex;
+        display: flex !important;
         flex-direction: row;
         padding: .5rem 1rem;
         width: 100%;
@@ -34,7 +34,7 @@
     }
 
     .price-tag {
-        display: flex;
+        display: flex !important;
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-between;
@@ -52,7 +52,7 @@
     }
 
     .details {
-        display: flex;
+        display: flex !important;
         flex-direction: row;
         width: 90%;
         height: auto;
@@ -68,13 +68,13 @@
 
         .description-ingredients {
             width: 55%;
-            display: flex;
+            display: flex !important;
             flex-direction: column;
             gap: 1rem;
             height: auto;
 
             .ingredientsTitle {
-                display: flex;
+                display: flex !important;
                 flex-direction: row;
                 width: auto;
                 height: auto;
@@ -82,7 +82,7 @@
             }
 
             .descriptionTitle {
-                display: flex;
+                display: flex !important;
                 flex-direction: row;
                 width: auto;
                 height: auto;
@@ -90,14 +90,14 @@
             }
 
             .ingredients {
-                display: flex;
+                display: flex !important;
                 flex-direction: row;
                 width: auto;
                 height: auto;
             }
             
             .description {
-                display: flex;
+                display: flex !important;
                 width: auto;
                 height: auto;
                 flex-direction: column;
@@ -107,7 +107,7 @@
     }
 
     .btns {
-        display: flex;
+        display: flex !important;
         flex-direction: row;
         justify-content: space-between;
         padding: .5rem 1rem;
@@ -120,7 +120,7 @@
             border-radius: .5rem;
             color: var(--light-blue);
             font-weight: 600;
-            display: flex;
+            display: flex !important;
             flex-direction: row;
             align-items: center;
             justify-content: center;
@@ -138,7 +138,7 @@
         }
 
         .quantitySelector {
-            display: flex;
+            display: flex !important;
             flex-direction: row;
             gap: 0.5rem;
             width: 45%;
@@ -147,7 +147,7 @@
                 color: var(--light-blue);
                 width: auto;
                 height: auto;
-                display: flex;
+                display: flex !important;
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
@@ -156,7 +156,7 @@
             }
 
             .quantityBtns {
-                display: flex;
+                display: flex !important;
                 flex-direction: row;
                 border-radius: .5rem;
                 border: 2px solid var(--light-blue);
