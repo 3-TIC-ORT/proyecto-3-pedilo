@@ -8,7 +8,7 @@ export default function App() {
       <ul>
         <li><a href="/menu">/menu</a></li>
         <li><a href="/auth/signin">/auth/signin</a></li>
-        <li><a href="/autn/signup">/autn/signup</a></li>
+        <li><a href="/auth/signup">/auth/signup</a></li>
         <li><a href="/cart">/cart</a></li>
         <li><a href="/tables">/tables</a></li>
       </ul>
