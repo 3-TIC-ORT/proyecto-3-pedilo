@@ -31,16 +31,8 @@ export default async function RootLayout({
               <img src="/media/homeIcon.svg" alt="homeIcon" />
               <p>Inicio</p>
             </a>
-            <a href="/search">
-              <img src="/media/searchIcon.svg" alt="searchIcon" />
-              <p>Buscar</p>
-            </a>
             {role === "user" && (
               <>
-                <a href="/promotions">
-                  <img src="/media/promotionsIcon.svg" alt="promotionsIcon" />
-                  <p>Promociones</p>
-                </a>
                 <a href="/cart">
                   <img src="/media/cartIcon.svg" alt="cartIcon" />
                   <p>Carrito</p>

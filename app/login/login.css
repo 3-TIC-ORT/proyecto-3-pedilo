@@ -16,7 +16,7 @@ a {
     padding: .5rem 0;
 }
 
-.verifyContainer {
+.container {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -34,13 +34,13 @@ form {
         font-weight: 600;
     }
 
-    input {
+    input[type="email"] {
         padding: 1rem .5rem;
         border-radius: .5rem;
         border: 2px solid var(--gray);
     }
 
-    button {
+    button, input[type="submit"] {
         background-color: var(--light-blue);
         color: var(--white);
         font-weight: 600;
@@ -54,7 +54,10 @@ form {
     flex-direction: column;
     padding: .5rem 1rem;
 
-    button {
+    a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background-color: var(--dark-dark-red);
         color: var(--white);
         font-weight: 600;
