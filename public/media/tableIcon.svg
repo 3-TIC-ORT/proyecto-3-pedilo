@@ -1,0 +1,28 @@
+<svg width="81" height="80" viewBox="0 0 81 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Mesas" clip-path="url(#clip0_146_1281)">
+<g id="Borde">
+<path id="Vector" d="M63.5389 12.2539H16.861L0.199951 26.7209V27.3091V35.4867V35.6684V67.7455H10.5228V35.6684H14.1793V56.5731H23.2117V35.6684H57.187V56.5731H66.2204V35.6684H69.8759V67.7455H80.2V35.6684V35.4867V26.7195L63.5389 12.2539ZM17.8237 14.835H62.575L75.8262 26.3403H4.57245L17.8237 14.835ZM7.94183 65.1645H2.78104V35.6684H7.94183V65.1645ZM20.6307 53.9919H16.7604V35.6684H20.6307V53.9919ZM63.6396 53.9919H59.7681V35.6684H63.6396V53.9919ZM77.619 65.1645H72.457V35.6684H77.619V65.1645ZM77.619 33.0875H2.78104V28.2766H77.619V33.0875Z" fill="#919191"/>
+</g>
+<g id="Fondo">
+<rect id="Rectangle 1" x="1.53333" y="34.667" width="6.66667" height="30.6667" fill="#919191"/>
+<rect id="Rectangle 2" x="72.2" y="34.667" width="6.66667" height="30.6667" fill="#919191"/>
+<rect id="Rectangle 3" x="16.2" y="34.667" width="5.33333" height="20" fill="#919191"/>
+<rect id="Rectangle 4" x="58.8667" y="34.667" width="5.33333" height="20" fill="#919191"/>
+<rect id="Rectangle 5" x="1.53333" y="28" width="77.3333" height="5.33333" fill="#919191"/>
+<rect id="Rectangle 6" x="14.8667" y="14.667" width="50.6667" height="12" fill="#919191"/>
+<rect id="Rectangle 7" x="12.2" y="17.334" width="2.66667" height="9.33333" fill="#919191"/>
+<rect id="Rectangle 11" x="65.5333" y="17.334" width="2.66667" height="9.33333" fill="#919191"/>
+<rect id="Rectangle 12" x="66.8667" y="18.667" width="4" height="9.33333" fill="#919191"/>
+<rect id="Rectangle 13" x="69.5333" y="21.334" width="4" height="9.33333" fill="#919191"/>
+<rect id="Rectangle 14" x="72.2" y="24" width="4" height="9.33333" fill="#919191"/>
+<rect id="Rectangle 8" x="9.53333" y="18.667" width="4" height="9.33333" fill="#919191"/>
+<rect id="Rectangle 9" x="6.8667" y="21.334" width="4" height="9.33333" fill="#919191"/>
+<rect id="Rectangle 10" x="4.19995" y="24" width="4" height="9.33333" fill="#919191"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_146_1281">
+<rect width="80" height="80" fill="white" transform="translate(0.199951)"/>
+</clipPath>
+</defs>
+</svg>

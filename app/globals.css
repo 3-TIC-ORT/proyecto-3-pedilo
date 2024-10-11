@@ -95,6 +95,22 @@ footer {
       p {
         color: var(--gray);
         font-size: .75rem;
+        text-align: center;
+      }
+
+      .iconGroup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+
+        img {
+          width: auto;
+          height: auto;
+          color: var(--gray);
+        }
       }
     }
   }
