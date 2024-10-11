@@ -7,13 +7,29 @@ export default function LogoutButton() {
   //   return null
   // }
   return (
-    <form
-      action={async () => {
-        "use server"
-        await signOut()
-      }}
-    >
-      <button type="submit">Sign Out</button>
-    </form>
+    <>
+      <form
+        action={async () => {
+          "use server"
+          await signOut()
+        }}
+      >
+        <button type="submit">Sign Out</button>
+      </form>
+      <style>
+        {`
+          form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+
+            button {
+              width: 100%;
+            }
+          }
+        `}
+      </style>
+    </>
   )
 }
