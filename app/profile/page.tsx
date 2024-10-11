@@ -20,10 +20,12 @@ export async function Profile() {
         <div className="info">
             <img src={user.image ? user.image : "media/defaultProfilePicture.svg"} alt="profilePicture" />
             <div className="userInfo">
-                <div className="textLine">
-                    <p>Nombre:</p>
-                    <p>{user.name}</p>
-                </div>
+                {user.name && (
+                    <div className="textLine">
+                        <p>Nombre:</p>
+                        <p>{user.name}</p>
+                    </div>
+                )}
                 {user.surname && (
                     <div className="textLine">
                         <p>Apellido:</p>
