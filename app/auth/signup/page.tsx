@@ -1,6 +1,6 @@
 "use client"
 import Link from 'next/link';
-import SignUpForm from '@/components/sigUpForm';
+import SignUpForm from '@/components/signUpForm';
 import './register.css';
 import { useRouter } from 'next/navigation';
 
