@@ -8,10 +8,9 @@ export default async function Menu() {
     const menuItems = await getItems() as Item[]; // Assert the type to Item[]
 
     return (
-      <div className="masterContainer container">
-        <h1 className='headH1'>Menu</h1>
+      <main>
         <MenuClient menuItems={menuItems} />
-      </div>
+      </main>
     );
   } catch (error) {
     // Handle error (e.g., show an error message)

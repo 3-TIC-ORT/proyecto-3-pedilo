@@ -1,21 +1,20 @@
+"use client"
 import Link from 'next/link';
-import SignupForm from '@/components/signupForm';
+import SignUpForm from '@/components/sigUpForm';
+import './register.css';
+import { useRouter } from 'next/navigation';
+
 export default function Page() {
+  const router = useRouter();
+
   return (
-    <div className="flex flex-col p-4 lg:w-1/3">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold">Create an account</h1>
-        <p className="text-gray-500">Enter your information to get started</p>
+    <main>
+      <h1>Qué ganas de conocerte!</h1>
+      <p>Ingresá tus datos y sé parte de nuestra familia.</p>
+      <SignUpForm />
+      <div className="otherActions">
+        <button onClick={() => router.back()} className="backBtn">Cancelar</button>
       </div>
-      <div className="mt-6">
-        <SignupForm />
-      </div>
-      <div className="mt-6 text-center text-sm">
-        Already have an account?{' '}
-        <Link className="underline" href="/login">
-          Login
-        </Link>
-      </div>
-    </div>
+    </main>
   );
 }

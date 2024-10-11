@@ -13,16 +13,38 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const restaurantName = 'Ejemplo';
   return (
     <html lang="en">
       <body>
-        <div className="header">{restaurantName} </div><LogoutButton />
+        <header>
+          <img src="/images/" alt="restaurantLogo" id="restaurantLogo"/>
+        </header>
         {children}
-        <div className="footer">
-          <div className="help">Necesitas ayuda?</div>
-          <div className="mozo">Llamar a un mozo</div>
-        </div>
+        <footer>
+          <button>Llamar Mozo</button>
+          <nav>
+            <a href="/menu">
+              <img src="/media/homeIcon.svg" alt="homeIcon" />
+              <p>Inicio</p>
+            </a>
+            <a href="/">
+              <img src="/media/promotionsIcon.svg" alt="promotionsIcon" />
+              <p>Promociones</p>
+            </a>
+            <a href="/">
+              <img src="/media/searchIcon.svg" alt="searchIcon" />
+              <p>Buscar</p>
+            </a>
+            <a href="/">
+              <img src="/media/profileIcon.svg" alt="profileIcon" />
+              <p>Perfil</p>
+            </a>
+            <a href="/">
+              <img src="/media/cartIcon.svg" alt="cartIcon" />
+              <p>Carrito</p>
+            </a>
+          </nav>
+        </footer>
       </body>
     </html>
   );

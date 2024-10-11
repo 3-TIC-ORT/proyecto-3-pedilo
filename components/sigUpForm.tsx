@@ -60,37 +60,45 @@ export default function SignupForm() {
   };
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-2">
-        <div>
-          <label htmlFor="name">Name</label>
-          <input id="name" name="name" placeholder="John" />
-        </div>
-        {state.errors.name && (
-          <p className="text-sm text-red-500">{state.errors.name}</p>
-        )}
-
-        <div>
-          <label htmlFor="surname">Surname</label>
-          <input id="surname" name="surname" placeholder="Doe" />
-        </div>
-        {state.errors.surname && (
-          <p className="text-sm text-red-500">{state.errors.surname}</p>
-        )}
-
-        <div>
-          <label htmlFor="email">Email</label>
-          <input id="email" name="email" placeholder="john@example.com" />
-        </div>
-        {state.errors.email && (
-          <p className="text-sm text-red-500">{state.errors.email}</p>
-        )}
-
-        <div>
-          <label htmlFor="password">Password</label>
-          <input id="password" name="password" type="password" />
-        </div>
-        {state.errors.password && (
-          <div className="text-sm text-red-500">
+      <input
+          type="text"
+          placeholder="Nombre"
+          id="name"
+          name="name"
+          required
+      />
+      {state.errors.name && (
+        <p className="error">{state.errors.name}</p>
+      )}
+      <input
+          type="text"
+          placeholder="Apellido"
+          id="surname"
+          name="surname"
+          required
+      />
+      {state.errors.surname && (
+        <p className="error">{state.errors.surname}</p>
+      )}
+      <input
+          type="email"
+          placeholder="Email"
+          id="email"
+          name="email"
+          required
+      />
+      {state.errors.email && (
+        <p className="error">{state.errors.email}</p>
+      )}
+      <input
+          type="password"
+          placeholder="Contraseña"
+          id="password"
+          name="password"
+          required
+      />
+      {state.errors.password && (
+          <div className="error">
             <p>Password must:</p>
             <ul>
               {Array.isArray(state.errors.password) ? (
@@ -102,13 +110,10 @@ export default function SignupForm() {
               )}   </ul>
           </div>
         )}
-
         {state.errors.general && (
-          <p className="text-sm text-red-500">{state.errors.general}</p>
+          <p className="error">{state.errors.general}</p>
         )}
-
-        <SignupButton isSubmitting={state.isSubmitting} />
-      </div>
+      <SignupButton isSubmitting={state.isSubmitting} />
     </form>
   );
 }
@@ -119,9 +124,8 @@ interface SignupButtonProps {
 
 export function SignupButton({ isSubmitting }: SignupButtonProps) {
   return (
-    <button aria-disabled={isSubmitting} type="submit" className="mt-2 w-full">
-      {isSubmitting ? 'Submitting...' : 'Sign Up'}
+    <button aria-disabled={isSubmitting} disabled={isSubmitting} type="submit">
+      {isSubmitting ? 'Registrandote...' : 'Registrarse'}
     </button>
   );
 }
-
