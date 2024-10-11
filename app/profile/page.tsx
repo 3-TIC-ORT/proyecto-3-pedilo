@@ -16,22 +16,27 @@ export async function Profile() {
     return (
       <main>
         <div className="info">
-          <img src="media/defaultProfilePicture.svg" alt="profilePicture" />
-          {user.image}
-          <div className="userInfo">
-            <div className="textLine">
-              <p>Nombre:</p>
-              <p>{user.name}</p>
+            <img src={user.image ? user.image : "media/defaultProfilePicture.svg"} alt="profilePicture" />
+            <div className="userInfo">
+                <div className="textLine">
+                    <p>Nombre:</p>
+                    <p>{user.name}</p>
+                </div>
+                {user.surname && (
+                    <div className="textLine">
+                        <p>Apellido:</p>
+                        <p>{user.surname}</p>
+                    </div>
+                )}
+                <div className="textLine">
+                    <p>Email:</p>
+                    <p>{user.email}</p>
+                </div>
+                <div className="textLine">
+                    <p>Pedidos:</p>
+                    <p>{orders.length}</p>
+                </div>
             </div>
-            <div className="textLine">
-              <p>Email:</p>
-              <p>{user.email}</p>
-            </div>
-            <div className="textLine">
-              <p>Pedidos:</p>
-              <p>{orders}</p>
-            </div>
-          </div>
         </div>
         <button>Historial de pedidos</button>
         <LogoutButton />

@@ -1,6 +1,6 @@
 .info {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: .5rem 1rem;
@@ -12,11 +12,12 @@
         border-radius: 50%;
         object-fit: cover;
         object-position: center;
+        border: 2px solid var(--gray);
     }
 
     .userInfo {
         width: 100%;
-        height: 75%;
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
@@ -27,6 +28,10 @@
             gap: 0.25rem;
 
             p {
+                max-width: 75%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+
                 &:first-child {
                     font-weight: 600;
                 }
