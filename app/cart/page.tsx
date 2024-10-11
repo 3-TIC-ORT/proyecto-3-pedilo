@@ -1,8 +1,8 @@
-"use client"; // Client Component
+"use client"; 
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // Correct import for App Directory
-import { getCart, addToCart, removeFromCart } from '@/actions/cart'; // Import the new actions
+import { useRouter } from 'next/navigation'; 
+import { getCart, addToCart, removeFromCart } from '@/actions/cart'; 
 
 interface CartItem {
   itemId: number;
@@ -17,12 +17,12 @@ const CartPage: React.FC = () => {
   const [total, setTotal] = useState<string>('0');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter(); // Correct usage with App Directory
+  const router = useRouter(); 
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const data = await getCart(); // Use the new getCart function
+        const data = await getCart(); 
 
         if (data) {
           setCart(data.items);
