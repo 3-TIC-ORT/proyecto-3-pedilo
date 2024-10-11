@@ -6,11 +6,7 @@ export default function App() {
     <main>
       <h1>U&apos;re now on &quot;/&quot;. click on each route to go to it.</h1>
       <ul>
-        <li><a href="/menu">/menu</a></li>
-        <li><a href="/auth/signin">/auth/signin</a></li>
-        <li><a href="/auth/signup">/auth/signup</a></li>
-        <li><a href="/cart">/cart</a></li>
-        <li><a href="/tables">/tables</a></li>
+        <li><a href="/api/auth/signin">/api/auth/signin</a></li>
       </ul>
     </main>
   );

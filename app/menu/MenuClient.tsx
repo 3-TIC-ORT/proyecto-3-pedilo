@@ -25,6 +25,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const router = useRouter(); // Navigation hook
+  console.log("userRole: "+userRole);
 
   const categories = menuItems.reduce<Record<string, MenuItem[]>>((acc, item) => {
     if (!acc[item.category]) {

@@ -22,7 +22,6 @@ interface ProductClientProps {
 const ProductClient: React.FC<ProductClientProps> = ({ product, userRole }) => {
   const [quantity, setQuantity] = useState(1);
   const router = useRouter();
-
   if (!product) {
     return <div>Producto no encontrado</div>;
   }
