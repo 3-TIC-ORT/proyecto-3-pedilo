@@ -1,58 +1,39 @@
-"use client";
-import React, { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { redirect } from "next/navigation"
+import { signIn, auth, providerMap } from "@/auth"
+import { AuthError } from "next-auth"
 
-export default function SignInPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null); // Clear previous errors
-
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
-
-    if (result?.error) {
-      setError(result.error);
-    } else {
-      router.push("/"); // Redirect to homepage or any other protected page
-    }
-  };
-
-  const handleProviderSignIn = async (provider: string) => {
-    const result = await signIn(provider, {
-      redirect: false,
-      email,
-    });
-
-    if (result?.error) {
-      setError(result.error);
-    } else {
-      router.push("/"); // Redirect to homepage or any other protected page
-    }
-  };
-
+export default async function SignInForm() {
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="error">{error}</div>
-      <input
-          type="email"
-          placeholder="Email"
-          name="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-      />
-      <button type="button" onClick={() => handleProviderSignIn('resend')}>Iniciar sesión</button>
-      <button type="button" onClick={() => handleProviderSignIn('google')}>Continuar con Google</button>
-    </form>
-  );
+    <div>
+      {Object.values(providerMap).map((provider) => (
+        <form
+          action={async () => {
+            "use server"
+            try {
+              await signIn(provider.id, {
+                redirectTo: props.searchParams?.callbackUrl ?? "",
+              })
+            } catch (error) {
+              // Signin can fail for a number of reasons, such as the user
+              // not existing, or the user not having the correct role.
+              // In some cases, you may want to redirect to a custom error
+              if (error instanceof AuthError) {
+                return redirect(`${SIGNIN_ERROR_URL}?error=${error.type}`)
+              }
+
+              // Otherwise if a redirects happens Next.js can handle it
+              // so you can just re-thrown the error and let Next.js handle it.
+              // Docs:
+              // https://nextjs.org/docs/app/api-reference/functions/redirect#server-component
+              throw error
+            }
+          }}
+        >
+          <button type="submit">
+            <span>Sign in with {provider.name}</span>
+          </button>
+        </form>
+      ))}
+    </div>
+  )
 }
