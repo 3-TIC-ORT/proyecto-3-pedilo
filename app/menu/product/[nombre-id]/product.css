@@ -53,24 +53,25 @@
 
     .details {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         width: 90%;
         height: auto;
         gap: 1rem;
 
         .productImg {
-            width: 45%;
-            aspect-ratio: 1/1;
+            width: 100%;
+            aspect-ratio: 4/3;
             object-fit: cover;
-            background-color: var(--gray);
+            object-position: center;
             border-radius: .25rem;
+            border: 2px solid var(--gray);
         }
 
         .description-ingredients {
-            width: 55%;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: .5rem;
             height: auto;
 
             .ingredientsTitle {
@@ -110,7 +111,7 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        padding: .5rem 1rem;
+        padding: 1rem;
         width: 100%;
         height: auto;
         gap: 1rem;
