@@ -4,7 +4,7 @@ import LogoutButton from '@/components/LogoutButton';
 import { auth } from '@/auth';
 import { getOrders } from '@/actions/order';
 
-export async function Profile() {
+export default async function Profile() {
   const session = await auth();
   if (!session) {
     return (
@@ -42,6 +42,4 @@ export async function Profile() {
     )
   }
 }
-
-export default Profile
 

@@ -14,7 +14,7 @@ export default function LogoutButton() {
           await signOut()
         }}
       >
-        <button type="submit">Sign Out</button>
+        <button type="submit">Cerrar sesión</button>
       </form>
       <style>
         {`
