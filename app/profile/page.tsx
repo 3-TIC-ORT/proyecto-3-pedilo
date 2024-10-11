@@ -26,12 +26,6 @@ export async function Profile() {
                         <p>{user.name}</p>
                     </div>
                 )}
-                {user.surname && (
-                    <div className="textLine">
-                        <p>Apellido:</p>
-                        <p>{user.surname}</p>
-                    </div>
-                )}
                 <div className="textLine">
                     <p>Email:</p>
                     <p>{user.email}</p>
