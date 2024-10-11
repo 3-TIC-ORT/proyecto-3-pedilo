@@ -17,15 +17,13 @@ model User {
   emailVerified DateTime?
   password      String?         // Optional: If storing passwords
   image         String?
-  role          String?
+  role          String          @default("user") // Now includes roles like "chef", "waiter", "manager"
   accounts      Account[]
   sessions      Session[]
   Cart          Cart[]
   Orders        Order[]
-  Chefs         Chef[]
-  Waiters       Waiter[]
-  Managers      Manager[]
-  Tables        Table[]
+  Tables        Table[]         // Tables the user is associated with (optional)
+  AssignedTables Table[]        @relation("WaiterTables") // Tables assigned to the waiter (optional)
   Authenticator Authenticator[] // Optional for WebAuthn support
 
   createdAt DateTime @default(now())
@@ -87,8 +85,6 @@ model Authenticator {
   @@id([userId, credentialID])
 }
 
-// Additional application-specific models
-
 model Item {
   id          Int         @id @default(autoincrement())
   title       String
@@ -140,33 +136,13 @@ model Order {
   @@map("orders")
 }
 
-model Chef {
-  id     Int  @id @default(autoincrement())
-  userId String
-  User   User @relation(fields: [userId], references: [id])
-}
-
-model Waiter {
-  id     Int     @id @default(autoincrement())
-  userId String @unique
-  User   User    @relation(fields: [userId], references: [id])
-  Table  Table[]
-}
-
-model Manager {
-  id     Int  @id @default(autoincrement())
-  userId String
-  User   User @relation(fields: [userId], references: [id])
-}
-
 model Table {
-  tableNumber Int  @id @unique
+  tableNumber Int     @id @unique
   userId      String?
-  waiterId    Int?
+  waiterId    String? // Optional: A table might not always have a waiter assigned
 
   User   User?   @relation(fields: [userId], references: [id])
-  Waiter Waiter? @relation(fields: [waiterId], references: [id])
+  Waiter User?   @relation("WaiterTables", fields: [waiterId], references: [id])
 
   @@map("tables")
 }
-

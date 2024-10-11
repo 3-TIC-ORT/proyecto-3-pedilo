@@ -14,7 +14,7 @@
     "@auth/prisma-adapter": "^2.4.2",
     "@neondatabase/serverless": "^0.9.5",
     "@prisma/adapter-neon": "^5.19.1",
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.20.0",
     "@simplewebauthn/browser": "^9.0.1",
     "@simplewebauthn/server": "^9.0.3",
     "@vercel/speed-insights": "^1.0.12",
