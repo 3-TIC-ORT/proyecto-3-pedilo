@@ -9,7 +9,7 @@ export async function middleware(req: NextRequest) {
   const isProtected = protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route));
   if (isProtected && (!session || !session.user)) {
     console.log("middleware: not Authenticated");
-    return NextResponse.redirect(new URL('/auth/signin', req.url));
+    return NextResponse.redirect(new URL('/login', req.url));
   }
   return NextResponse.next();
 }

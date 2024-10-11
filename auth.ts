@@ -1,10 +1,8 @@
-import NextAuth from "next-auth"
+import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
-import Resend from "next-auth/providers/resend"
+import Resend from "next-auth/providers/resend";
 import { prisma } from "@/prisma";
-
-
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -19,6 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return {
           id: profile.sub,
           name: profile.name,
+          surname: profile.family_name,
           email: profile.email,
           image: profile.picture,
           role: profile.role ?? "user",
@@ -26,7 +25,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-
+  pages: {
+    signIn: '/login',
+    verifyRequest: '/login?verifyRequest=true',
+  },
   callbacks: {
     session({ session, user }) {
       if (session.user) {
@@ -36,4 +38,3 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
 });
-

@@ -26,25 +26,33 @@ export default function SignInPage() {
     }
   };
 
+  const handleProviderSignIn = async (provider: string) => {
+    const result = await signIn(provider, {
+      redirect: false,
+      email,
+    });
+
+    if (result?.error) {
+      setError(result.error);
+    } else {
+      router.push("/"); // Redirect to homepage or any other protected page
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="error">{error}</div>
       <input
           type="email"
           placeholder="Email"
+          name="email"
+          id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
       />
-      <input
-          type="password"
-          id="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-      />
-      <button type="submit">Iniciar Sesión</button>
+      <button type="button" onClick={() => handleProviderSignIn('resend')}>Iniciar sesión</button>
+      <button type="button" onClick={() => handleProviderSignIn('google')}>Continuar con Google</button>
     </form>
   );
 }

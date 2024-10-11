@@ -13,6 +13,8 @@ export async function Profile() {
   } else {
     const user = session.user;
     const orders = await getOrders(user.id);
+    console.log("orders: " + orders);
+    
     return (
       <main>
         <div className="info">
