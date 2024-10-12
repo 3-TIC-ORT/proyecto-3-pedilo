@@ -83,9 +83,9 @@ main {
                 content: '';
                 display: block;
                 width: 2px;
-                height: 180%;
+                height: 280%;
                 background-color: var(--gray);
-                top: -45%;
+                top: -90%;
                 right: -1rem;
                 position: absolute;
             }
