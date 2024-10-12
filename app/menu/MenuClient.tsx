@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Import navigation hook
 import { addToCart } from '@/actions/cart'; // Import the addToCart function
 import './menu.css';
@@ -24,8 +24,25 @@ interface MenuClientProps {
 function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const [showPopup, setShowPopup] = useState(false); // State for popup visibility
+  const [popupClass, setPopupClass] = useState('popup'); // State for popup class
+  const [popupCount, setPopupCount] = useState(0); // State for popup count
   const router = useRouter(); // Navigation hook
   console.log("userRole: "+userRole);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showPopup) {
+      timer = setTimeout(() => {
+        setPopupClass('popup-exit'); // Set exit animation
+        setTimeout(() => {
+          setShowPopup(false);
+          setPopupCount(0); // Reset count
+        }, 500); // Hide popup after exit animation
+      }, 4500); // Show popup for 5 seconds (4.5s + 0.5s exit animation)
+    }
+    return () => clearTimeout(timer);
+  }, [showPopup]);
 
   const categories = menuItems.reduce<Record<string, MenuItem[]>>((acc, item) => {
     if (!acc[item.category]) {
@@ -53,6 +70,9 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
       try {
         await addToCart(item.id); // Llama a la función addToCart para agregar el producto al carrito
         console.log(`Pidiendo ${quantity} de ${item.title}`);
+        setPopupCount(prev => prev + 1); // Increment count
+        setShowPopup(true); // Show popup
+        setPopupClass('popup'); // Set entry animation
       } catch (error) {
         console.error('Error adding item to cart:', error);
       }
@@ -114,6 +134,11 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
           </section>
         ))}
       </div>
+      {showPopup && (
+        <div className={popupClass} onClick={() => setPopupCount(prev => prev + 1)}>
+          Se agregó al carrito ({popupCount})
+        </div>
+      )}
     </>
   );
 }

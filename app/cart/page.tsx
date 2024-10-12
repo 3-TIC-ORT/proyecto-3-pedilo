@@ -70,7 +70,7 @@ const CartPage: React.FC = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
+    <main>
       <h1>Your Cart</h1>
       {cart.length === 0 ? (
         <p>Your cart is empty.</p>
@@ -104,7 +104,7 @@ const CartPage: React.FC = () => {
           <h2>Total: {total}</h2>
         </>
       )}
-    </div>
+    </main>
   );
 };
 
