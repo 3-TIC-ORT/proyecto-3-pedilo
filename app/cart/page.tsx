@@ -1,112 +1,153 @@
-"use client"; // Client Component
-
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // Correct import for App Directory
-import { getCart, addToCart, removeFromCart } from '@/actions/cart'; // Import the new actions
+"use client"
+import React, { useEffect, useRef, useState } from 'react';
+import { getCart, addToCart, removeFromCart, clearCart } from '@/actions/cart';
+import "./cart.css";
 
 interface CartItem {
   itemId: number;
-  amount: number;
   title: string;
-  price: string;
+  amount: number;
   total: string;
+  price: string;
 }
 
-const CartPage: React.FC = () => {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [total, setTotal] = useState<string>('0');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter(); // Correct usage with App Directory
+function Cart() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [orderNotes, setOrderNotes] = useState('');
+  const [loading, setLoading] = useState(true); // Estado de carga
+  const itemNameRefs = useRef<HTMLParagraphElement[]>([]);
+  const itemPriceRefs = useRef<HTMLParagraphElement[]>([]);
+
+  const setItemNameRef = (el: HTMLParagraphElement | null) => {
+    if (el && !itemNameRefs.current.includes(el)) {
+      itemNameRefs.current.push(el);
+    }
+  };
+
+  const setItemPriceRef = (el: HTMLParagraphElement | null) => {
+    if (el && !itemPriceRefs.current.includes(el)) {
+      itemPriceRefs.current.push(el);
+    }
+  };
 
   useEffect(() => {
-    const fetchCart = async () => {
+    const fetchCartItems = async () => {
       try {
-        const data = await getCart(); // Use the new getCart function
-
-        if (data) {
-          setCart(data.items);
-          setTotal(data.total);
-        }
-      } catch (err) {
-        console.error('Error fetching cart:', err);
-        console.log(err);
-        setError('An error occurred while fetching the cart.');
+        setLoading(true); // Iniciar carga
+        const { items } = await getCart();
+        setCartItems(items);
+      } catch (error) {
+        console.error('Failed to fetch cart items:', error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Finalizar carga
       }
     };
 
-    fetchCart();
+    fetchCartItems();
   }, []);
 
-  const handleAddToCart = async (itemId: number) => {
+  useEffect(() => {
+    itemNameRefs.current.forEach((itemName, index) => {
+      const itemPrice = itemPriceRefs.current[index];
+      if (itemName && itemPrice) {
+        const parentWidth = itemName.parentElement?.offsetWidth || 0;
+        const itemPriceWidth = itemPrice.offsetWidth;
+        itemName.style.maxWidth = `calc(${parentWidth}px - ${itemPriceWidth}px - 1rem)`;
+      }
+    });
+  }, [cartItems]);
+
+  const handleQuantityChange = async (itemId: number, delta: number) => {
     try {
-      await addToCart(itemId); // Use the new addToCart function
-      // Refetch the cart after adding an item
-      const updatedCart = await getCart();
-      setCart(updatedCart.items);
-      setTotal(updatedCart.total);
-    } catch (err) {
-      console.error('Error adding item to cart:', err);
-      alert('Failed to add item to cart.');
+      if (delta > 0) {
+        await addToCart(itemId);
+      } else {
+        await removeFromCart(itemId);
+      }
+      const { items } = await getCart();
+      setCartItems(items);
+    } catch (error) {
+      console.error('Failed to update item quantity:', error);
     }
   };
 
-  const handleDeleteFromCart = async (itemId: number) => {
+  const handleRemoveItem = async (itemId: number) => {
     try {
-      await removeFromCart(itemId); // Use the new removeFromCart function
-      // Refetch the cart after removing an item
-      const updatedCart = await getCart();
-      setCart(updatedCart.items);
-      setTotal(updatedCart.total);
-    } catch (err) {
-      console.error('Error deleting item from cart:', err);
-      alert('Failed to delete item from cart.');
+      await removeFromCart(itemId);
+      const { items } = await getCart();
+      setCartItems(items);
+    } catch (error) {
+      console.error('Failed to remove item from cart:', error);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  const handleOrder = () => {
+    console.log({
+      items: cartItems,
+      notes: orderNotes,
+    });
+  };
 
   return (
     <main>
-      <h1>Your Cart</h1>
-      {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <>
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Amount</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item) => (
-                <tr key={item.itemId}>
-                  <td>{item.title}</td>
-                  <td>{item.amount}</td>
-                  <td>{item.price}</td>
-                  <td>{item.total}</td>
-                  <td>
-                    <button onClick={() => handleAddToCart(item.itemId)}>Add More</button>
-                    <button onClick={() => handleDeleteFromCart(item.itemId)}>Remove</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <h2>Total: {total}</h2>
-        </>
-      )}
+      {loading ? (
+          <div className='container'>Cargando carrito...</div>
+        ) : cartItems.length === 0 ? (
+          <div className='container'>El carrito está vacío</div>
+        ) : (
+          <>
+            <div className="headerInfo">
+              <div className="textRow">
+                <p>Mesa N°</p>
+                <p>99</p>
+              </div>
+              <div className="textRow">
+                <p>Total:</p>
+                <p>${cartItems.reduce((total, item) => total + parseFloat(item.total.replace('$', '')), 0).toFixed(2)}</p>
+              </div>
+            </div>
+            <div className="cartItems">
+              {cartItems.map((item, index) => (
+                  <div key={item.itemId} className="item">
+                    <div className="dataRow">
+                      <p ref={setItemNameRef} className='itemName'>{item.title}</p>
+                      <p ref={setItemPriceRef} className='itemPrice'>{item.total}</p>
+                    </div>
+                    <div className="btns">
+                      <div className="quantitySelector">
+                        <div className="quantityBtns">
+                          <button onClick={() => handleQuantityChange(item.itemId, -1)}>
+                            <img src="/media/minusIcon.svg" alt="minusIcon" />
+                          </button>
+                          <p>{item.amount}</p>
+                          <button onClick={() => handleQuantityChange(item.itemId, 1)}>
+                            <img src="/media/plusIcon.svg" alt="plusIcon" />
+                          </button>
+                        </div>
+                      </div>
+                      <button onClick={() => handleRemoveItem(item.itemId)}>
+                        <img src="/media/trashcanIcon.svg" alt="trashcanIcon" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+            <div className="orderNotes">
+              <p>Notas para la cocina:</p>
+              <textarea
+                placeholder='Ejemplo: hamburguesa sin lechuga, papas frita...'
+                value={orderNotes}
+                onChange={(e) => setOrderNotes(e.target.value)}
+              ></textarea>
+            </div>
+            <div className="orderBtn">
+              <button onClick={handleOrder}>Ordenar</button>
+            </div>
+          </>
+        )}
     </main>
   );
-};
+}
 
-export default CartPage;
-
+export default Cart;
