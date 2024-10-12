@@ -44,6 +44,7 @@ section {
     padding: .5rem 1rem;
     width: 100%;
     height: auto;
+    gap: 0.5rem;
 
     h1 {
         font-weight: 600;
@@ -176,54 +177,4 @@ section {
             }
         }
     }
-}
-
-@keyframes popup-enter {
-    from {
-        opacity: 0;
-        transform: translate(-50%, 50%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
-}
-
-@keyframes popup-exit {
-    from {
-        opacity: 1;
-        transform: translate(-50%, 0);
-    }
-    to {
-        opacity: 0;
-        transform: translate(-50%, 50%);
-    }
-}
-
-.popup {
-    position: fixed;
-    bottom: 4rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--light-blue);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    animation: popup-enter 0.5s forwards;
-}
-
-.popup-exit {
-    position: fixed;
-    bottom: 4rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--light-blue);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    animation: popup-exit 0.5s forwards;
 }

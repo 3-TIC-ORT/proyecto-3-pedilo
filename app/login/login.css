@@ -1,12 +1,18 @@
-h1 {
-    font-size: 1.5rem;
-    font-weight: 750;
-    padding: 0 1rem;
-}
+.textInfo, .container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 
-p {
-    font-size: 1rem;
-    padding: 0 1rem;
+    h1 {
+        font-size: 2.25rem;
+        font-weight: 750;
+        padding: 0 1rem;
+    }
+    
+    p {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
 }
 
 a {

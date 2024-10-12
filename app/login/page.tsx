@@ -24,8 +24,10 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
           </div>
         ) : (
           <div className="container">
-            <h1>Hola! Que alegría volver a verte!</h1>
-            <p>Ingresá tu email y contraseña para que sepamos quién sos.</p>
+            <div className="textInfo">
+              <h1>Hola! Que alegría volver a verte!</h1>
+              <p>Ingresá tu email y contraseña para que sepamos quién sos.</p>
+            </div>
             {/* Resend Provider (Email Magic Link) */}
             <form
               action={async (formData) => {

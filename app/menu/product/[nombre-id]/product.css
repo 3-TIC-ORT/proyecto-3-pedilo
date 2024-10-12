@@ -1,21 +1,3 @@
-.backBtn {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    width: 3rem;
-    height: 3rem;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-
-    img {
-        width: 2rem;
-        height: auto;
-    }
-}
-
 .productContainer {
     display: flex;
     flex-direction: column;

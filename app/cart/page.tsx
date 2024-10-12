@@ -11,12 +11,23 @@ interface CartItem {
   price: string;
 }
 
+interface Popup {
+  message: string;
+  count: number;
+  id: number;
+  exit: boolean;
+}
+
 function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [orderNotes, setOrderNotes] = useState('');
   const [loading, setLoading] = useState(true); // Estado de carga
+  const [showConfirmation, setShowConfirmation] = useState(false); // Estado para mostrar confirmación
+  const [popups, setPopups] = useState<Popup[]>([]); // Estado para popups
   const itemNameRefs = useRef<HTMLParagraphElement[]>([]);
   const itemPriceRefs = useRef<HTMLParagraphElement[]>([]);
+  const [isOrderBtnDisabled, setIsOrderBtnDisabled] = useState(false);
+  const [isConfirmOrderBtnDisabled, setIsConfirmOrderBtnDisabled] = useState(false);
 
   const setItemNameRef = (el: HTMLParagraphElement | null) => {
     if (el && !itemNameRefs.current.includes(el)) {
@@ -57,12 +68,42 @@ function Cart() {
     });
   }, [cartItems]);
 
+  useEffect(() => {
+    let timers: NodeJS.Timeout[] = [];
+    popups.forEach((popup, index) => {
+      timers.push(setTimeout(() => {
+        setPopups(prev => prev.map(p => p.id === popup.id ? { ...p, exit: true } : p));
+        setTimeout(() => {
+          setPopups(prev => prev.filter(p => p.id !== popup.id));
+        }, 500); // Duration of exit animation
+      }, 2500)); // Show popup for 2.5 seconds
+    });
+    return () => timers.forEach(timer => clearTimeout(timer));
+  }, [popups]);
+
+  const addPopup = (message: string) => {
+    setPopups(prev => {
+      const existingPopup = prev.find(popup => popup.message === message);
+      if (existingPopup) {
+        return prev.map(popup =>
+          popup.message === message
+            ? { ...popup, count: popup.count + 1 }
+            : popup
+        );
+      } else {
+        return [...prev, { message, count: 1, id: Date.now(), exit: false }];
+      }
+    });
+  };
+
   const handleQuantityChange = async (itemId: number, delta: number) => {
     try {
       if (delta > 0) {
         await addToCart(itemId);
+        addPopup('Cantidad aumentada');
       } else {
         await removeFromCart(itemId);
+        addPopup('Cantidad disminuida');
       }
       const { items } = await getCart();
       setCartItems(items);
@@ -76,38 +117,66 @@ function Cart() {
       await removeFromCart(itemId);
       const { items } = await getCart();
       setCartItems(items);
+      addPopup('Producto eliminado');
     } catch (error) {
       console.error('Failed to remove item from cart:', error);
     }
   };
 
   const handleOrder = () => {
+    setShowConfirmation(true); // Mostrar botón de confirmación
+    setIsOrderBtnDisabled(true); // Deshabilitar botón de ordenar
+    setTimeout(() => {
+      setIsConfirmOrderBtnDisabled(false); // Habilitar botón de confirmar
+    }, 500);
+  };
+
+  const handleConfirmOrder = () => {
     console.log({
       items: cartItems,
       notes: orderNotes,
     });
   };
 
+  const handleBackArrowClick = () => {
+    setShowConfirmation(false);
+    setIsOrderBtnDisabled(false); // Deshabilitar botón de confirmar
+    setIsConfirmOrderBtnDisabled(true);
+  };
+
   return (
     <main>
-      {loading ? (
-          <div className='container'>Cargando carrito...</div>
-        ) : cartItems.length === 0 ? (
-          <div className='container'>El carrito está vacío</div>
-        ) : (
-          <>
-            <div className="headerInfo">
-              <div className="textRow">
-                <p>Mesa N°</p>
-                <p>99</p>
-              </div>
-              <div className="textRow">
-                <p>Total:</p>
-                <p>${cartItems.reduce((total, item) => total + parseFloat(item.total.replace('$', '')), 0).toFixed(2)}</p>
-              </div>
+      {showConfirmation ? (
+        <div className="container">
+          <div className='confirmationContainer'>
+            <button className="backArrowBtn" onClick={handleBackArrowClick}><img src="/media/arrowIcon.svg" alt="arrowIcon" /></button>
+            <h1>Una última confirmación por las dudas</h1>
+            <p>Tocá confirmar pedido y preparate para comer</p>
+            <div className="orderBtn">
+              <button onClick={handleConfirmOrder} disabled={isConfirmOrderBtnDisabled}>Confirmar Orden</button>
             </div>
-            <div className="cartItems">
-              {cartItems.map((item, index) => (
+          </div>
+        </div>
+      ) : (
+        <>
+          {loading ? (
+            <div className='container'>Cargando carrito...</div>
+          ) : cartItems.length === 0 ? (
+            <div className='container'>El carrito está vacío</div>
+          ) : (
+            <>
+              <div className="headerInfo">
+                <div className="textRow">
+                  <p>Mesa N°</p>
+                  <p>99</p>
+                </div>
+                <div className="textRow">
+                  <p>Total:</p>
+                  <p>${cartItems.reduce((total, item) => total + parseFloat(item.total.replace('$', '')), 0).toFixed(2)}</p>
+                </div>
+              </div>
+              <div className="cartItems">
+                {cartItems.slice().reverse().map((item, index) => (
                   <div key={item.itemId} className="item">
                     <div className="dataRow">
                       <p ref={setItemNameRef} className='itemName'>{item.title}</p>
@@ -130,22 +199,30 @@ function Cart() {
                       </button>
                     </div>
                   </div>
-                ))
-              }
-            </div>
-            <div className="orderNotes">
-              <p>Notas para la cocina:</p>
-              <textarea
-                placeholder='Ejemplo: hamburguesa sin lechuga, papas frita...'
-                value={orderNotes}
-                onChange={(e) => setOrderNotes(e.target.value)}
-              ></textarea>
-            </div>
-            <div className="orderBtn">
-              <button onClick={handleOrder}>Ordenar</button>
-            </div>
-          </>
-        )}
+                ))}
+              </div>
+              <div className="orderNotes">
+                <p>Notas para la cocina:</p>
+                <textarea
+                  placeholder='Ejemplo: hamburguesa sin lechuga, papas frita...'
+                  value={orderNotes}
+                  onChange={(e) => setOrderNotes(e.target.value)}
+                ></textarea>
+              </div>
+              <div className="orderBtn">
+                <button onClick={handleOrder} disabled={isOrderBtnDisabled}>Ordenar</button>
+              </div>
+            </>
+          )}
+        </>
+      )}
+      <div className="popups">
+        {popups.map((popup, index) => (
+          <div key={popup.id} className={`popup ${popup.exit ? 'popup-exit' : ''}`}>
+            {popup.message} ({popup.count})
+          </div>
+        ))}
+      </div>
     </main>
   );
 }

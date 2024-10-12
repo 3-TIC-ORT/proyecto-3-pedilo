@@ -56,7 +56,7 @@ function ProductClient({ product, userRole }: ProductClientProps) {
 
   return (
     <main>
-      <button onClick={() => router.back()} className="backBtn"><img src="/media/arrowIcon.svg" alt="arrowIcon" /></button>
+      <a href='/menu' className="backArrowBtn"><img src="/media/arrowIcon.svg" alt="arrowIcon" /></a>
       <div className="productContainer">
         <h1 className="name">{product.title}</h1>
         <div className="price-tag">

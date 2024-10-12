@@ -39,7 +39,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
           setShowPopup(false);
           setPopupCount(0); // Reset count
         }, 500); // Hide popup after exit animation
-      }, 4500); // Show popup for 5 seconds (4.5s + 0.5s exit animation)
+      }, 2500); // Show popup for 3 seconds (2.5s + 0.5s exit animation)
     }
     return () => clearTimeout(timer);
   }, [showPopup]);
