@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react';
 import { getCart, addToCart, removeFromCart, clearCart } from '@/actions/cart';
+import { createOrder } from '@/actions/order';
 import "./cart.css";
 
 interface CartItem {
@@ -49,6 +50,7 @@ function Cart() {
         setCartItems(items);
       } catch (error) {
         console.error('Failed to fetch cart items:', error);
+        addPopup('Ocurrio un error al cargar el carrito. Por favor, intente nuevamente.');
       } finally {
         setLoading(false); // Finalizar carga
       }
@@ -109,6 +111,7 @@ function Cart() {
       setCartItems(items);
     } catch (error) {
       console.error('Failed to update item quantity:', error);
+      addPopup('Ocurrio un error al actualizar la cantidad. Por favor, intente nuevamente.');
     }
   };
 
@@ -120,6 +123,7 @@ function Cart() {
       addPopup('Producto eliminado');
     } catch (error) {
       console.error('Failed to remove item from cart:', error);
+      addPopup('Ocurrio un error al eliminar el producto. Por favor, intente nuevamente.');
     }
   };
 
@@ -131,11 +135,25 @@ function Cart() {
     }, 500);
   };
 
-  const handleConfirmOrder = () => {
-    console.log({
-      items: cartItems,
-      notes: orderNotes,
-    });
+  const handleConfirmOrder = async () => {
+    try {
+      setIsConfirmOrderBtnDisabled(true);
+      const result = await createOrder();
+      if (result.orderId) {
+        addPopup(`Orden creada exitosamente. Número de orden: ${result.orderId}`);
+        await clearCart();
+        setCartItems([]);
+        setOrderNotes('');
+        setShowConfirmation(false);
+      } else {
+        throw new Error('Failed to create order');
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      addPopup('Error al crear la orden. Por favor, intente nuevamente.');
+    } finally {
+      setIsConfirmOrderBtnDisabled(false);
+    }
   };
 
   const handleBackArrowClick = () => {
@@ -153,7 +171,9 @@ function Cart() {
             <h1>Una última confirmación por las dudas</h1>
             <p>Tocá confirmar pedido y preparate para comer</p>
             <div className="orderBtn">
-              <button onClick={handleConfirmOrder} disabled={isConfirmOrderBtnDisabled}>Confirmar Orden</button>
+              <button onClick={handleConfirmOrder} disabled={isConfirmOrderBtnDisabled}>
+                {isConfirmOrderBtnDisabled ? 'Procesando...' : 'Confirmar Orden'}
+              </button>
             </div>
           </div>
         </div>

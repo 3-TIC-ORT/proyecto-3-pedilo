@@ -1,3 +1,4 @@
+"use server"
 import { prisma } from '@/prisma';
 import { Item } from '@prisma/client'; // Adjust based on your Prisma client setup
 
