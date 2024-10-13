@@ -137,12 +137,12 @@ model Order {
 }
 
 model Table {
-  tableNumber Int     @id @unique
+  tableNumber Int     @id @unique @default(autoincrement())
   userId      String?
-  waiterId    String? // Optional: A table might not always have a waiter assigned
+  waiterId    String 
 
   User   User?   @relation(fields: [userId], references: [id])
-  Waiter User?   @relation("WaiterTables", fields: [waiterId], references: [id])
+  Waiter User   @relation("WaiterTables", fields: [waiterId], references: [id])
 
   @@map("tables")
 }
