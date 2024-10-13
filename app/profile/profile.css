@@ -42,11 +42,14 @@
     }
 }
 
-button {
+button, .viewOrdersBtn {
     background-color: var(--dark-dark-red);
     color: var(--white);
     font-weight: 600;
     padding: 1rem 3rem;
     border-radius: .5rem;
     margin: .5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

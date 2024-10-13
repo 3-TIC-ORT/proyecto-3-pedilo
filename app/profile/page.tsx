@@ -36,7 +36,7 @@ export default async function Profile() {
                 </div>
             </div>
         </div>
-        <button>Historial de pedidos</button>
+        <a href='/orders' className='viewOrdersBtn'>Tus pedidos</a>
         <LogoutButton />
       </main>
     )
