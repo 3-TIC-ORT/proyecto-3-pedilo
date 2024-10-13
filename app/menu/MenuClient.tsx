@@ -27,8 +27,8 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
   const [showPopup, setShowPopup] = useState(false); // State for popup visibility
   const [popupClass, setPopupClass] = useState('popup'); // State for popup class
   const [popupCount, setPopupCount] = useState(0); // State for popup count
+  const [popupMessage, setPopupMessage] = useState(''); // State for popup message
   const router = useRouter(); // Navigation hook
-  console.log("userRole: "+userRole);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -65,16 +65,19 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
   };
 
   const handleOrder = async (item: MenuItem) => {
-    const quantity = quantities[item.id] || 0;
+    const quantity = quantities[item.id] || 1;
     if (quantity > 0) {
       try {
-        await addToCart(item.id); // Llama a la función addToCart para agregar el producto al carrito
-        console.log(`Pidiendo ${quantity} de ${item.title}`);
+        await addToCart(item.id, undefined, quantity); // Llama a la función addToCart para agregar el producto al carrito
         setPopupCount(prev => prev + 1); // Increment count
+        setPopupMessage('Producto agregado al carrito'); // Set success message
         setShowPopup(true); // Show popup
         setPopupClass('popup'); // Set entry animation
       } catch (error) {
         console.error('Error adding item to cart:', error);
+        setPopupMessage(error instanceof Error ? error.message : 'Error desconocido'); // Set error message
+        setShowPopup(true); // Show popup
+        setPopupClass('popup'); // Set entry animation
       }
     }
   };
@@ -136,7 +139,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
       </div>
       {showPopup && (
         <div className={popupClass} onClick={() => setPopupCount(prev => prev + 1)}>
-          Se agregó al carrito ({popupCount})
+          {popupMessage} ({popupCount})
         </div>
       )}
     </>

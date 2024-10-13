@@ -117,10 +117,15 @@ function Cart() {
 
   const handleRemoveItem = async (itemId: number) => {
     try {
-      await removeFromCart(itemId);
-      const { items } = await getCart();
-      setCartItems(items);
-      addPopup('Producto eliminado');
+      const item = cartItems.find(item => item.itemId === itemId);
+      if (item) {
+        await removeFromCart(itemId, undefined, item.amount); // Pasar la cantidad total del artículo
+        const { items } = await getCart();
+        setCartItems(items);
+        addPopup('Producto eliminado');
+      } else {
+        addPopup('El artículo no se encontró en el carrito.');
+      }
     } catch (error) {
       console.error('Failed to remove item from cart:', error);
       addPopup('Ocurrio un error al eliminar el producto. Por favor, intente nuevamente.');

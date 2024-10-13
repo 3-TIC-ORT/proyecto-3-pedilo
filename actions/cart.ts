@@ -6,7 +6,7 @@ import { Session } from 'next-auth';
 async function getSession(): Promise<Session> {
   const session = await auth();
   if (!session?.user) {
-    throw new Error('User not authenticated');
+    throw new Error('Usuario no autenticado');
   }
   return session;
 }
@@ -36,18 +36,18 @@ export async function getCart(userId?: string) {
 
     return { items: formattedItems, total: formatUSD(total) };
   } catch (error) {
-    throw new Error('Failed to fetch cart');
+    throw new Error('Error al obtener el carrito');
   }
 }
 
-export async function addToCart(itemId: number, userId?: string) {
+export async function addToCart(itemId: number, userId?: string, quantity: number = 1) {
   try {
     const session = await getSession(); // Ensure user is authenticated
     userId = userId || session.user.id;
 
     const item = await prisma.item.findUnique({ where: { id: itemId } });
     if (!item) {
-      throw new Error('Invalid item');
+      throw new Error('Item invalido');
     }
 
     const cartItem = await prisma.cart.findFirst({
@@ -55,23 +55,34 @@ export async function addToCart(itemId: number, userId?: string) {
     });
 
     if (cartItem) {
+      const newAmount = cartItem.amount + quantity;
+      if (newAmount > 99) {
+        throw new Error('No se pueden agregar más de 99 del mismo artículo al carrito');
+      }
       await prisma.cart.update({
         where: { itemId_userId: { itemId, userId } },
-        data: { amount: { increment: 1 } },
+        data: { amount: { increment: quantity } },
       });
     } else {
+      if (quantity > 99) {
+        throw new Error('No se pueden agregar más de 99 del mismo artículo al carrito');
+      }
       await prisma.cart.create({
-        data: { itemId, userId, amount: 1 },
+        data: { itemId, userId, amount: quantity },
       });
     }
 
     return { message: 'Item added to cart' };
   } catch (error) {
-    throw new Error('Failed to add item to cart');
+    if (error instanceof Error) {
+      throw new Error('Error al agregar el item al carrito: ' + error.message);
+    } else {
+      throw new Error('Error al agregar el item al carrito');
+    }
   }
 }
 
-export async function removeFromCart(itemId: number, userId?: string) {
+export async function removeFromCart(itemId: number, userId?: string, quantity: number = 1) {
   try {
     const session = await getSession(); // Ensure user is authenticated
     userId = userId || session.user.id;
@@ -81,24 +92,24 @@ export async function removeFromCart(itemId: number, userId?: string) {
     });
 
     if (!cartItem) {
-      throw new Error('Item not found in cart');
-
+      throw new Error('No se encontró el item en el carrito');
     }
 
-    if (cartItem.amount > 1) {
-      await prisma.cart.update({
-        where: { itemId_userId: { itemId, userId } },
-        data: { amount: { decrement: 1 } },
-      });
-    } else {
+    const newAmount = cartItem.amount - quantity;
+    if (newAmount < 1) {
       await prisma.cart.delete({
         where: { itemId_userId: { itemId, userId } },
       });
+    } else {
+      await prisma.cart.update({
+        where: { itemId_userId: { itemId, userId } },
+        data: { amount: { decrement: quantity } },
+      });
     }
 
-    return { message: 'Item updated/removed from cart' };
+    return { message: 'Se removio/actualizo el item del carrito' };
   } catch (error) {
-    throw new Error('Failed to remove item from cart');
+    throw new Error('Error al remover el item del carrito');
   }
 }
 
@@ -108,9 +119,9 @@ export async function clearCart(userId?: string) {
     userId = userId || session.user.id;
 
     await prisma.cart.deleteMany({ where: { userId } });
-    return { message: 'Cart cleared' };
+    return { message: 'Carrito vaciado' };
   } catch (error) {
-    throw new Error('Failed to clear cart');
+    throw new Error('Error al vaciar el carrito');
   }
 }
 
