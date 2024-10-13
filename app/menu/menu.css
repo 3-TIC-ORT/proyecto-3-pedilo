@@ -2,14 +2,16 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 100%;
+    width: calc(100% - 2rem);
     min-height: max-content;
     height: auto;
-    padding: .5rem 1rem;
+    margin: 0 1rem;
+    padding: .5rem 0;
     gap: 1rem;
     overflow-x: scroll;
     overflow-y: hidden;
     font-weight: 600;
+    scroll-snap-type: x mandatory; /* Activa el sticky scroll */
 
     .sectionScrollerBtn {
         background-color: var(--white);
@@ -22,6 +24,7 @@
         border-radius: .5rem;
         height: auto;
         width: auto;
+        scroll-snap-align: start; /* Activa el sticky scroll */
     }
 
     .sectionScrollerBtn:active {
@@ -35,6 +38,7 @@
     flex-direction: column;
     overflow-y: scroll;
     height: auto;
+    scroll-snap-type: x mandatory; /* Activa el sticky scroll */
 }
 
 section {
@@ -45,6 +49,7 @@ section {
     width: 100%;
     height: auto;
     gap: 0.5rem;
+    scroll-snap-align: start; /* Activa el sticky scroll */
 
     h1 {
         font-weight: 600;
@@ -58,6 +63,7 @@ section {
         overflow-x: scroll;
         width: 100%;
         height: auto;
+        scroll-snap-type: x mandatory; /* Activa el sticky scroll */
 
         .product {
             border: 2px solid var(--black);
@@ -67,6 +73,7 @@ section {
             overflow: hidden;
             min-width: 16rem;
             cursor: pointer;
+            scroll-snap-align: start; /* Activa el sticky scroll */
     
             .name {
                 display: flex;
