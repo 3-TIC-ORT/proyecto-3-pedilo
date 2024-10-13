@@ -60,7 +60,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
   const handleQuantityChange = (itemId: number, delta: number) => {
     setQuantities(prev => ({
       ...prev,
-      [itemId]: Math.max(0, (prev[itemId] || 0) + delta),
+      [itemId]: Math.max(1, (prev[itemId] || 1) + delta),
     }));
   };
 
@@ -109,7 +109,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
                   {userRole === "user" && (
                     <div className="btns">
                       <div className="quantitySelector">
-                        <p>{quantities[item.id] || 0}</p>
+                        <p>{quantities[item.id] || 1}</p>
                         <div className="quantityBtns">
                           <button onClick={(e) => { e.stopPropagation(); handleQuantityChange(item.id, -1); }}>
                             <img src="/media/minusIcon.svg" alt="minusIcon" />
