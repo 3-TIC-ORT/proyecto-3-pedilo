@@ -1,12 +1,11 @@
 "use server"
 import { prisma } from "@/prisma"
-import { auth } from "@/auth"
 
 export async function getTables() {
   return await prisma.table.findMany()
 }
 export async function assignTable(tableNumber: number, userId: string) {
-  const table = await prisma.table.findUnique({ where: { tableNumber } });
+  const table = await prisma.table.findUnique({ where: { tableNumber: tableNumber } });
   if (!table) {
     throw new Error("Table not found")
   }
@@ -14,7 +13,7 @@ export async function assignTable(tableNumber: number, userId: string) {
     throw new Error("Table is already assigned to another user")
   }
   return await prisma.table.update({
-    where: { tableNumber },
+    where: { tableNumber: tableNumber },
     data: { userId },
   });
 
