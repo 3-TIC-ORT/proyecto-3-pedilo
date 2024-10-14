@@ -22,7 +22,7 @@ model User {
   sessions      Session[]
   Cart          Cart[]
   Orders        Order[]
-  Tables        Table[]         // Tables the user is associated with (optional)
+  Tables        TableUser[]     // Changed: Now relates to TableUser model
   AssignedTables Table[]        @relation("WaiterTables") // Tables assigned to the waiter (optional)
   Authenticator Authenticator[] // Optional for WebAuthn support
 
@@ -137,12 +137,23 @@ model Order {
 }
 
 model Table {
-  tableNumber Int     @id @unique @default(autoincrement())
-  userId      String?
-  waiterId    String 
-
-  User   User?   @relation(fields: [userId], references: [id])
-  Waiter User   @relation("WaiterTables", fields: [waiterId], references: [id])
+  tableNumber Int         @id @unique @default(autoincrement())
+  Users       TableUser[] // Changed: Now relates to TableUser model
+  Waiter      User?       @relation("WaiterTables", fields: [waiterId], references: [id])
+  waiterId    String?
 
   @@map("tables")
+}
+
+// New model to represent the many-to-many relationship between User and Table
+model TableUser {
+  id          String   @id @default(cuid())
+  userId      String
+  tableNumber Int
+  User        User     @relation(fields: [userId], references: [id])
+  Table       Table    @relation(fields: [tableNumber], references: [tableNumber])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, tableNumber])
 }
