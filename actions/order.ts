@@ -95,7 +95,7 @@ export async function createOrder(userId?: string) {
   // Fetch cart items for the user
   const cartItems = await prisma.cart.findMany({
     where: { userId: user },
-    include: { Item: true }, // Get the item details (like price)
+    include: { Item: true },
   });
 
   if (!cartItems.length) {
@@ -103,12 +103,12 @@ export async function createOrder(userId?: string) {
   }
 
   // Fetch table number for the user
-  const tableData = await prisma.table.findFirst({
+  const tableUser = await prisma.tableUser.findFirst({
     where: { userId: user },
     select: { tableNumber: true },
   });
 
-  if (!tableData) {
+  if (!tableUser) {
     throw new Error('Table not selected');
   }
 
@@ -121,21 +121,21 @@ export async function createOrder(userId?: string) {
   const order = await prisma.order.create({
     data: {
       userId: user,
-      totalAmount: totalAmount, // Calculated total amount
+      totalAmount: totalAmount,
       orderDate: new Date(),
-      tableNumber: tableData.tableNumber, // User's table number
+      tableNumber: tableUser.tableNumber,
     },
   });
 
-  const orderId = order.orderId; // Primary key for the new order
+  const orderId = order.orderId;
 
   // Insert each item from the cart into the OrderItem table
   for (const cartItem of cartItems) {
     await prisma.orderItem.create({
       data: {
-        orderId: orderId,           // Reference to the created order
-        itemId: cartItem.itemId,     // Item ID from the cart
-        quantity: cartItem.amount || 0, // Item quantity
+        orderId: orderId,
+        itemId: cartItem.itemId,
+        quantity: cartItem.amount || 0,
       },
     });
   }
