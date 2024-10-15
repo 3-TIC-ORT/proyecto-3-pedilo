@@ -30,6 +30,10 @@
         background-color: var(--dark-dark-red);
         color: var(--white);
     }
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .products {
