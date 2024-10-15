@@ -3,7 +3,7 @@
     flex-direction: row;
     align-items: center;
     width: calc(100% - 2rem);
-    min-height: max-content;
+    min-height: 2rem;
     height: auto;
     margin: .5rem 1rem;
     gap: 1rem;
