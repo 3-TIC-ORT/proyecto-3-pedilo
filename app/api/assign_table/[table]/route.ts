@@ -18,6 +18,7 @@ export async function GET(
       await assignTable(Number(table), userId);
     } catch (error) {
       console.error("Error assigning table:", error);
+      return redirect('/menu');
       // Even if there's an error, we'll still redirect to the menu
       // The error can be handled on the menu page if necessary
     }
