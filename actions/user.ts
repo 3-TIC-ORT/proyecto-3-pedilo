@@ -3,7 +3,7 @@ import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from "next-auth";
 
-export async function getUsers(userId?) {
+export async function getUsers(userId?: string) {
   try {
     if (!userId) {
       return prisma.user.findUnique({
