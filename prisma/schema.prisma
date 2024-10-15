@@ -25,6 +25,8 @@ model User {
   Tables        TableUser[]     // Changed: Now relates to TableUser model
   AssignedTables Table[]        @relation("WaiterTables") // Tables assigned to the waiter (optional)
   Authenticator Authenticator[] // Optional for WebAuthn support
+  CallsMade     Call[]          @relation("UserCalls")
+  CallsReceived Call[]          @relation("WaiterCalls")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -92,8 +94,6 @@ model Item {
   ingredients String
   photo       String?
   price       Float
-  rating      Float
-  recommended Boolean
   category    String
   Cart        Cart[]
   OrderItems  OrderItem[]
@@ -141,10 +141,10 @@ model Table {
   Users       TableUser[] // Changed: Now relates to TableUser model
   Waiter      User?       @relation("WaiterTables", fields: [waiterId], references: [id])
   waiterId    String?
+  Calls       Call[]
 
   @@map("tables")
 }
-
 // New model to represent the many-to-many relationship between User and Table
 model TableUser {
   id          String   @id @default(cuid())
@@ -156,4 +156,21 @@ model TableUser {
   updatedAt   DateTime @updatedAt
 
   @@unique([userId, tableNumber])
+}
+model Call {
+  id          String   @id @default(cuid())
+  userId      String   // The user who made the call
+  waiterId    String   // The waiter who received the call
+  tableNumber Int
+  status      String   @default("Pending") // e.g., "Pending", "Answered", "Completed"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  User   User  @relation("UserCalls", fields: [userId], references: [id])
+  Waiter User  @relation("WaiterCalls", fields: [waiterId], references: [id])
+  Table  Table @relation(fields: [tableNumber], references: [tableNumber])
+
+  @@index([userId])
+  @@index([waiterId])
+  @@index([tableNumber])
 }
