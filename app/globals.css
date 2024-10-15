@@ -54,6 +54,10 @@ main {
   overflow-y: scroll;
   overflow-x: hidden;
   flex-direction: column;
+
+  &:has(.container) {
+    align-items: center;
+  }
 }
 
 footer {
