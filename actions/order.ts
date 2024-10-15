@@ -149,3 +149,53 @@ export async function createOrder(userId?: string) {
   return { message: 'Order created successfully', orderId: orderId };
 }
 
+export async function changeOrderStatus(orderId: number, status: string) {
+  const order = prisma.order.update({
+    where: { orderId: orderId },
+    data: { status },
+  });
+  const orderItems = prisma.orderItem.updateMany({
+    where: { orderId: orderId },
+    data: { status },
+  });
+
+  return { message: 'Order status updated successfully', orderId: orderId };
+
+}
+
+export async function ChangeItemStatus(orderId: number, itemId: number, status: string) {
+  try {
+    // Update the status of the specific item in the order
+    const updatedItem = await prisma.orderItem.update({
+      where: {
+        orderId_itemId: {
+          orderId: orderId,
+          itemId: itemId,
+        },
+      },
+      data: { status },
+    });
+
+    if (!updatedItem) {
+      throw new Error('Item not found in the order');
+    }
+
+    // Check if all order items are prepared
+    const orderItems = await prisma.orderItem.findMany({
+      where: { orderId },
+    });
+
+    const allItemsPrepared = orderItems.every((item) => item.status === 'prepared');
+
+    if (allItemsPrepared) {
+
+      changeOrderStatus(orderId, "ready");
+    }
+
+    return { message: `Item status updated to ${status}` };
+  } catch (error) {
+    console.error('Error updating item status:', error);
+    throw new Error('Failed to update item status');
+  }
+}
+
