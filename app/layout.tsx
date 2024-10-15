@@ -40,7 +40,7 @@ export default async function RootLayout({
               </>
             )}
             {role === "admin" && (
-              <a href="/dashboard/customize">
+              <a href="/dashboard">
                 <img src="/media/customizeIcon.svg" alt="customizeIcon" />
                 <p>Personalizar</p>
               </a>
