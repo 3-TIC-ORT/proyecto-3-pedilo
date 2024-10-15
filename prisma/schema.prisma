@@ -92,8 +92,6 @@ model Item {
   ingredients String
   photo       String?
   price       Float
-  rating      Float
-  recommended Boolean
   category    String
   Cart        Cart[]
   OrderItems  OrderItem[]
