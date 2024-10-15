@@ -5,8 +5,7 @@
     width: calc(100% - 2rem);
     min-height: max-content;
     height: auto;
-    margin: 0 1rem;
-    padding: .5rem 0;
+    margin: .5rem 1rem;
     gap: 1rem;
     overflow-x: scroll;
     overflow-y: hidden;
