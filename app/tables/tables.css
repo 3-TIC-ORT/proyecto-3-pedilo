@@ -23,6 +23,8 @@ section {
         flex: 1;
         height: auto;
         display: flex;
+        flex-direction: column;
+        text-align: center;
         align-items: center;
         justify-content: center;
         padding: 2rem 0;
@@ -39,6 +41,37 @@ section {
         &:disabled {
             background-color: var(--gray);
             color: var(--white);
+            cursor: not-allowed;
         }
+    }
+
+    .waiter-checkbox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        min-width: calc(50% - .5rem);
+        flex: 1;
+        padding: 1rem;
+        background-color: var(--light-gray);
+        border-radius: .5rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    
+    .waiter-checkbox input[type="checkbox"] {
+        display: none;
+    }
+    
+    .waiter-checkbox:has(input:checked) {
+        background-color: var(--light-blue);
+        color: var(--white);
+    }
+    
+    .waiter-checkbox:has(input:disabled) {
+        background-color: var(--gray);
+        color: var(--white);
+        cursor: not-allowed;
     }
 }

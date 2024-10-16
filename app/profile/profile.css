@@ -42,7 +42,7 @@
     }
 }
 
-button, .viewOrdersBtn {
+button[type="submit"], .viewOrdersBtn {
     background-color: var(--dark-dark-red);
     color: var(--white);
     font-weight: 600;
