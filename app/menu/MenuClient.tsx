@@ -11,8 +11,6 @@ interface MenuItem {
   ingredients: string;
   photo: string | null;
   price: number;
-  rating: number;
-  recommended: boolean;
   category: string;
 }
 
