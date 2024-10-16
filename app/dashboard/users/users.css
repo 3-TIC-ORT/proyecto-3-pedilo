@@ -43,6 +43,7 @@ section {
                 justify-content: space-between;
     
                 .card {
+                    background-color: var(--white);
                     cursor: grab;
                     display: flex;
                     flex-direction: row;
