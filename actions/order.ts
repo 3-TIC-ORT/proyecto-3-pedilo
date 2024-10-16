@@ -1,4 +1,3 @@
-"use server"
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from "next-auth";
@@ -150,17 +149,17 @@ export async function createOrder(userId?: string) {
 }
 
 export async function changeOrderStatus(orderId: number, status: string) {
-  const order = prisma.order.update({
+  // Await the update operations to ensure they complete before proceeding
+  await prisma.order.update({
     where: { orderId: orderId },
     data: { status },
   });
-  const orderItems = prisma.orderItem.updateMany({
+  await prisma.orderItem.updateMany({
     where: { orderId: orderId },
     data: { status },
   });
 
   return { message: 'Order status updated successfully', orderId: orderId };
-
 }
 
 export async function ChangeItemStatus(orderId: number, itemId: number, status: string) {
@@ -188,8 +187,8 @@ export async function ChangeItemStatus(orderId: number, itemId: number, status: 
     const allItemsPrepared = orderItems.every((item) => item.status === 'prepared');
 
     if (allItemsPrepared) {
-
-      changeOrderStatus(orderId, "ready");
+      // Await the changeOrderStatus to ensure the order status is updated before proceeding
+      await changeOrderStatus(orderId, "ready");
     }
 
     return { message: `Item status updated to ${status}` };

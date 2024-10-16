@@ -22,3 +22,14 @@ export async function getItems(itemId?: number): Promise<Item | Item[]> {
   }
 }
 
+export async function createItem(itemData: Item): Promise<Item> {
+  try {
+    const item = await prisma.item.create({
+      data: itemData,
+    });
+    return item;
+  } catch (error) {
+    console.error('Error creating item:', error);
+    throw new Error('Failed to create item');
+  }
+}
