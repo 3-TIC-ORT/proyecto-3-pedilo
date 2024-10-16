@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import React, { useState, useMemo, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { assignTable, unassignTable, assignWaiter, unassignWaiter } from '@/actions/tables'
-import "./tables.css"
+import React, { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { assignTable, unassignTable, assignWaiter, unassignWaiter, getTableUsers } from '@/actions/tables';
+import "./tables.css";
 
 interface User {
   id: string;
@@ -74,6 +74,11 @@ export default function TablesClient({ initialTables, initialUserTables, current
     try {
       if (userRole === 'user') {
         if (isAuthenticated) {
+          const table = tables.find(t => t.tableNumber === tableNumber);
+          if (table && table.Users.length >= 99) {
+            showPopupMessage(`Mesa ${tableNumber} ya tiene 99 usuarios.`);
+            return;
+          }
           if (userTables.includes(tableNumber)) {
             await unassignTable(tableNumber, currentUser!.id);
             setUserTables(userTables.filter(t => t !== tableNumber));
@@ -86,7 +91,8 @@ export default function TablesClient({ initialTables, initialUserTables, current
           }
         } else {
           sessionStorage.setItem('selectedTable', tableNumber.toString());
-          document.cookie = `selectedTable=${tableNumber}; path=/;`;
+          localStorage.setItem('selectedTable', tableNumber.toString());
+
           showPopupMessage(`Mesa ${tableNumber} seleccionada. Por favor, inicia sesión para continuar.`);
           setTimeout(() => router.push('/login'), 1500);
         }
@@ -107,6 +113,24 @@ export default function TablesClient({ initialTables, initialUserTables, current
       }
     } catch (error) {
       console.error('Error al manejar el clic en la mesa:', error);
+      showPopupMessage('Ocurrió un error. Por favor, intente nuevamente.');
+    }
+  };
+
+  const handleUnassignAllUsers = async (tableNumber: number) => {
+    try {
+      const tableUsers = await getTableUsers(tableNumber);
+      for (const tableUser of tableUsers) {
+        await unassignTable(tableNumber, tableUser.userId);
+      }
+      setTables(tables.map(t => 
+        t.tableNumber === tableNumber 
+          ? {...t, Users: []}
+          : t
+      ));
+      showPopupMessage(`Todos los usuarios de la Mesa ${tableNumber} han sido desasignados.`);
+    } catch (error) {
+      console.error('Error al desasignar todos los usuarios de la mesa:', error);
       showPopupMessage('Ocurrió un error. Por favor, intente nuevamente.');
     }
   };
@@ -138,25 +162,31 @@ export default function TablesClient({ initialTables, initialUserTables, current
           <React.Fragment key={table.tableNumber}>
             {userRole === 'user' ? (
               <button
+                className="tableBtn"
                 onClick={() => handleTableClick(table.tableNumber)}
-                disabled={isAuthenticated && table.Users.length > 0 && !userTables.includes(table.tableNumber)}
+                disabled={isAuthenticated && table.Users.length >= 99 && !userTables.includes(table.tableNumber)}
               >
                 <p>Mesa {table.tableNumber}</p>
                 {userTables.includes(table.tableNumber) && <p>(Seleccionada)</p>}
               </button>
             ) : (
-              <label className="waiter-checkbox">
-                <input
-                  type="checkbox"
-                  checked={table.Waiter?.id === currentUser?.id}
-                  onChange={() => handleTableClick(table.tableNumber)}
-                  disabled={!!(table.Waiter && table.Waiter.id !== currentUser?.id)}
-                />
-                Mesa {table.tableNumber}
-                {table.Waiter && table.Waiter.id !== currentUser?.id && (
-                  <p>(Asignada a otro camarero)</p>
-                )}
-              </label>
+                <label className="waiter-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={table.Waiter?.id === currentUser?.id}
+                    onChange={() => handleTableClick(table.tableNumber)}
+                    disabled={!!(table.Waiter && table.Waiter.id !== currentUser?.id)}
+                  />
+                  Mesa {table.tableNumber}
+                  {table.Waiter && table.Waiter.id !== currentUser?.id && (
+                    <p>(Asignada a otro camarero)</p>
+                  )}
+                  {table.Users.length > 0 && (
+                    <button onClick={() => handleUnassignAllUsers(table.tableNumber)}>
+                      Liberar mesa
+                    </button>
+                  )}
+                </label>
             )}
           </React.Fragment>
         ))}
@@ -167,5 +197,5 @@ export default function TablesClient({ initialTables, initialUserTables, current
         </div>
       )}
     </main>
-  )
+  );
 }

@@ -1,7 +1,6 @@
-import { auth } from '@/auth';
-import { getTables, getUserTables, assignTable } from '@/actions/tables'
-import TablesClient from './TablesClients'
-import { cookies } from 'next/headers'
+import { getTables, getUserTables, assignTable, unassignTable } from '@/actions/tables';
+import TablesClient from './TablesClients';
+import { auth } from "@/auth";
 
 interface User {
   id: string;
@@ -11,15 +10,18 @@ interface User {
 }
 
 async function getInitialData(userId: string | null) {
-  const tables = await getTables()
-  const userTables = userId ? await getUserTables(userId) : []
-  return { tables, userTables }
+  const tables = await getTables();
+  const userTables = userId ? await getUserTables(userId) : [];
+  return { tables, userTables };
 }
 
 export default async function TablesPage() {
   const session = await auth();
-  const cookieStore = cookies()
-  const selectedTable = cookieStore.get('selectedTable')
+  let selectedTable: string | null = null;
+
+  if (typeof window !== 'undefined') {
+    selectedTable = localStorage.getItem('selectedTable');
+  }
 
   if (session && session.user) {
     const user: User = {
@@ -29,33 +31,32 @@ export default async function TablesPage() {
     const userRole = user.role as 'user' | 'waiter' || 'user';
     const initialData = await getInitialData(user.id);
 
+    // Unassign user from their current table if they have one
     if (initialData.userTables.length > 0) {
-      return (
-        <main>
-          <h1>Ya tienes una mesa asignada (Mesa {initialData.userTables[0]})</h1>
-        </main>
-      )
+      await unassignTable(initialData.userTables[0], user.id);
     }
 
     if (selectedTable) {
-      await assignTable(parseInt(selectedTable.value), user.id);
-      cookieStore.delete('selectedTable');
+      await assignTable(parseInt(selectedTable), user.id);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('selectedTable');
+      }
       return (
         <main>
-          <h1>Se te ha asignado la Mesa {selectedTable.value}</h1>
+          <h1>Se te ha asignado la Mesa {selectedTable}</h1>
         </main>
-      )
+      );
     }
 
     return (
       <TablesClient
         initialTables={initialData.tables}
-        initialUserTables={initialData.userTables}
+        initialUserTables={[]}
         currentUser={user}
         userRole={userRole}
         isAuthenticated={true}
       />
-    )
+    );
   } else {
     const initialData = await getInitialData(null);
     return (
@@ -66,6 +67,6 @@ export default async function TablesPage() {
         userRole="user"
         isAuthenticated={false}
       />
-    )
+    );
   }
 }
