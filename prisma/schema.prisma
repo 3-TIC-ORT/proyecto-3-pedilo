@@ -162,6 +162,7 @@ model Call {
   userId      String   // The user who made the call
   waiterId    String   // The waiter who received the call
   tableNumber Int
+  reason        String
   status      String   @default("Pending") // e.g., "Pending", "Answered", "Completed"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
