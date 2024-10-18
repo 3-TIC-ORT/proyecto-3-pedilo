@@ -33,6 +33,14 @@ export default async function Menu() {
   } catch (error) {
     // Handle error (e.g., show an error message)
     console.error('Failed to load menu items or user role:', error);
-    return <main>Error loading menu items or user role</main>;
+    return (
+      <main>
+        <div className="container">
+          <h1>Ops...</h1>
+          <p>Lo sentimos, ocurrio un error al cargar el menu.</p>
+          <p>Prueba refrezcar la pagina o intentarlo más tarde.</p>
+        </div>
+      </main>
+    );
   }
 }
