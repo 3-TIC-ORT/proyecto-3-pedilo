@@ -63,9 +63,6 @@ export async function getWaiterCalls() {
   }
 }
 
-import { ablyClient } from "@/lib/ably";
-import { auth } from "@/auth";
-import { prisma } from "@/prisma";
 
 export async function resolveCall(id: string) {
   try {
