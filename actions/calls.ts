@@ -1,4 +1,5 @@
 "use server"
+import { ablyClient } from "@/lib/ably";  // Import Ably client
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
 
@@ -11,8 +12,6 @@ export async function newCall(tableNumber: number, waiterId: string, reason: str
 
     const userId = session.user.id;
 
-    // Fetch waiterId for the given tableNumber
-
     // Create the new call with waiterId, tableNumber, userId, and reason
     const call = await prisma.call.create({
       data: {
@@ -23,7 +22,16 @@ export async function newCall(tableNumber: number, waiterId: string, reason: str
       }
     });
 
-    return call; // Return the created call object
+    // Publish to Ably that a new call was created
+    await ablyClient.channels.get("call-updates").publish("new-call", {
+      callId: call.id,
+      waiterId: call.waiterId,
+      tableNumber: call.tableNumber,
+      reason: call.reason,
+      status: "pending"  // Default status
+    });
+
+    return call;
   } catch (error) {
     console.error("Error creating new call:", error);
     return false; // Return false if there is an error
@@ -55,6 +63,10 @@ export async function getWaiterCalls() {
   }
 }
 
+import { ablyClient } from "@/lib/ably";
+import { auth } from "@/auth";
+import { prisma } from "@/prisma";
+
 export async function resolveCall(id: string) {
   try {
     const session = await auth();
@@ -78,13 +90,20 @@ export async function resolveCall(id: string) {
     // Update the call's status to "resolved"
     const resolvedCall = await prisma.call.update({
       where: { id },
-      data: { status: "resolved" } // Fix typo from "resoled" to "resolved"
+      data: { status: "resolved" }
     });
 
-    return resolvedCall; // Return the updated call
+    // Publish to Ably that the call was resolved
+    await ablyClient.channels.get("call-updates").publish("call-resolved", {
+      callId: resolvedCall.id,
+      tableNumber: resolvedCall.tableNumber,
+      status: "resolved"
+    });
+
+    return resolvedCall;
   } catch (error) {
     console.error("Error resolving call:", error);
-    throw new Error("Failed to resolve call"); // Return a meaningful error message
+    throw new Error("Failed to resolve call");
   }
 }
 

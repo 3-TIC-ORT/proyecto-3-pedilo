@@ -2,6 +2,7 @@
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from 'next-auth';
+import { ablyClient } from '@/lib/ably';
 
 async function getSession(): Promise<Session> {
   const session = await auth();
@@ -42,77 +43,65 @@ export async function getCart(userId?: string) {
 
 export async function addToCart(itemId: number, userId?: string, quantity: number = 1) {
   try {
-    const session = await getSession(); // Ensure user is authenticated
+    const session = await getSession();
     userId = userId || session.user.id;
 
     const item = await prisma.item.findUnique({ where: { id: itemId } });
-    if (!item) {
-      throw new Error('Item invalido');
-    }
+    if (!item) throw new Error('Invalid item');
 
-    const cartItem = await prisma.cart.findFirst({
-      where: { userId, itemId },
-    });
+    const cartItem = await prisma.cart.findFirst({ where: { userId, itemId } });
+    const newAmount = cartItem ? cartItem.amount + quantity : quantity;
+
+    if (newAmount > 99) throw new Error('Cannot add more than 99 items to the cart');
 
     if (cartItem) {
-      const newAmount = cartItem.amount + quantity;
-      if (newAmount > 99) {
-        throw new Error('No se pueden agregar más de 99 del mismo artículo al carrito');
-      }
-      await prisma.cart.update({
-        where: { itemId_userId: { itemId, userId } },
-        data: { amount: { increment: quantity } },
-      });
+      await prisma.cart.update({ where: { itemId_userId: { itemId, userId } }, data: { amount: { increment: quantity } } });
     } else {
-      if (quantity > 99) {
-        throw new Error('No se pueden agregar más de 99 del mismo artículo al carrito');
-      }
-      await prisma.cart.create({
-        data: { itemId, userId, amount: quantity },
-      });
+      await prisma.cart.create({ data: { itemId, userId, amount: quantity } });
     }
+
+    // Publish Ably event when an item is added to the cart
+    await ablyClient.channels.get('cart-updates').publish('item-updated', {
+      userId,
+      action: 'add',
+      itemId,
+      newAmount
+    });
 
     return { message: 'Item added to cart' };
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error('Error al agregar el item al carrito: ' + error.message);
-    } else {
-      throw new Error('Error al agregar el item al carrito');
-    }
+    throw new Error('Error adding item to cart: ');
   }
 }
-
 export async function removeFromCart(itemId: number, userId?: string, quantity: number = 1) {
   try {
-    const session = await getSession(); // Ensure user is authenticated
+    const session = await getSession();
     userId = userId || session.user.id;
 
-    const cartItem = await prisma.cart.findFirst({
-      where: { itemId, userId },
-    });
-
-    if (!cartItem) {
-      throw new Error('No se encontró el item en el carrito');
-    }
+    const cartItem = await prisma.cart.findFirst({ where: { itemId, userId } });
+    if (!cartItem) throw new Error('Item not found in cart');
 
     const newAmount = cartItem.amount - quantity;
+
     if (newAmount < 1) {
-      await prisma.cart.delete({
-        where: { itemId_userId: { itemId, userId } },
-      });
+      await prisma.cart.delete({ where: { itemId_userId: { itemId, userId } } });
     } else {
-      await prisma.cart.update({
-        where: { itemId_userId: { itemId, userId } },
-        data: { amount: { decrement: quantity } },
-      });
+      await prisma.cart.update({ where: { itemId_userId: { itemId, userId } }, data: { amount: { decrement: quantity } } });
     }
 
-    return { message: 'Se removio/actualizo el item del carrito' };
+    // Publish Ably event when an item is removed or updated in the cart
+    await ablyClient.channels.get('cart-updates').publish('item-updated', {
+      userId,
+      action: 'remove',
+      itemId,
+      newAmount: Math.max(newAmount, 0)
+    });
+
+    return { message: 'Item removed from cart' };
   } catch (error) {
-    throw new Error('Error al remover el item del carrito');
+    throw new Error('Error removing item from cart: ');
   }
 }
-
 export async function clearCart(userId?: string) {
   try {
     const session = await getSession(); // Ensure user is authenticated

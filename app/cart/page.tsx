@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getCart, addToCart, removeFromCart, clearCart } from '@/actions/cart';
 import { createOrder } from '@/actions/order';
+import { Realtime } from 'ably';
 import "./cart.css";
 
 interface CartItem {
@@ -57,6 +58,20 @@ function Cart() {
     };
 
     fetchCartItems();
+    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
+
+    // Subscribe to the cart-updates channel
+    const channel = ably.channels.get('cart-updates');
+    channel.subscribe('item-updated', async (message) => {
+      const { items } = await getCart();
+      setCartItems(items);
+    });
+
+    // Clean up on unmount
+    return () => {
+      channel.unsubscribe();
+      ably.close();
+    };
   }, []);
 
   useEffect(() => {
