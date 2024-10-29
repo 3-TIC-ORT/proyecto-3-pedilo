@@ -77,13 +77,14 @@ export async function getOrders(userId?: string) {
     totalAmount: order.totalAmount,
     orderDate: order.orderDate,
     tableNumber: order.tableNumber,
+    status: order.status,         // Added status
+    orderNote: order.orderNote,   // Added orderNote
     items: order.OrderItems.map((orderItem) => ({
       itemId: orderItem.itemId,
       title: orderItem.Item.title,
       quantity: orderItem.quantity,
     })),
   }));
-
   return formattedOrders;
 }
 
