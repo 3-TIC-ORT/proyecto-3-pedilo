@@ -129,13 +129,13 @@ model Order {
   totalAmount Float
   status      String   @default("Pending")
   tableNumber Int?
+  orderNote   String?  // Added this field as optional
 
   User       User        @relation(fields: [userId], references: [id])
   OrderItems OrderItem[]
 
   @@map("orders")
 }
-
 model Table {
   tableNumber Int         @id @unique @default(autoincrement())
   Users       TableUser[] // Changed: Now relates to TableUser model
