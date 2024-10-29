@@ -4,10 +4,20 @@ h1 {
     padding: 0 1rem;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+}
+
 .orders {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
+    flex-direction: column;
+    gap: .5rem;
     padding: .5rem 0;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -16,171 +26,216 @@ h1 {
     width: calc(100% - 2rem);
     scroll-snap-type: x mandatory; /* Activa el sticky scroll */
 
-    section {
+    .ordersContainer {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         gap: 1rem;
-        min-width: 100%;
+        overflow-x: scroll;
+        overflow-y: hidden;
         height: 100%;
-        border: 2px solid var(--black);
-        padding: 1rem;
-        border-radius: .5rem;
-        position: relative;
-        scroll-snap-align: start; /* Activa el sticky scroll */
+        width: 100%;
+        scroll-snap-type: x mandatory; /* Activa el sticky scroll */
 
-        p {
-            font-weight: 500;
-        }
-        
-        .textRow {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            gap: .25rem;
-            position: relative;
-        
-            p:first-child {
-                font-weight: 600;
-            }
-
-            &::after {
-                content: '';
-                width: 100%;
-                height: 1px;
-                background-color: var(--light-gray);
-                position: absolute;
-                bottom: -.5rem;
-                left: 0;
-            }
-        }
-
-        .orderNotes {
+        section {
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-            width: 100%;
-            position: relative;
-            gap: 0.25rem;
-
-            p:first-child {
-                font-weight: 600;
-            }
-
-            p:last-child {
-                padding: .5rem;
-                background-color: var(--light-gray);
-                border-radius: .25rem;
-            }
-
-            &::after {
-                content: '';
-                width: 100%;
-                height: 1px;
-                background-color: var(--light-gray);
-                position: absolute;
-                bottom: -.5rem;
-                left: 0;
-            }
-        }
-
-        .orderItems {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
+            gap: 1rem;
+            min-width: 100%;
             height: 100%;
-            gap: 0.25rem;
-            overflow: hidden;
-
-            .textRow {
-                &::after {
-                    display: none;
-                }
-
-                .textRow {
-                    p:last-child {
-                        font-weight: 500;
-                    }
-                }
-            }
-
+            border: 2px solid var(--black);
+            padding: 1rem;
+            border-radius: .5rem;
+            position: relative;
+            scroll-snap-align: start; /* Activa el sticky scroll */
+    
             p {
-                font-weight: 600;
+                font-weight: 500;
             }
-
-            .itemsContainer {
+            
+            .textRow {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                gap: .25rem;
+                position: relative;
+            
+                p:first-child {
+                    font-weight: 600;
+                }
+    
+                &::after {
+                    content: '';
+                    width: 100%;
+                    height: 1px;
+                    background-color: var(--light-gray);
+                    position: absolute;
+                    bottom: -.5rem;
+                    left: 0;
+                }
+            }
+    
+            .orderNotes {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                width: 100%;
+                position: relative;
+                gap: 0.25rem;
+    
+                p:first-child {
+                    font-weight: 600;
+                }
+    
+                p:last-child {
+                    padding: .5rem;
+                    background-color: var(--light-gray);
+                    border-radius: .25rem;
+                }
+    
+                &::after {
+                    content: '';
+                    width: 100%;
+                    height: 1px;
+                    background-color: var(--light-gray);
+                    position: absolute;
+                    bottom: -.5rem;
+                    left: 0;
+                }
+            }
+    
+            .orderItems {
                 display: flex;
                 flex-direction: column;
                 width: 100%;
                 height: 100%;
                 gap: 0.25rem;
-                border-radius: .25rem;
-                overflow-y: scroll;
-                background-color: var(--light-gray);
-                padding: 0.5rem;
-
-                .item {
-                    display: flex;
-                    flex-direction: row;
-                    width: 100%;
-                    gap: 1rem;
-                    justify-content: space-between;
-                    
-                    .itemRow {
-                        display: flex;
-                        flex-direction: row;
-                        gap: 0.25rem;
-                        width: 100%;
-                        justify-content: space-between;
-                        align-items: center;
+                overflow: hidden;
+    
+                .textRow {
+                    &::after {
+                        display: none;
                     }
-
-                    .itemPrice {
-                        display: flex;
-                        flex-direction: row;
-                        gap: 0.25rem;
-                        align-items: center;
-                        position: relative;
-
-                        &::before {
-                            content: '';
-                            width: 1px;
-                            height: 100%;
-                            background-color: var(--gray);
-                            position: absolute;
-                            top: 0;
-                            left: -.5rem;
+    
+                    .textRow {
+                        p:last-child {
+                            font-weight: 500;
                         }
                     }
-
-                    p {
-                        font-weight: 500;
+                }
+    
+                p {
+                    font-weight: 600;
+                }
+    
+                .itemsContainer {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+                    height: 100%;
+                    gap: 0.25rem;
+                    border-radius: .25rem;
+                    overflow-y: scroll;
+                    background-color: var(--light-gray);
+                    padding: 0.5rem;
+    
+                    .item {
+                        display: flex;
+                        flex-direction: row;
+                        width: 100%;
+                        gap: 1rem;
+                        justify-content: space-between;
+                        
+                        .itemRow {
+                            display: flex;
+                            flex-direction: row;
+                            gap: 0.25rem;
+                            width: 100%;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+    
+                        .itemPrice {
+                            display: flex;
+                            flex-direction: row;
+                            gap: 0.25rem;
+                            align-items: center;
+                            position: relative;
+    
+                            &::before {
+                                content: '';
+                                width: 1px;
+                                height: 100%;
+                                background-color: var(--gray);
+                                position: absolute;
+                                top: 0;
+                                left: -.5rem;
+                            }
+                        }
+    
+                        p {
+                            font-weight: 500;
+                        }
                     }
                 }
             }
-        }
-
-        .orderState {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            width: 100%;
-
-            p:first-child {
-                font-weight: 600;
+    
+            .orderState {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
+                width: 100%;
+    
+                p:first-child {
+                    font-weight: 600;
+                }
+            }
+    
+            .orderDetails {
+                font-size: .7rem;
+                font-weight: 500;
+                text-align: end;
+                position: absolute;
+                bottom: 0.25rem;
+                left: 0.25rem;
+                opacity: 50%;
             }
         }
+    }
 
-        .orderDetails {
-            font-size: .7rem;
-            font-weight: 500;
-            text-align: end;
-            position: absolute;
-            bottom: 0.25rem;
-            left: 0.25rem;
-            opacity: 50%;
+    .ordersCounter {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        height: auto;
+
+        .orderCount {
+            width: .5rem;
+            height: .5rem;
+            border-radius: 50%;
+            background-color: var(--gray);
+        }
+
+        .orderCountSelected {
+            background-color: var(--dark-red);
+        }
+
+        .arrow {
+            width: 2rem;
+            height: 2rem;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid var(--black);
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
         }
     }
 }

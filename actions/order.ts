@@ -22,6 +22,7 @@ export async function getAllOrders() {
     totalAmount: order.totalAmount,
     orderDate: order.orderDate,
     tableNumber: order.tableNumber,
+    orderStatus: order.status,
     items: order.OrderItems.map((orderItem) => ({
       itemId: orderItem.itemId,
       title: orderItem.Item.title,
