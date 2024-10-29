@@ -88,36 +88,30 @@ export async function getOrders(userId?: string) {
   return formattedOrders;
 }
 
-export async function createOrder(userId?: string) {
+export async function createOrder(userId?: string, orderNote?: string) {  // Added orderNote parameter
   // Authenticate the user using getSession
   const session = await getSession();
   const user = userId || session.user.id;
-
   // Fetch cart items for the user
   const cartItems = await prisma.cart.findMany({
     where: { userId: user },
     include: { Item: true },
   });
-
   if (!cartItems.length) {
     throw new Error('Cart is empty');
   }
-
   // Fetch table number for the user
   const tableUser = await prisma.tableUser.findFirst({
     where: { userId: user },
     select: { tableNumber: true },
   });
-
   if (!tableUser) {
     throw new Error('Table not selected');
   }
-
   // Calculate the total amount for the order
   const totalAmount = cartItems.reduce((acc, cartItem) => {
     return acc + (cartItem.amount * cartItem.Item.price);
   }, 0);
-
   // Create a new order for the user
   const order = await prisma.order.create({
     data: {
@@ -125,11 +119,10 @@ export async function createOrder(userId?: string) {
       totalAmount: totalAmount,
       orderDate: new Date(),
       tableNumber: tableUser.tableNumber,
+      orderNote: orderNote,  // Added orderNote
     },
   });
-
   const orderId = order.orderId;
-
   // Insert each item from the cart into the OrderItem table
   for (const cartItem of cartItems) {
     await prisma.orderItem.create({
@@ -140,16 +133,13 @@ export async function createOrder(userId?: string) {
       },
     });
   }
-
   // Clear the user's cart after order creation
   await prisma.cart.deleteMany({
     where: { userId: user },
   });
-
   // Return success response with the new order ID
   return { message: 'Order created successfully', orderId: orderId };
 }
-
 export async function changeOrderStatus(orderId: number, status: string) {
   // Await the update operations to ensure they complete before proceeding
   await prisma.order.update({
