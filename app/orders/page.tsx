@@ -127,8 +127,8 @@ const Orders: React.FC = () => {
               </div>
               {order.orderNote && (
                 <div className="orderNotes">
-                    <p>Notas:</p>
-                    <p>{order.orderNote}</p>
+                  <p>Notas:</p>
+                  <p>{order.orderNote}</p>
                 </div>
               )}
               <div className="itemsContainer">
