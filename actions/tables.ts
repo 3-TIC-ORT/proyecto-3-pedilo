@@ -1,5 +1,6 @@
 "use server"
 import { prisma } from "@/prisma"
+import { ablyClient } from '@/lib/ably';
 
 export async function getTables() {
   return await prisma.table.findMany({
@@ -27,69 +28,47 @@ export async function getTables() {
 }
 
 export async function assignTable(tableNumber: number, userId: string) {
-  // Check if the requested table exists
   const table = await prisma.table.findUnique({ where: { tableNumber } });
-  if (!table) {
-    throw new Error("Table not found");
-  }
+  if (!table) throw new Error("Table not found");
 
-  // Start a transaction to ensure data consistency
-  return await prisma.$transaction(async (prisma) => {
-    // Check if the user is already assigned to any table
-    const existingAssignment = await prisma.tableUser.findFirst({
-      where: { userId },
-    });
-
-    // If an existing assignment is found, remove it
+  const assignment = await prisma.$transaction(async (prisma) => {
+    const existingAssignment = await prisma.tableUser.findFirst({ where: { userId } });
     if (existingAssignment) {
       await prisma.tableUser.delete({
-        where: {
-          userId_tableNumber: {
-            userId,
-            tableNumber: existingAssignment.tableNumber,
-          },
-        },
+        where: { userId_tableNumber: { userId, tableNumber: existingAssignment.tableNumber } },
       });
     }
-
-    // Create the new table assignment
-    return await prisma.tableUser.create({
-      data: {
-        userId,
-        tableNumber,
-      },
-    });
+    return await prisma.tableUser.create({ data: { userId, tableNumber } });
   });
+
+  // Publish table assignment to Ably channel
+  await ablyClient.channels.get('table-updates').publish('table-assigned', {
+    tableNumber,
+    userId,
+  });
+
+  return assignment;
 }
 export async function unassignTable(tableNumber: number, userId: string) {
   const table = await prisma.table.findUnique({ where: { tableNumber } });
-  if (!table) {
-    throw new Error("Table not found")
-  }
+  if (!table) throw new Error("Table not found");
 
   const assignment = await prisma.tableUser.findUnique({
-    where: {
-      userId_tableNumber: {
-        userId,
-        tableNumber
-      }
-    }
+    where: { userId_tableNumber: { userId, tableNumber } },
   });
 
-  if (!assignment) {
-    throw new Error("User is not assigned to this table")
-  }
+  if (!assignment) throw new Error("User is not assigned to this table");
 
-  return await prisma.tableUser.delete({
-    where: {
-      userId_tableNumber: {
-        userId,
-        tableNumber
-      }
-    },
+  await prisma.tableUser.delete({ where: { userId_tableNumber: { userId, tableNumber } } });
+
+  // Publish table unassignment to Ably channel
+  await ablyClient.channels.get('table-updates').publish('table-unassigned', {
+    tableNumber,
+    userId,
   });
+
+  return true;
 }
-
 export async function getTableUsers(tableNumber: number) {
   return await prisma.tableUser.findMany({
     where: { tableNumber },
@@ -124,24 +103,35 @@ export async function getUserTables(userId: string) {
 
 export async function assignWaiter(tableNumber: number, waiterId: string) {
   const table = await prisma.table.findUnique({ where: { tableNumber } });
-  if (!table) {
-    throw new Error("Table not found")
-  }
+  if (!table) throw new Error("Table not found");
 
-  return await prisma.table.update({
+  const updatedTable = await prisma.table.update({
     where: { tableNumber },
     data: { waiterId },
   });
+
+  // Publish waiter assignment to Ably channel
+  await ablyClient.channels.get('table-updates').publish('waiter-assigned', {
+    tableNumber,
+    waiterId,
+  });
+
+  return updatedTable;
 }
 
 export async function unassignWaiter(tableNumber: number) {
   const table = await prisma.table.findUnique({ where: { tableNumber } });
-  if (!table) {
-    throw new Error("Table not found")
-  }
+  if (!table) throw new Error("Table not found");
 
-  return await prisma.table.update({
+  const updatedTable = await prisma.table.update({
     where: { tableNumber },
     data: { waiterId: null },
   });
+
+  // Publish waiter unassignment to Ably channel
+  await ablyClient.channels.get('table-updates').publish('waiter-unassigned', {
+    tableNumber,
+  });
+
+  return updatedTable;
 }
