@@ -63,6 +63,20 @@ export async function getWaiterCalls() {
   }
 }
 
+export async function hasPendingCall(tableNumber: number) {
+  try {
+    const pendingCall = await prisma.call.findFirst({
+      where: {
+        tableNumber,
+        status: "pending"
+      }
+    });
+    return !!pendingCall; // Return true if there is a pending call, false otherwise
+  } catch (error) {
+    console.error("Error checking pending call:", error);
+    throw new Error("Failed to check pending call");
+  }
+}
 
 export async function resolveCall(id: string) {
   try {

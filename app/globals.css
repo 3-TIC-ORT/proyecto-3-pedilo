@@ -70,7 +70,7 @@ footer {
   padding: 1rem;
   border-top: 2px solid var(--black);
 
-  button {
+  .callsBtn {
     background-color: var(--dark-red);
     height: auto;
     width: 100%;
@@ -78,6 +78,7 @@ footer {
     padding: 1rem 3rem;
     color: var(--white);
     font-weight: 600;
+    text-align: center;
   }
 
   nav {

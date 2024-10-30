@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import LogoutButton from "@/components/LogoutButton";
+import CallWaiterBtn from "@/components/CallWaiterBtn";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { auth } from "@/auth";
+import { getUserTables } from "@/actions/tables"; // Importa la función
 
 export const metadata: Metadata = {
   title: "Pedilo",
@@ -16,6 +17,13 @@ export default async function RootLayout({
 }>) {
   const session = await auth();
   const role = session?.user?.role;
+  const userId = session?.user?.id;
+
+  let hasTableAssigned = false;
+  if (role === "user" && userId) {
+    const userTables = await getUserTables(userId);
+    hasTableAssigned = userTables.length > 0;
+  }
 
   return (
     <html lang="en">
@@ -25,7 +33,12 @@ export default async function RootLayout({
         </header>
         {children}
         <footer>
-          <button>Llamar Mozo</button>
+          {(role === "chef" || (role === "user" && hasTableAssigned)) && (
+            <CallWaiterBtn />
+          )}
+          {role === "waiter" && (
+            <a className="callsBtn" href="/calls">Llamados</a>
+          )}
           <nav>
             <a href="/menu">
               <img src="/media/homeIcon.svg" alt="homeIcon" />
@@ -49,6 +62,12 @@ export default async function RootLayout({
               <a href="/calls">
                 <img src="/media/callsIcon.svg" alt="callsIcon" />
                 <p>Llamados</p>
+              </a>
+            )}
+            {(role === "waiter" || (role === "user" && !hasTableAssigned)) && (
+              <a href="/tables">
+                <img src="/media/tableIcon.svg" alt="callsIcon" />
+                <p>Mesas</p>
               </a>
             )}
             {role === "chef" && (
