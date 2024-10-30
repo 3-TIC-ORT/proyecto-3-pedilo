@@ -33,15 +33,22 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <header>
-          <img src="/images/logo.svg" alt="restaurantLogo" id="restaurantLogo"/>
+          <img
+            src="/images/logo.svg"
+            alt="restaurantLogo"
+            id="restaurantLogo"
+          />
         </header>
         {children}
         <footer>
-          {(role === "chef" || (role === "user" && hasTableAssigned && !pendingCall)) && (
+          {(role === "chef" ||
+            (role === "user" && hasTableAssigned && !pendingCall)) && (
             <CallWaiterBtn />
           )}
           {role === "waiter" && (
-            <a className="callsBtn" href="/calls">Llamados</a>
+            <a className="callsBtn" href="/calls">
+              Llamados
+            </a>
           )}
           <nav>
             <a href="/menu">
