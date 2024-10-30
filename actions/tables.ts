@@ -1,7 +1,16 @@
 "use server"
 import { prisma } from "@/prisma"
 import { ablyClient } from '@/lib/ably';
+import { Session } from "next-auth";
+import { auth } from '@/auth'
 
+async function getSession(): Promise<Session> {
+  const session = await auth();
+  if (!session?.user) {
+    throw new Error('Usuario no autenticado');
+  }
+  return session;
+}
 export async function getTables() {
   return await prisma.table.findMany({
     include: {
