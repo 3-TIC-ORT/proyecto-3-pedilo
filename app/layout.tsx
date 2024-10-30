@@ -81,7 +81,7 @@ export default async function RootLayout({
                 <p>Mesas</p>
               </a>
             )}
-            {role === "chef" && (
+            {(role === "waiter" || (role === "chef")) && (
               <a href="/orders">
                 <img src="/media/ordersIcon.svg" alt="ordersIcon" />
                 <p>Ordenes</p>
