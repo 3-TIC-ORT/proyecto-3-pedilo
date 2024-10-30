@@ -52,6 +52,7 @@ export default function TablesClient({ initialTables, initialUserTables, current
 
   useEffect(() => {
     const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
+
     const channel = ably.channels.get('table-updates');
 
     // Subscribe to table assignment
@@ -73,10 +74,10 @@ export default function TablesClient({ initialTables, initialUserTables, current
       };
 
       setTables((prevTables) =>
-        prevTables.map((table) =>
-          table.tableNumber === tableNumber
-            ? { ...table, Users: [...table.Users, newUser] }
-            : table
+        prevTables.map((t) =>
+          t.tableNumber === tableNumber
+            ? { ...t, Waiter: t.Waiter?.id === currentUser!.id ? null : currentUser as Waiter }
+            : t
         )
       );
     });
