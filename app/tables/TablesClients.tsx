@@ -50,51 +50,31 @@ export default function TablesClient({ initialTables, initialUserTables, current
   const [popupCount, setPopupCount] = useState(0);
   const router = useRouter();
 
+  // Function to fetch tables from the server
+  const fetchTables = async () => {
+    try {
+      const updatedTables = await getTables(); // Fetch updated table data
+      setTables(updatedTables);
+    } catch (error) {
+      console.error('Error fetching tables:', error);
+      showPopupMessage('Error al actualizar la información de las mesas.');
+    }
+  };
+
   useEffect(() => {
     const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
-
     const channel = ably.channels.get('table-updates');
 
     // Subscribe to table assignment
     channel.subscribe('table-assigned', (message) => {
-      const { tableNumber, userId } = message.data;
-
-      // Define a new TableUser object with required properties
-      //   const newUser: TableUser = {
-      //     id: `${tableNumber}-${userId}`, // Placeholder unique ID
-      //     userId,
-      //     tableNumber,
-      //     createdAt: new Date(), // Placeholder date
-      //     updatedAt: new Date(), // Placeholder date
-      //     User: {
-      //       id: userId,
-      //       name: null,  // Placeholder value
-      //       email: ''    // Placeholder value
-      //     }
-      //   };
-      //
-      //   setTables((prevTables) =>
-      //     prevTables.map((t) =>
-      //       t.tableNumber === tableNumber
-      //         ? { ...t, Waiter: t.Waiter?.id === currentUser!.id ? null : currentUser as Waiter }
-      //         : t
-      //     )
-      //   );
+      // Refetch tables when a table is assigned
       fetchTables();
     });
 
     // Subscribe to table unassignment
     channel.subscribe('table-unassigned', (message) => {
-      const { tableNumber, userId } = message.data;
+      // Refetch tables when a table is unassigned
       fetchTables();
-
-      // setTables((prevTables) =>
-      //   prevTables.map((table) =>
-      //     table.tableNumber === tableNumber
-      //       ? { ...table, Users: table.Users.filter(user => user.userId !== userId) }
-      //       : table
-      //   )
-      // );
     });
 
     // Cleanup Ably connection on component unmount
@@ -103,16 +83,6 @@ export default function TablesClient({ initialTables, initialUserTables, current
       ably.close();
     };
   }, []);
-
-  const fetchTables = async () => {
-    try {
-      const updatedTables = await getTables(); // Replace with your actual data fetching logic
-      setTables(updatedTables);
-    } catch (error) {
-      console.error('Error fetching tables:', error);
-      showPopupMessage('Error al actualizar la información de las mesas.');
-    }
-  };
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -157,7 +127,6 @@ export default function TablesClient({ initialTables, initialUserTables, current
         } else {
           sessionStorage.setItem('selectedTable', tableNumber.toString());
           localStorage.setItem('selectedTable', tableNumber.toString());
-
           showPopupMessage(`Mesa ${tableNumber} seleccionada. Por favor, inicia sesión para continuar.`);
           setTimeout(() => router.push('/login'), 1500);
         }
@@ -170,11 +139,7 @@ export default function TablesClient({ initialTables, initialUserTables, current
           await assignWaiter(tableNumber, currentUser!.id);
           showPopupMessage(`Mesa ${tableNumber} asignada.`);
         }
-        setTables(tables.map(t =>
-          t.tableNumber === tableNumber
-            ? { ...t, Waiter: t.Waiter?.id === currentUser!.id ? null : currentUser as Waiter }
-            : t
-        ));
+        fetchTables(); // Refresh tables after waiter assignment
       }
     } catch (error) {
       console.error('Error al manejar el clic en la mesa:', error);
@@ -188,11 +153,7 @@ export default function TablesClient({ initialTables, initialUserTables, current
       for (const tableUser of tableUsers) {
         await unassignTable(tableNumber, tableUser.userId);
       }
-      setTables(tables.map(t =>
-        t.tableNumber === tableNumber
-          ? { ...t, Users: [] }
-          : t
-      ));
+      fetchTables(); // Refresh tables after unassigning all users
       showPopupMessage(`Todos los usuarios de la Mesa ${tableNumber} han sido desasignados.`);
     } catch (error) {
       console.error('Error al desasignar todos los usuarios de la mesa:', error);
@@ -264,3 +225,4 @@ export default function TablesClient({ initialTables, initialUserTables, current
     </main>
   );
 }
+
