@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { assignTable, unassignTable, assignWaiter, unassignWaiter, getTableUsers } from '@/actions/tables';
+import { Realtime } from 'ably';
 import "./tables.css";
 
 interface User {
@@ -48,6 +49,57 @@ export default function TablesClient({ initialTables, initialUserTables, current
   const [popupMessage, setPopupMessage] = useState('');
   const [popupCount, setPopupCount] = useState(0);
   const router = useRouter();
+
+  useEffect(() => {
+    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
+    const channel = ably.channels.get('table-updates');
+
+    // Subscribe to table assignment
+    channel.subscribe('table-assigned', (message) => {
+      const { tableNumber, userId } = message.data;
+
+      // Define a new TableUser object with required properties
+      const newUser: TableUser = {
+        id: `${tableNumber}-${userId}`, // Placeholder unique ID
+        userId,
+        tableNumber,
+        createdAt: new Date(), // Placeholder date
+        updatedAt: new Date(), // Placeholder date
+        User: {
+          id: userId,
+          name: null,  // Placeholder value
+          email: ''    // Placeholder value
+        }
+      };
+
+      setTables((prevTables) =>
+        prevTables.map((table) =>
+          table.tableNumber === tableNumber
+            ? { ...table, Users: [...table.Users, newUser] }
+            : table
+        )
+      );
+    });
+
+    // Subscribe to table unassignment
+    channel.subscribe('table-unassigned', (message) => {
+      const { tableNumber, userId } = message.data;
+
+      setTables((prevTables) =>
+        prevTables.map((table) =>
+          table.tableNumber === tableNumber
+            ? { ...table, Users: table.Users.filter(user => user.userId !== userId) }
+            : table
+        )
+      );
+    });
+
+    // Cleanup Ably connection on component unmount
+    return () => {
+      channel.unsubscribe();
+      ably.close();
+    };
+  }, []);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -105,9 +157,9 @@ export default function TablesClient({ initialTables, initialUserTables, current
           await assignWaiter(tableNumber, currentUser!.id);
           showPopupMessage(`Mesa ${tableNumber} asignada.`);
         }
-        setTables(tables.map(t => 
-          t.tableNumber === tableNumber 
-            ? {...t, Waiter: t.Waiter?.id === currentUser!.id ? null : currentUser as Waiter}
+        setTables(tables.map(t =>
+          t.tableNumber === tableNumber
+            ? { ...t, Waiter: t.Waiter?.id === currentUser!.id ? null : currentUser as Waiter }
             : t
         ));
       }
@@ -123,9 +175,9 @@ export default function TablesClient({ initialTables, initialUserTables, current
       for (const tableUser of tableUsers) {
         await unassignTable(tableNumber, tableUser.userId);
       }
-      setTables(tables.map(t => 
-        t.tableNumber === tableNumber 
-          ? {...t, Users: []}
+      setTables(tables.map(t =>
+        t.tableNumber === tableNumber
+          ? { ...t, Users: [] }
           : t
       ));
       showPopupMessage(`Todos los usuarios de la Mesa ${tableNumber} han sido desasignados.`);
@@ -170,23 +222,23 @@ export default function TablesClient({ initialTables, initialUserTables, current
                 {userTables.includes(table.tableNumber) && <p>(Seleccionada)</p>}
               </button>
             ) : (
-                <label className="waiter-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={table.Waiter?.id === currentUser?.id}
-                    onChange={() => handleTableClick(table.tableNumber)}
-                    disabled={!!(table.Waiter && table.Waiter.id !== currentUser?.id)}
-                  />
-                  Mesa {table.tableNumber}
-                  {table.Waiter && table.Waiter.id !== currentUser?.id && (
-                    <p>(Asignada a otro camarero)</p>
-                  )}
-                  {table.Users.length > 0 && (
-                    <button onClick={() => handleUnassignAllUsers(table.tableNumber)}>
-                      Liberar mesa
-                    </button>
-                  )}
-                </label>
+              <label className="waiter-checkbox">
+                <input
+                  type="checkbox"
+                  checked={table.Waiter?.id === currentUser?.id}
+                  onChange={() => handleTableClick(table.tableNumber)}
+                  disabled={!!(table.Waiter && table.Waiter.id !== currentUser?.id)}
+                />
+                Mesa {table.tableNumber}
+                {table.Waiter && table.Waiter.id !== currentUser?.id && (
+                  <p>(Asignada a otro camarero)</p>
+                )}
+                {table.Users.length > 0 && (
+                  <button onClick={() => handleUnassignAllUsers(table.tableNumber)}>
+                    Liberar mesa
+                  </button>
+                )}
+              </label>
             )}
           </React.Fragment>
         ))}
