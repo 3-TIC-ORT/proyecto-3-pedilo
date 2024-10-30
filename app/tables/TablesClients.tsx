@@ -3,8 +3,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getTables, assignTable, unassignTable, assignWaiter, unassignWaiter, getTableUsers } from '@/actions/tables';
-import { Realtime } from 'ably';
-import "./tables.css";
+import * as Ably from 'ably';
 
 interface User {
   id: string;
@@ -41,7 +40,13 @@ interface TablesClientProps {
   isAuthenticated: boolean;
 }
 
-export default function TablesClient({ initialTables, initialUserTables, currentUser, userRole, isAuthenticated }: TablesClientProps) {
+export default function TablesClient({
+  initialTables,
+  initialUserTables,
+  currentUser,
+  userRole,
+  isAuthenticated
+}: TablesClientProps) {
   const [tables, setTables] = useState(initialTables);
   const [userTables, setUserTables] = useState(initialUserTables);
   const [showPopup, setShowPopup] = useState(false);
@@ -50,10 +55,16 @@ export default function TablesClient({ initialTables, initialUserTables, current
   const [popupCount, setPopupCount] = useState(0);
   const router = useRouter();
 
-  // Function to fetch tables from the server
+  const showPopupMessage = (message: string) => {
+    setPopupMessage(message);
+    setPopupCount(prev => prev + 1);
+    setShowPopup(true);
+    setPopupClass('popup');
+  };
+
   const fetchTables = async () => {
     try {
-      const updatedTables = await getTables(); // Fetch updated table data
+      const updatedTables = await getTables();
       setTables(updatedTables);
     } catch (error) {
       console.error('Error fetching tables:', error);
@@ -61,29 +72,83 @@ export default function TablesClient({ initialTables, initialUserTables, current
     }
   };
 
+  // Initialize Ably client
   useEffect(() => {
-    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
-    const channel = ably.channels.get('table-updates');
+    let ably: Ably.Realtime | null = null;
+    let channel: Ably.RealtimeChannel | null = null;
 
-    // Subscribe to table assignment
-    channel.subscribe('table-assigned', (message) => {
-      // Refetch tables when a table is assigned
-      fetchTables();
-    });
+    const setupAbly = async () => {
+      try {
+        ably = new Ably.Realtime({
+          key: process.env.NEXT_PUBLIC_ABLY_API_KEY,
+          clientId: currentUser?.id || 'anonymous'
+        });
 
-    // Subscribe to table unassignment
-    channel.subscribe('table-unassigned', (message) => {
-      // Refetch tables when a table is unassigned
-      fetchTables();
-    });
+        channel = ably.channels.get('table-updates');
 
-    // Cleanup Ably connection on component unmount
-    return () => {
-      channel.unsubscribe();
-      ably.close();
+        // Handle table assignments
+        channel.subscribe('table-assigned', async (message) => {
+          const { tableNumber, userId } = message.data;
+          await fetchTables();
+          if (currentUser?.id === userId) {
+            setUserTables(prev => [...prev, tableNumber]);
+          }
+        });
+
+        // Handle table unassignments
+        channel.subscribe('table-unassigned', async (message) => {
+          const { tableNumber, userId } = message.data;
+          await fetchTables();
+          if (currentUser?.id === userId) {
+            setUserTables(prev => prev.filter(t => t !== tableNumber));
+          }
+        });
+
+        // Handle waiter assignments
+        channel.subscribe('waiter-assigned', async (message) => {
+          const { tableNumber, waiterId } = message.data;
+          if (userRole === 'waiter') {
+            await fetchTables();
+          }
+        });
+
+        // Handle waiter unassignments
+        channel.subscribe('waiter-unassigned', async (message) => {
+          const { tableNumber } = message.data;
+          if (userRole === 'waiter') {
+            await fetchTables();
+          }
+        });
+
+        // Handle connection state
+        ably.connection.on('connected', () => {
+          console.log('Connected to Ably');
+        });
+
+        ably.connection.on('failed', () => {
+          console.error('Failed to connect to Ably');
+          showPopupMessage('Error de conexión con el servidor');
+        });
+      } catch (error) {
+        console.error('Error setting up Ably:', error);
+        showPopupMessage('Error al inicializar la conexión en tiempo real');
+      }
     };
-  }, []);
 
+    setupAbly();
+
+    // Cleanup function
+    return () => {
+      if (channel) {
+        channel.unsubscribe();
+      }
+      if (ably) {
+        ably.close();
+      }
+    };
+  }, [currentUser?.id, userRole]);
+
+  // Add popup timeout effect
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (showPopup) {
@@ -97,13 +162,6 @@ export default function TablesClient({ initialTables, initialUserTables, current
     }
     return () => clearTimeout(timer);
   }, [showPopup]);
-
-  const showPopupMessage = (message: string) => {
-    setPopupMessage(message);
-    setPopupCount(prev => prev + 1);
-    setShowPopup(true);
-    setPopupClass('popup');
-  };
 
   const handleTableClick = async (tableNumber: number) => {
     try {
@@ -139,7 +197,6 @@ export default function TablesClient({ initialTables, initialUserTables, current
           await assignWaiter(tableNumber, currentUser!.id);
           showPopupMessage(`Mesa ${tableNumber} asignada.`);
         }
-        fetchTables(); // Refresh tables after waiter assignment
       }
     } catch (error) {
       console.error('Error al manejar el clic en la mesa:', error);
@@ -153,7 +210,6 @@ export default function TablesClient({ initialTables, initialUserTables, current
       for (const tableUser of tableUsers) {
         await unassignTable(tableNumber, tableUser.userId);
       }
-      fetchTables(); // Refresh tables after unassigning all users
       showPopupMessage(`Todos los usuarios de la Mesa ${tableNumber} han sido desasignados.`);
     } catch (error) {
       console.error('Error al desasignar todos los usuarios de la mesa:', error);
@@ -225,4 +281,3 @@ export default function TablesClient({ initialTables, initialUserTables, current
     </main>
   );
 }
-
