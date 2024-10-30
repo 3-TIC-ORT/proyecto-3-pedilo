@@ -4,6 +4,7 @@ import CallWaiterBtn from "@/components/CallWaiterBtn";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { auth } from "@/auth";
 import { getUserTables } from "@/actions/tables"; // Importa la función
+import { hasPendingCall } from "@/actions/calls";
 
 export const metadata: Metadata = {
   title: "Pedilo",
@@ -20,20 +21,22 @@ export default async function RootLayout({
   const userId = session?.user?.id;
 
   let hasTableAssigned = false;
+  let pendingCall = false;
   if (role === "user" && userId) {
     const userTables = await getUserTables(userId);
     hasTableAssigned = userTables.length > 0;
+    pendingCall = await hasPendingCall(userTables[0]);
   }
 
   return (
     <html lang="en">
       <body>
         <header>
-          <img src="/images/" alt="restaurantLogo" id="restaurantLogo"/>
+          <img src="/images/" alt="restaurantLogo" id="restaurantLogo" />
         </header>
         {children}
         <footer>
-          {(role === "chef" || (role === "user" && hasTableAssigned)) && (
+          {(role === "chef" || (role === "user" && hasTableAssigned && !pendingCall)) && (
             <CallWaiterBtn />
           )}
           {role === "waiter" && (
