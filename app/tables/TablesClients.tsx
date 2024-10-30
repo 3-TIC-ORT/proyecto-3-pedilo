@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { assignTable, unassignTable, assignWaiter, unassignWaiter, getTableUsers } from '@/actions/tables';
+import { getTables, assignTable, unassignTable, assignWaiter, unassignWaiter, getTableUsers } from '@/actions/tables';
 import { Realtime } from 'ably';
 import "./tables.css";
 
@@ -60,39 +60,41 @@ export default function TablesClient({ initialTables, initialUserTables, current
       const { tableNumber, userId } = message.data;
 
       // Define a new TableUser object with required properties
-      const newUser: TableUser = {
-        id: `${tableNumber}-${userId}`, // Placeholder unique ID
-        userId,
-        tableNumber,
-        createdAt: new Date(), // Placeholder date
-        updatedAt: new Date(), // Placeholder date
-        User: {
-          id: userId,
-          name: null,  // Placeholder value
-          email: ''    // Placeholder value
-        }
-      };
-
-      setTables((prevTables) =>
-        prevTables.map((t) =>
-          t.tableNumber === tableNumber
-            ? { ...t, Waiter: t.Waiter?.id === currentUser!.id ? null : currentUser as Waiter }
-            : t
-        )
-      );
+      //   const newUser: TableUser = {
+      //     id: `${tableNumber}-${userId}`, // Placeholder unique ID
+      //     userId,
+      //     tableNumber,
+      //     createdAt: new Date(), // Placeholder date
+      //     updatedAt: new Date(), // Placeholder date
+      //     User: {
+      //       id: userId,
+      //       name: null,  // Placeholder value
+      //       email: ''    // Placeholder value
+      //     }
+      //   };
+      //
+      //   setTables((prevTables) =>
+      //     prevTables.map((t) =>
+      //       t.tableNumber === tableNumber
+      //         ? { ...t, Waiter: t.Waiter?.id === currentUser!.id ? null : currentUser as Waiter }
+      //         : t
+      //     )
+      //   );
+      fetchTables();
     });
 
     // Subscribe to table unassignment
     channel.subscribe('table-unassigned', (message) => {
       const { tableNumber, userId } = message.data;
+      fetchTables();
 
-      setTables((prevTables) =>
-        prevTables.map((table) =>
-          table.tableNumber === tableNumber
-            ? { ...table, Users: table.Users.filter(user => user.userId !== userId) }
-            : table
-        )
-      );
+      // setTables((prevTables) =>
+      //   prevTables.map((table) =>
+      //     table.tableNumber === tableNumber
+      //       ? { ...table, Users: table.Users.filter(user => user.userId !== userId) }
+      //       : table
+      //   )
+      // );
     });
 
     // Cleanup Ably connection on component unmount
@@ -101,6 +103,16 @@ export default function TablesClient({ initialTables, initialUserTables, current
       ably.close();
     };
   }, []);
+
+  const fetchTables = async () => {
+    try {
+      const updatedTables = await getTables(); // Replace with your actual data fetching logic
+      setTables(updatedTables);
+    } catch (error) {
+      console.error('Error fetching tables:', error);
+      showPopupMessage('Error al actualizar la información de las mesas.');
+    }
+  };
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
