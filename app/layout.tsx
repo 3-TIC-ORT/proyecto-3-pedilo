@@ -25,6 +25,7 @@ export default async function RootLayout({
   if (role === "user" && userId) {
     const userTables = await getUserTables(userId);
     hasTableAssigned = userTables.length > 0;
+    console.log("hasTableAssigned", userTables);
     pendingCall = await hasPendingCall(userTables[0]);
   }
 
