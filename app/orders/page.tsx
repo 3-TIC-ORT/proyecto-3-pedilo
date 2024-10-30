@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react';
-import { getOrders } from '@/actions/order';
+import { getOrders, getAllOrders, changeOrderStatus } from '@/actions/order';
+import { getSession } from 'next-auth/react'; // Actualiza la importación de getSession
 import "./orders.css";
 
 interface OrderItem {
@@ -23,13 +24,22 @@ const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [currentOrderIndex, setCurrentOrderIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null); // Estado para almacenar el rol del usuario
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadOrders = async () => {
       try {
         setIsLoading(true);
-        const userOrders = await getOrders();
+        const session = await getSession();
+        setUserRole(session?.user?.role || null); // Establece el rol del usuario
+
+        let userOrders;
+        if (session?.user?.role === 'waiter' || session?.user?.role === 'chef' || session?.user?.role === 'admin') {
+          userOrders = await getAllOrders();
+        } else {
+          userOrders = await getOrders();
+        }
         setOrders(userOrders);
       } catch (error) {
         console.error('Error loading orders:', error);
@@ -73,10 +83,71 @@ const Orders: React.FC = () => {
     });
   };
 
+  const handleOrderReady = async (orderId: number) => {
+    try {
+      await changeOrderStatus(orderId, 'ready');
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.orderId === orderId ? { ...order, status: 'ready' } : order
+        )
+      );
+    } catch (error) {
+      console.error('Error updating order status:', error);
+    }
+  };
+
   if (isLoading) {
     return (
       <main>
         <div className='container'>Cargando ordenes...</div>
+      </main>
+    );
+  }
+
+  if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') { // Verifica si el usuario tiene acceso a la sección
+    // Ordenar las órdenes para que las que están en estado "ready" aparezcan al final
+    const sortedOrders = [...orders].sort((a, b) => a.status === 'ready' ? 1 : -1);
+
+    return (
+      <main>
+        <h1>Ordenes</h1>
+        <div className="waiterOrders">
+          {sortedOrders.map((order) => (
+            <section key={order.orderId} className={`waiterSection ${order.status === 'ready' ? 'ready' : ''}`}>
+              <div className="textRow">
+                <div className="textRow">
+                  <p>Mesa N°</p>
+                  <p>{order.tableNumber}</p>
+                </div>
+                <p>-</p>
+                <div className="textRow">
+                  <p>Orden</p>
+                  <p>#{order.orderId}</p>
+                </div>
+              </div>
+              {order.orderNote && (
+                <div className="orderNotes">
+                    <p>Notas:</p>
+                    <p>{order.orderNote}</p>
+                </div>
+              )}
+              <div className="itemsContainer">
+                {order.items.map((item) => (
+                  <div key={item.itemId} className="itemRow">
+                    <p>{item.title}</p>
+                    <p>{item.quantity}x</p>
+                  </div>
+                ))}
+              </div>
+              <button 
+                onClick={() => handleOrderReady(order.orderId)} 
+                disabled={order.status === 'ready'}
+              >
+                Listo
+              </button>
+            </section>
+          ))}
+        </div>
       </main>
     );
   }

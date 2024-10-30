@@ -7,7 +7,7 @@ export default function CallWaiterBtn() {
             <button id="callWaiterBtn">Llamar Mozo</button>
             <style>
                 {`
-                button {
+                #callWaiterBtn {
                     background-color: var(--dark-red);
                     height: auto;
                     width: 100%;

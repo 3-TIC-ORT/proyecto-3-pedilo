@@ -60,7 +60,7 @@ section {
             color: var(--white);
 
             &:active {
-                background-color: var(--light-gray);
+                background-color: var(--gray);
                 color: var(--black);
             }
     

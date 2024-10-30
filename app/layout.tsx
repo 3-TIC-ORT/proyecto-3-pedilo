@@ -33,7 +33,7 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <header>
-          <img src="/images/" alt="restaurantLogo" id="restaurantLogo" />
+          <img src="/images/logo.svg" alt="restaurantLogo" id="restaurantLogo"/>
         </header>
         {children}
         <footer>
