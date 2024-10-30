@@ -220,7 +220,14 @@ export default function TablesClient({
 
   const sortedTables = useMemo(() => {
     if (userRole === 'user') {
-      return [...tables].sort((a, b) => a.tableNumber - b.tableNumber);
+      return [...tables].sort((a, b) => {
+        const aDisabled = !a.Waiter || a.Users.length >= 99;
+        const bDisabled = !b.Waiter || b.Users.length >= 99;
+
+        if (aDisabled && !bDisabled) return 1;
+        if (!aDisabled && bDisabled) return -1;
+        return a.tableNumber - b.tableNumber;
+      });
     } else {
       return [...tables].sort((a, b) => {
         const aAssigned = a.Waiter?.id === currentUser?.id;
@@ -247,7 +254,7 @@ export default function TablesClient({
               <button
                 className="tableBtn"
                 onClick={() => handleTableClick(table.tableNumber)}
-                disabled={isAuthenticated && table.Users.length >= 99 && !userTables.includes(table.tableNumber)}
+                disabled={isAuthenticated && (table.Users.length >= 99 || !table.Waiter) && !userTables.includes(table.tableNumber)}
               >
                 <p>Mesa {table.tableNumber}</p>
                 {userTables.includes(table.tableNumber) && <p>(Seleccionada)</p>}
