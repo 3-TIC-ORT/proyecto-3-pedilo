@@ -15,6 +15,8 @@ interface Order {
   orderDate: Date;
   tableNumber: number | null;
   items: OrderItem[];
+  status: string;
+  orderNote: string | null;
 }
 
 const Orders: React.FC = () => {
@@ -108,10 +110,12 @@ const Orders: React.FC = () => {
                   <p>#{order.orderId}</p>
                 </div>
               </div>
-              <div className="orderNotes">
-                <p>Notas:</p>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi, quam in dolor assumenda nam veritatis. Eligendi id rerum tempore? Quae provident hic qui quis porro doloribus officiis optio autem quos!</p>
-              </div>
+              {order.orderNote && (
+                <div className="orderNotes">
+                    <p>Notas:</p>
+                    <p>{order.orderNote}</p>
+                </div>
+              )}
               <div className="orderItems">
                 <div className="textRow">
                   <p>Productos:</p>
@@ -128,7 +132,7 @@ const Orders: React.FC = () => {
                         <p>{item.quantity}x</p>
                       </div>
                       <div className="itemPrice">
-                        <p>${(item.quantity * order.totalAmount / order.items.reduce((acc, curr) => acc + curr.quantity, 0)).toLocaleString()}</p>
+                        <p>${(item.quantity * order.totalAmount / order.items.reduce((acc, curr) => acc + curr.quantity, 0)).toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
@@ -136,7 +140,7 @@ const Orders: React.FC = () => {
               </div>
               <div className="orderState">
                 <p>Estado:</p>
-                <p>En preparación</p>
+                <p>{order.status}</p>
               </div>
               <div className="orderDetails">
                 {formatDate(order.orderDate)}
@@ -157,19 +161,15 @@ const Orders: React.FC = () => {
             // Display arrows for more than 5 orders
             <>
               <div 
-                className="arrow" 
+                className={`arrow ${currentOrderIndex === 0 ? 'disabled' : ''}`} 
                 onClick={() => scrollToOrder('left')}
-                style={{ visibility: currentOrderIndex === 0 ? 'hidden' : 'visible' }}
               >
                 <img src="/media/smallArrowIcon.svg" alt="smallArrowIconLeft" />
               </div>
               <div 
-                className="arrow" 
+                className={`arrow ${currentOrderIndex === orders.length - 1 ? 'disabled' : ''}`} 
                 onClick={() => scrollToOrder('right')}
-                style={{ 
-                  visibility: currentOrderIndex === orders.length - 1 ? 'hidden' : 'visible',
-                  transform: 'scaleX(-1)' 
-                }}
+                style={{ transform: 'scaleX(-1)' }}
               >
                 <img src="/media/smallArrowIcon.svg" alt="smallArrowIconRight" />
               </div>

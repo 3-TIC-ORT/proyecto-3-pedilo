@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getCart, addToCart, removeFromCart, clearCart } from '@/actions/cart';
 import { createOrder } from '@/actions/order';
+import { getUserTables } from '@/actions/tables';
 import { Realtime } from 'ably';
 import "./cart.css";
 
@@ -30,6 +31,7 @@ function Cart() {
   const itemPriceRefs = useRef<HTMLParagraphElement[]>([]);
   const [isOrderBtnDisabled, setIsOrderBtnDisabled] = useState(false);
   const [isConfirmOrderBtnDisabled, setIsConfirmOrderBtnDisabled] = useState(false);
+  const [tableNumber, setTableNumber] = useState<number | null>(null); // Estado para el número de mesa
 
   const setItemNameRef = (el: HTMLParagraphElement | null) => {
     if (el && !itemNameRefs.current.includes(el)) {
@@ -72,6 +74,22 @@ function Cart() {
       channel.unsubscribe();
       ably.close();
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchTableNumber = async () => {
+      try {
+        const tables = await getUserTables();
+        if (tables.length > 0) {
+          setTableNumber(tables[0]); // Asigna el primer número de mesa encontrado
+        }
+      } catch (error) {
+        console.error('Failed to fetch table number:', error);
+        addPopup('Ocurrió un error al cargar el número de mesa. Por favor, intente nuevamente.');
+      }
+    };
+
+    fetchTableNumber();
   }, []);
 
   useEffect(() => {
@@ -148,6 +166,14 @@ function Cart() {
   };
 
   const handleOrder = () => {
+    if (tableNumber === null) {
+      addPopup('Por favor, seleccione una mesa. Te estamos redirigiendo...');
+      setTimeout(() => {
+        window.location.href = '/tables';
+      }, 3000);
+      return;
+    }
+
     setShowConfirmation(true); // Mostrar botón de confirmación
     setIsOrderBtnDisabled(true); // Deshabilitar botón de ordenar
     setTimeout(() => {
@@ -158,13 +184,16 @@ function Cart() {
   const handleConfirmOrder = async () => {
     try {
       setIsConfirmOrderBtnDisabled(true);
-      const result = await createOrder();
+      const result = await createOrder(undefined, orderNotes); // Pasar orderNotes a createOrder
       if (result.orderId) {
-        addPopup(`Orden creada exitosamente. Número de orden: ${result.orderId}`);
+        addPopup(`Orden creada exitosamente. Número de orden: ${result.orderId}. Te redirigiremos a tus órdenes.`);
         await clearCart();
         setCartItems([]);
         setOrderNotes('');
         setShowConfirmation(false);
+        setTimeout(() => {
+          window.location.href = '/orders';
+        }, 3000);
       } else {
         throw new Error('Failed to create order');
       }
@@ -208,7 +237,7 @@ function Cart() {
               <div className="headerInfo">
                 <div className="textRow">
                   <p>Mesa N°</p>
-                  <p>99</p>
+                  <p>{tableNumber !== null ? tableNumber : 'No asignada'}</p>
                 </div>
                 <div className="textRow">
                   <p>Total:</p>

@@ -1,5 +1,7 @@
 "use server"
 import { prisma } from "@/prisma"
+import { auth } from '@/auth';
+import { Session } from "next-auth";
 
 export async function getTables() {
   return await prisma.table.findMany({
@@ -26,7 +28,24 @@ export async function getTables() {
   })
 }
 
-export async function assignTable(tableNumber: number, userId: string) {
+async function getSession(): Promise<Session> {
+  const session = await auth();
+  if (!session?.user) {
+    throw new Error('User not authenticated');
+  }
+  return session;
+}
+
+export async function assignTable(tableNumber: number, userId?: string) {
+  // Authenticate the user using getSession
+  const session = await getSession();
+  const user = userId || session.user.id;
+
+  // Ensure `user` is defined
+  if (!user) {
+    throw new Error("User ID is required.");
+  }
+
   // Check if the requested table exists
   const table = await prisma.table.findUnique({ where: { tableNumber } });
   if (!table) {
@@ -37,7 +56,7 @@ export async function assignTable(tableNumber: number, userId: string) {
   return await prisma.$transaction(async (prisma) => {
     // Check if the user is already assigned to any table
     const existingAssignment = await prisma.tableUser.findFirst({
-      where: { userId },
+      where: { userId: user },
     });
 
     // If an existing assignment is found, remove it
@@ -45,7 +64,7 @@ export async function assignTable(tableNumber: number, userId: string) {
       await prisma.tableUser.delete({
         where: {
           userId_tableNumber: {
-            userId,
+            userId: user,
             tableNumber: existingAssignment.tableNumber,
           },
         },
@@ -55,35 +74,39 @@ export async function assignTable(tableNumber: number, userId: string) {
     // Create the new table assignment
     return await prisma.tableUser.create({
       data: {
-        userId,
+        userId: user,
         tableNumber,
       },
     });
   });
 }
-export async function unassignTable(tableNumber: number, userId: string) {
+
+export async function unassignTable(tableNumber: number, userId?: string) {
+  const session = await getSession();
+  const user = userId || session.user.id;
+
   const table = await prisma.table.findUnique({ where: { tableNumber } });
   if (!table) {
-    throw new Error("Table not found")
+    throw new Error("Table not found");
   }
 
   const assignment = await prisma.tableUser.findUnique({
     where: {
       userId_tableNumber: {
-        userId,
+        userId: user,
         tableNumber
       }
     }
   });
 
   if (!assignment) {
-    throw new Error("User is not assigned to this table")
+    throw new Error("User is not assigned to this table");
   }
 
   return await prisma.tableUser.delete({
     where: {
       userId_tableNumber: {
-        userId,
+        userId: user,
         tableNumber
       }
     },
@@ -105,17 +128,12 @@ export async function getTableUsers(tableNumber: number) {
   });
 }
 
-// export async function getUserTable(userId: string) {
-//   const tableUser = await prisma.tableUser.findFirst({
-//     where: { userId },
-//     select: { tableNumber: true },
-//   });
-//
-//   return tableUser?.tableNumber;
-// }
-export async function getUserTables(userId: string) {
+export async function getUserTables(userId?: string) {
+  const session = await getSession();
+  const user = userId || session.user.id;
+
   const tableUsers = await prisma.tableUser.findMany({
-    where: { userId },
+    where: { userId: user },
     select: { tableNumber: true },
   });
 
@@ -125,7 +143,7 @@ export async function getUserTables(userId: string) {
 export async function assignWaiter(tableNumber: number, waiterId: string) {
   const table = await prisma.table.findUnique({ where: { tableNumber } });
   if (!table) {
-    throw new Error("Table not found")
+    throw new Error("Table not found");
   }
 
   return await prisma.table.update({
@@ -137,7 +155,7 @@ export async function assignWaiter(tableNumber: number, waiterId: string) {
 export async function unassignWaiter(tableNumber: number) {
   const table = await prisma.table.findUnique({ where: { tableNumber } });
   if (!table) {
-    throw new Error("Table not found")
+    throw new Error("Table not found");
   }
 
   return await prisma.table.update({
