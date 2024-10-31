@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Proyecto Pedilo
 
-## Getting Started
+## Descripción
 
-First, run the development server:
+Pedilo es una aplicación web diseñada para facilitar la gestión de pedidos en línea. Con una interfaz intuitiva y funcionalidades eficientes, permite a los usuarios realizar pedidos de manera rápida y sencilla, optimizando la experiencia del cliente y mejorando la eficiencia operativa.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Características
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Interfaz de usuario intuitiva**: Navegación fácil y accesible para todos los usuarios.
+- **Gestión de pedidos**: Los usuarios pueden realizar, modificar y cancelar pedidos.
+- **Sistema de notificaciones**: Alertas en tiempo real para el estado de los pedidos.
+- **Soporte multilenguaje**: Disponible en varios idiomas para alcanzar un público más amplio.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tecnologías utilizadas
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Frontend**: React, HTML, CSS
+- **Backend**: Node.js, Express
+- **Base de datos**: MongoDB
+- **Autenticación**: JWT (JSON Web Tokens)
 
-## Learn More
+## Instalación
 
-To learn more about Next.js, take a look at the following resources:
+Para configurar el proyecto en tu máquina local, sigue estos pasos:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/3-TIC-ORT/proyecto-3-pedilo.git
+   ```
+2. Dirigete al directorio:
+   ```bash
+   cd proyecto-3-pedilo
+   ```
+3. Instala las dependencias:
+   ```bash
+   npm install
+   ```
+4. Configura las variables de entorno necesarias en un archivo .env.local:
+   ```bash
+   type nul > .env.local
+   ```
+5. Inicia el servidor en modo desarrollador:
+   ```bash
+   npm run dev
+   ```
+## Uso
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Una vez que la aplicación esté en funcionamiento, puedes acceder a ella desde tu navegador en http://localhost:3000. Desde allí, podrás crear una cuenta, iniciar sesión y realizar pedidos.
 
-## Deploy on Vercel
+## Contribuciones
+Las contribuciones son bienvenidas. Si deseas colaborar, por favor sigue estos pasos:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  1. Haz un fork del repositorio.
+  2. Crea una nueva rama (git checkout -b feature/nueva-caracteristica).
+  3. Realiza tus cambios y haz un commit (git commit -m 'Añadir nueva característica').
+  4. Envía tus cambios a tu fork (git push origin feature/nueva-caracteristica).
+  5. Abre un Pull Request.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Contacto
+Para más información o preguntas, puedes contactarnos a través de [pedilohelp@gmail.com].
