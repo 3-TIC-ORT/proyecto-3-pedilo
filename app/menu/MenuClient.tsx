@@ -102,7 +102,16 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
             <div className="categoryProducts">
               {categories[categoryName].map((item, itemIndex) => (
                 <div key={itemIndex} className="product" onClick={() => handleProductClick(item)}>
-                  <p className="name">{item.title}</p>
+                  {item.photo ? (
+                    <div className="productInfoContainer">
+                      <p className="name">{item.title}</p>
+                      <img src={item.photo} alt={item.title} className="productImg" />
+                    </div>
+                  ) : (
+                    <div className="productTitleContainer">
+                      <p className="name">{item.title}</p>
+                    </div>
+                  )}
                   <div className="price-tag">
                     <p className="price">${item.price.toFixed(2)}</p>
                     <p className="tag">{item.category}</p>
