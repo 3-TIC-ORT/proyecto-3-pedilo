@@ -38,7 +38,7 @@ function Landing() {
       <section>
         <div className="leftSide">
             <div className="title">
-                <h1>Categoria</h1>
+                <h1>Nombre</h1>
                 <p>Integrantes</p>
             </div>
             <div className="aplicacionesUsadas">
@@ -51,12 +51,18 @@ function Landing() {
             <div className="etapa">
                 <div className="text">
                     <h1>Etapa</h1>
-                    <p>Nombre de la etapa</p>
+                    <p>Nombre</p>
                 </div>
                 <div className="content">
-                    <div className="img"></div>
-                    <div className="img"></div>
-                    <div className="img"></div>
+                    <div className="img">
+                        <img src="" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="" alt="" />
+                    </div>
                 </div>
             </div>
         </div>

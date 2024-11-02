@@ -275,6 +275,13 @@ header, footer {
                         background-color: var(--white);
                         border-radius: 1rem;
                         min-height: calc(50% - 1rem);
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            object-position: center;
+                        }
                     }
                 }
 
