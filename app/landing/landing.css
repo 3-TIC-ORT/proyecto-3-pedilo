@@ -13,6 +13,7 @@ header, footer {
     flex-direction: column;
     align-items: center;
     position: relative;
+    scroll-snap-align: start; /* Activa el sticky scroll */
     
     .header {
         display: flex;
@@ -48,7 +49,7 @@ header, footer {
             gap: 1.5rem;
 
             a {
-                color: #FFF;
+                color: var(--white);
                 text-align: center;
                 font-family: Inter;
                 font-size: 2.25rem;
@@ -69,6 +70,7 @@ header, footer {
         flex-shrink: 0;
         align-self: stretch;
         position: relative;
+        scroll-snap-type: y mandatory; /* Activa el sticky scroll */
 
         /*Inicio*/
 
@@ -89,8 +91,6 @@ header, footer {
             h1 {
                 color: rgba(255, 255, 255, 0.50);
                 text-align: start;
-                -webkit-text-stroke-width: 2;
-                -webkit-text-stroke-color: #FFF;
                 font-family: Inter;
                 font-size: 12rem;
                 font-style: normal;
@@ -102,8 +102,6 @@ header, footer {
             p {
                 color: rgba(255, 255, 255, 0.50);
                 text-align: start;
-                -webkit-text-stroke-width: 2;
-                -webkit-text-stroke-color: #FFF;
                 font-family: Inter;
                 font-size: 4rem;
                 font-style: normal;
@@ -112,7 +110,7 @@ header, footer {
                 backdrop-filter: blur(.25rem);
             }
         }
-
+        
         .scrollButton {
             display: flex;
             width: 4rem;
@@ -122,9 +120,10 @@ header, footer {
             align-items: center;
             position: absolute;
             left: 50%;
+            transform: translateX(-50%);
             bottom: 1rem;
             border-radius: 50%;
-            border: 2px solid #FFF;
+            border: 2px solid var(--white);
             background: rgba(255, 255, 255, 0.25) url('/media/noise.png') repeat;
 
             svg {
@@ -132,11 +131,11 @@ header, footer {
                 height: 50%;
                 flex-shrink: 0;
                 stroke-width: 5px;
-                stroke: #FFF;
+                stroke: var(--white);
             }
         }
 
-        /*Timi*/
+        /*Section*/
 
         .leftSide {
             display: flex;
@@ -156,8 +155,6 @@ header, footer {
                 h1 {
                     color: rgba(255, 255, 255, 0.75);
                     text-align: start;
-                    -webkit-text-stroke-width: 2;
-                    -webkit-text-stroke-color: #FFF;
                     font-family: Inter;
                     font-size: 8rem;
                     font-style: normal;
@@ -169,8 +166,6 @@ header, footer {
                 p {
                     color: rgba(255, 255, 255, 0.75);
                     text-align: start;
-                    -webkit-text-stroke-width: 2;
-                    -webkit-text-stroke-color: #FFF;
                     font-family: Inter;
                     font-size: 3rem;
                     font-style: normal;
@@ -196,7 +191,7 @@ header, footer {
                     justify-content: center;
                     align-items: center;
                     border-radius: 50%;
-                    border: 2px solid #FFF;
+                    border: 2px solid var(--white);
                     background: rgba(255, 255, 255, 0.25) url('/media/noise.png') repeat;
                     backdrop-filter: blur(.25rem);
 
@@ -218,6 +213,7 @@ header, footer {
             align-self: stretch;
             border-radius: 1rem;
             overflow-y: scroll;
+            scroll-snap-align: start; /* Activa el sticky scroll */
 
             .etapa {
                 display: flex;
@@ -227,18 +223,18 @@ header, footer {
                 gap: 2rem;
                 flex: 1 0 0;
                 align-self: stretch;
+                scroll-snap-type: y mandatory; /* Activa el sticky scroll */
 
                 .text {
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-end;
                     align-items: flex-start;
+                    height: auto;
 
                     h1 {
                         color: rgba(255, 255, 255, 0.75);
                         text-align: start;
-                        -webkit-text-stroke-width: 2;
-                        -webkit-text-stroke-color: #FFF;
                         font-family: Inter;
                         font-size: 4rem;
                         font-style: normal;
@@ -250,8 +246,6 @@ header, footer {
                     p {
                         color: rgba(255, 255, 255, 0.75);
                         text-align: start;
-                        -webkit-text-stroke-width: 2;
-                        -webkit-text-stroke-color: #FFF;
                         font-family: Inter;
                         font-size: 2rem;
                         font-style: normal;
@@ -261,19 +255,132 @@ header, footer {
                     }
                 }
 
+                /* Contenido predeterminda */
                 .content {
                     display: flex;
-                    padding: 2rem;
                     flex-direction: column;
                     align-items: flex-start;
+                    flex-wrap: wrap;
+                    padding: 2rem;
                     gap: 2rem;
-                    flex: 1 0 0;
-                    align-self: stretch;
                     border-radius: 2rem;
                     background: rgba(255, 255, 255, 0.50);
                     backdrop-filter: blur(.25rem);
+                    height: 100%;
+                    width: 100%;
+
+                    .img {
+                        flex: 1;
+                        min-width: calc(50% - 1rem);
+                        background-color: var(--white);
+                        border-radius: 1rem;
+                        min-height: calc(50% - 1rem);
+                    }
+                }
+
+                .type1 {
+                    flex-direction: row;
+                }
+
+                .type2 {
+                    flex-wrap: wrap-reverse;
+                }
+
+                .type3 {
+                    flex-direction: row;
+                    flex-wrap: wrap-reverse;
                 }
             }
         }
     }
+}
+
+@media (max-width: 1366px) {
+    .body {
+        
+        .header {
+            height: 4rem;
+            padding: 1rem;
+            justify-content: center;
+    
+            .logo {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+    
+            .buttons {
+                display: none;
+            }
+        }
+    
+        section {
+            flex-direction: column;
+            gap: 2rem;
+    
+            /*Inicio*/
+    
+            .title {
+    
+                h1 {
+                    font-size: 6rem;
+                }
+    
+                p {
+                    font-size: 2rem;
+                }
+            }
+    
+            /*Secciones*/
+    
+            .leftSide {
+                max-width: none;
+                width: 100%;
+                gap: 1rem;
+
+                .title {
+    
+                    h1 {
+                        font-size: 4rem;
+                    }
+    
+                    p {
+                        font-size: 1.5rem;
+                    }
+                }
+    
+                .aplicacionesUsadas {
+                    gap: .5rem;
+    
+                    .aplicacion {
+                        width: 4rem;
+                        height: 4rem;
+                    }
+                }
+            }
+    
+            .rightSide {
+                padding: 0;
+    
+                .etapa {
+                    gap: 1rem;
+    
+                    .text {
+    
+                        h1 {
+                            font-size: 2rem;
+                        }
+    
+                        p {
+                            font-size: 1rem;
+                        }
+                    }
+    
+                    .content {
+                        padding: 1rem;
+                        gap: 1rem;
+                    }
+                }
+            }
+        }
+    }    
 }

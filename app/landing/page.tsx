@@ -53,7 +53,11 @@ function Landing() {
                     <h1>Etapa</h1>
                     <p>Nombre de la etapa</p>
                 </div>
-                <div className="content"></div>
+                <div className="content">
+                    <div className="img"></div>
+                    <div className="img"></div>
+                    <div className="img"></div>
+                </div>
             </div>
         </div>
       </section>
