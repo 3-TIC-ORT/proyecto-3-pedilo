@@ -8,7 +8,7 @@ export default async function Profile() {
   const session = await auth();
   if (!session) {
     return (
-      <div>Not authenticated</div>
+      <main>Not authenticated</main>
     )
   } else {
     const user = session.user;
