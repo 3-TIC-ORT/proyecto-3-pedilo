@@ -1,12 +1,14 @@
-import "./not-found.css"
-
 export default function notFound (){
     return(
-        <main className="text-left">
-         <h2 className="text-3xl">Error 404</h2>
-         <p>Te pedimos mil disculpas, hubo un problema en la aplicacion</p>
-         <p>Para reslverlo, chequeá que estés bien conectado a la red de internet</p>
-         <p>Volver al <a href="/menu">menu</a></p>
+        <main className="not-found">
+            <div className="container">
+                <div className="text">
+                    <h1>Error 404</h1>
+                    <h2>Pagina no encontrada</h2>
+                    <p>Ops.. parece que estas perdido. No encontramos la bandeja que estabas buscando</p>
+                </div>
+                <a href="/" className="back2MenuButton">Volver al inicio</a>
+            </div>
         </main>
 )
 }
