@@ -28,7 +28,7 @@ export default async function RootLayout({
     console.log("hasTableAssigned", userTables);
     pendingCall = await hasPendingCall(userTables[0]);
   }
-
+  
   return (
     <html lang="en">
       <body>
