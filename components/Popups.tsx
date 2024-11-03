@@ -6,10 +6,11 @@ interface Popup {
   count: number;
   id: number;
   exit: boolean;
+  isError?: boolean;
 }
 
 interface PopupContextType {
-  addPopup: (message: string) => void;
+  addPopup: (message: string, isError?: boolean) => void;
 }
 
 const PopupContext = createContext<PopupContextType | undefined>(undefined);
@@ -25,7 +26,7 @@ export const usePopup = () => {
 export const PopupProvider = ({ children }: { children: ReactNode }) => {
   const [popups, setPopups] = useState<Popup[]>([]);
 
-  const addPopup = (message: string) => {
+  const addPopup = (message: string, isError: boolean = false) => {
     setPopups(prev => {
       const existingPopup = prev.find(popup => popup.message === message);
       if (existingPopup) {
@@ -35,7 +36,7 @@ export const PopupProvider = ({ children }: { children: ReactNode }) => {
             : popup
         );
       } else {
-        return [...prev, { message, count: 1, id: Date.now(), exit: false }];
+        return [...prev, { message, count: 1, id: Date.now(), exit: false, isError }];
       }
     });
   };
@@ -44,9 +45,12 @@ export const PopupProvider = ({ children }: { children: ReactNode }) => {
     <PopupContext.Provider value={{ addPopup }}>
       {children}
       <div className="popups">
-        {popups.map((popup, index) => (
-          <div key={popup.id} className={`popup ${popup.exit ? 'popup-exit' : ''}`}>
-            {popup.message} ({popup.count})
+        {popups.map((popup) => (
+          <div 
+            key={popup.id} 
+            className={`popup ${popup.exit ? 'popup-exit' : ''} ${popup.isError ? 'popupError' : ''}`}
+          >
+            {popup.message} {popup.count > 1 && `(${popup.count})`}
           </div>
         ))}
       </div>
@@ -54,10 +58,4 @@ export const PopupProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const Popups = () => {
-  const { addPopup } = usePopup();
-
-  return null; // No need to render anything, as popups are handled in the context provider
-};
-
-export default Popups;
+export default PopupProvider;
