@@ -121,6 +121,12 @@ function Cart() {
 
   const handleRemoveItem = async (itemId: number) => {
     try {
+      if (tableNumber === null) {
+        addPopup('Primero debes seleccionar una mesa', true);
+        router.push('/tables');
+        return; // Exit the function if tableNumber is null
+      }
+
       const item = cartItems.find(item => item.itemId === itemId);
       if (item) {
         await removeFromCart(itemId, item.amount, tableNumber); // Pass tableNumber and itemId
