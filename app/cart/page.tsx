@@ -123,7 +123,8 @@ function Cart() {
     try {
       const item = cartItems.find(item => item.itemId === itemId);
       if (item) {
-        await removeFromCart(itemId, item.amount); // Pasar la cantidad total del artículo
+        await removeFromCart(itemId, item.amount, tableNumber); // Pass tableNumber and itemId
+
         const { items } = await getCart();
         setCartItems(items);
         addPopup('Artículo eliminado del carrito', false);
