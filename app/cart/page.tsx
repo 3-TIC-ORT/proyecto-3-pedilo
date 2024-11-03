@@ -3,7 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getCart, addToCart, removeFromCart, clearCart } from '@/actions/cart';
 import { createOrder } from '@/actions/order';
 import { getUserTables } from '@/actions/tables';
+import { usePopup } from '@/context/PopupContext';
 import { Realtime } from 'ably';
+import { useRouter } from 'next/navigation';
 import "./cart.css";
 
 interface CartItem {
@@ -24,6 +26,8 @@ function Cart() {
   const [isOrderBtnDisabled, setIsOrderBtnDisabled] = useState(false);
   const [isConfirmOrderBtnDisabled, setIsConfirmOrderBtnDisabled] = useState(false);
   const [tableNumber, setTableNumber] = useState<number | null>(null); // Estado para el número de mesa
+  const { addPopup } = usePopup();
+  const router = useRouter();
 
   const setItemNameRef = (el: HTMLParagraphElement | null) => {
     if (el && !itemNameRefs.current.includes(el)) {
@@ -45,6 +49,7 @@ function Cart() {
         setCartItems(items);
       } catch (error) {
         console.error('Failed to fetch cart items:', error);
+        addPopup('Ocurrio un error al cargar la informacion del carrito.', true);
       } finally {
         setLoading(false); // Finalizar carga
       }
@@ -76,6 +81,7 @@ function Cart() {
         }
       } catch (error) {
         console.error('Failed to fetch table number:', error);
+        addPopup('Ocurrio un error al cargar la informacion de la mesa.', true);
       }
     };
 
@@ -96,6 +102,8 @@ function Cart() {
   const handleQuantityChange = async (itemId: number, delta: number) => {
     try {
       if (tableNumber === null) {
+        addPopup('Primero debes seleccionar una mesa', true);
+        router.push('/tables');
         return; // Exit the function if tableNumber is null
       }
 
@@ -118,11 +126,13 @@ function Cart() {
         await removeFromCart(itemId, item.amount); // Pasar la cantidad total del artículo
         const { items } = await getCart();
         setCartItems(items);
+        addPopup('Artículo eliminado del carrito', false);
       } else {
         throw new Error('Item not found in cart');
       }
     } catch (error) {
       console.error('Failed to remove item from cart:', error);
+      addPopup('Ocurrio un error al eliminar el articulo del carrito.', true);
     }
   };
 
@@ -153,11 +163,13 @@ function Cart() {
         setTimeout(() => {
           window.location.href = '/orders';
         }, 3000);
+        addPopup('Orden creada exitosamente.', false);
       } else {
         throw new Error('Failed to create order');
       }
     } catch (error) {
       console.error('Error creating order:', error);
+      addPopup('Ocurrio un error al confirmar la orden.', true);
     } finally {
       setIsConfirmOrderBtnDisabled(false);
     }
