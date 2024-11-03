@@ -2,6 +2,7 @@
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from "next-auth";
+import { publishOrderUpdate, publishItemUpdate, publishOrder } from '@/lib/ably';
 
 async function getSession(): Promise<Session> {
   const session = await auth();
@@ -47,7 +48,7 @@ export async function getAllOrders() {
 }
 
 export async function orderItemStatus(itemId: number, status: string, orderId: number) {
-  await prisma.orderItem.update({
+  const updatedItem = await prisma.orderItem.update({
     where: {
       orderId_itemId: {
         orderId: orderId,
@@ -56,6 +57,9 @@ export async function orderItemStatus(itemId: number, status: string, orderId: n
     },
     data: { status: status },
   });
+
+  // Publish item status update
+  await publishItemUpdate(orderId, itemId, status);
 
   const orderItems = await prisma.orderItem.findMany({
     where: { orderId },
@@ -67,6 +71,8 @@ export async function orderItemStatus(itemId: number, status: string, orderId: n
       where: { orderId },
       data: { status: 'ready' },
     });
+    // Publish order status update
+    await publishOrderUpdate(orderId, 'ready');
   }
 
   return { message: `Item status updated to ${status}` };
@@ -102,6 +108,7 @@ export async function getOrders(userId?: string) {
   }));
   return formattedOrders;
 }
+
 
 export async function createOrder(userId?: string, orderNote?: string) {
   const session = await getSession();
@@ -170,6 +177,9 @@ export async function createOrder(userId?: string, orderNote?: string) {
       where: { cartId: cart.id }
     });
 
+    // Publish order creation update to Ably
+    await publishOrder(newOrder.orderId, newOrder.status); // Add this line to publish order creation
+
     return newOrder;
   });
 
@@ -180,7 +190,7 @@ export async function createOrder(userId?: string, orderNote?: string) {
 }
 
 export async function changeOrderStatus(orderId: number, status: string) {
-  await prisma.order.update({
+  const updatedOrder = await prisma.order.update({
     where: { orderId: orderId },
     data: { status },
   });
@@ -189,6 +199,9 @@ export async function changeOrderStatus(orderId: number, status: string) {
     where: { orderId: orderId },
     data: { status },
   });
+
+  // Publish order status update
+  await publishOrderUpdate(orderId, status);
 
   return { message: 'Order status updated successfully', orderId: orderId };
 }
@@ -208,6 +221,9 @@ export async function ChangeItemStatus(orderId: number, itemId: number, status: 
     if (!updatedItem) {
       throw new Error('Item not found in the order');
     }
+
+    // Publish item status update
+    await publishItemUpdate(orderId, itemId, status);
 
     const orderItems = await prisma.orderItem.findMany({
       where: { orderId },
