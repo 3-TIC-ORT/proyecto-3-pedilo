@@ -26,7 +26,7 @@ export default async function RootLayout({
     const userTables = await getUserTables(userId);
     hasTableAssigned = userTables.length > 0;
     console.log("hasTableAssigned", userTables);
-    pendingCall = await hasPendingCall(userTables[0]);
+    pendingCall = await hasPendingCall(userTables[0].tableNumber);
   }
 
   return (
@@ -43,8 +43,8 @@ export default async function RootLayout({
         <footer>
           {(role === "chef" ||
             (role === "user" && hasTableAssigned && !pendingCall)) && (
-            <CallWaiterBtn />
-          )}
+              <CallWaiterBtn />
+            )}
           {role === "waiter" && (
             <a className="callsBtn" href="/calls">
               Llamados

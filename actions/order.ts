@@ -3,7 +3,6 @@ import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from "next-auth";
 
-// Helper function to handle session authentication
 async function getSession(): Promise<Session> {
   const session = await auth();
   if (!session?.user) {
@@ -14,7 +13,17 @@ async function getSession(): Promise<Session> {
 
 export async function getAllOrders() {
   const orders = await prisma.order.findMany({
-    include: { OrderItems: { include: { Item: true } } },
+    include: {
+      OrderItems: {
+        include: { Item: true }
+      },
+      User: {
+        select: {
+          name: true,
+          email: true
+        }
+      }
+    },
   });
 
   const formattedOrders = orders.map((order) => ({
@@ -22,13 +31,15 @@ export async function getAllOrders() {
     totalAmount: order.totalAmount,
     orderDate: order.orderDate,
     tableNumber: order.tableNumber,
-    status: order.status,         // Added status
-    orderNote: order.orderNote,   // Added orderNote
+    status: order.status,
+    orderNote: order.orderNote,
     orderStatus: order.status,
+    orderedBy: order.User.name || order.User.email,
     items: order.OrderItems.map((orderItem) => ({
       itemId: orderItem.itemId,
       title: orderItem.Item.title,
       quantity: orderItem.quantity,
+      status: orderItem.status
     })),
   }));
 
@@ -36,7 +47,6 @@ export async function getAllOrders() {
 }
 
 export async function orderItemStatus(itemId: number, status: string, orderId: number) {
-  // Update the status of the specific item in the order
   await prisma.orderItem.update({
     where: {
       orderId_itemId: {
@@ -46,7 +56,7 @@ export async function orderItemStatus(itemId: number, status: string, orderId: n
     },
     data: { status: status },
   });
-  // Check if all order items are prepared
+
   const orderItems = await prisma.orderItem.findMany({
     where: { orderId },
   });
@@ -63,92 +73,118 @@ export async function orderItemStatus(itemId: number, status: string, orderId: n
 }
 
 export async function getOrders(userId?: string) {
-  // Authenticate the user using getSession
   const session = await getSession();
   const user = userId || session.user.id;
 
-  // Fetch all orders for the user
   const orders = await prisma.order.findMany({
     where: { userId: user },
     orderBy: { orderDate: 'desc' },
-    include: { OrderItems: { include: { Item: true } } },
+    include: {
+      OrderItems: {
+        include: { Item: true }
+      }
+    },
   });
 
-  // Format the order data for the response
   const formattedOrders = orders.map((order) => ({
     orderId: order.orderId,
     totalAmount: order.totalAmount,
     orderDate: order.orderDate,
     tableNumber: order.tableNumber,
-    status: order.status,         // Added status
-    orderNote: order.orderNote,   // Added orderNote
+    status: order.status,
+    orderNote: order.orderNote,
     items: order.OrderItems.map((orderItem) => ({
       itemId: orderItem.itemId,
       title: orderItem.Item.title,
       quantity: orderItem.quantity,
+      status: orderItem.status
     })),
   }));
   return formattedOrders;
 }
 
-export async function createOrder(userId?: string, orderNote?: string) {  // Added orderNote parameter
-  // Authenticate the user using getSession
+export async function createOrder(userId?: string, orderNote?: string) {
   const session = await getSession();
   const user = userId || session.user.id;
-  // Fetch cart items for the user
-  const cartItems = await prisma.cart.findMany({
-    where: { userId: user },
-    include: { Item: true },
-  });
-  if (!cartItems.length) {
-    throw new Error('Cart is empty');
-  }
-  // Fetch table number for the user
+
+  // First, find the table the user is assigned to
   const tableUser = await prisma.tableUser.findFirst({
     where: { userId: user },
-    select: { tableNumber: true },
+    include: {
+      Table: {
+        include: {
+          Cart: {
+            include: {
+              CartItems: {
+                include: { Item: true }
+              }
+            }
+          }
+        }
+      }
+    }
   });
+
   if (!tableUser) {
     throw new Error('Table not selected');
   }
+
+  const cart = tableUser.Table.Cart;
+  if (!cart || !cart.CartItems.length) {
+    throw new Error('Cart is empty');
+  }
+
   // Calculate the total amount for the order
-  const totalAmount = cartItems.reduce((acc, cartItem) => {
-    return acc + (cartItem.amount * cartItem.Item.price);
+  const totalAmount = cart.CartItems.reduce((acc, cartItem) => {
+    return acc + (cartItem.quantity * cartItem.Item.price);
   }, 0);
-  // Create a new order for the user
-  const order = await prisma.order.create({
-    data: {
-      userId: user,
-      totalAmount: totalAmount,
-      orderDate: new Date(),
-      tableNumber: tableUser.tableNumber,
-      orderNote: orderNote,  // Added orderNote
-    },
-  });
-  const orderId = order.orderId;
-  // Insert each item from the cart into the OrderItem table
-  for (const cartItem of cartItems) {
-    await prisma.orderItem.create({
+
+  // Create the order within a transaction
+  const order = await prisma.$transaction(async (prisma) => {
+    // Create the order
+    const newOrder = await prisma.order.create({
       data: {
-        orderId: orderId,
-        itemId: cartItem.itemId,
-        quantity: cartItem.amount || 0,
+        userId: user,
+        totalAmount,
+        orderDate: new Date(),
+        tableNumber: tableUser.tableNumber,
+        orderNote,
+        status: 'Pending'
       },
     });
-  }
-  // Clear the user's cart after order creation
-  await prisma.cart.deleteMany({
-    where: { userId: user },
+
+    // Create order items from cart items
+    for (const cartItem of cart.CartItems) {
+      await prisma.orderItem.create({
+        data: {
+          orderId: newOrder.orderId,
+          itemId: cartItem.itemId,
+          quantity: cartItem.quantity,
+          status: 'Pending'
+        },
+      });
+    }
+
+    // Clear the cart items
+    await prisma.cartItem.deleteMany({
+      where: { cartId: cart.id }
+    });
+
+    return newOrder;
   });
-  // Return success response with the new order ID
-  return { message: 'Order created successfully', orderId: orderId };
+
+  return {
+    message: 'Order created successfully',
+    orderId: order.orderId
+  };
 }
+
 export async function changeOrderStatus(orderId: number, status: string) {
-  // Await the update operations to ensure they complete before proceeding
   await prisma.order.update({
     where: { orderId: orderId },
     data: { status },
   });
+
   await prisma.orderItem.updateMany({
     where: { orderId: orderId },
     data: { status },
@@ -159,7 +195,6 @@ export async function changeOrderStatus(orderId: number, status: string) {
 
 export async function ChangeItemStatus(orderId: number, itemId: number, status: string) {
   try {
-    // Update the status of the specific item in the order
     const updatedItem = await prisma.orderItem.update({
       where: {
         orderId_itemId: {
@@ -174,7 +209,6 @@ export async function ChangeItemStatus(orderId: number, itemId: number, status: 
       throw new Error('Item not found in the order');
     }
 
-    // Check if all order items are prepared
     const orderItems = await prisma.orderItem.findMany({
       where: { orderId },
     });
@@ -182,7 +216,6 @@ export async function ChangeItemStatus(orderId: number, itemId: number, status: 
     const allItemsPrepared = orderItems.every((item) => item.status === 'prepared');
 
     if (allItemsPrepared) {
-      // Await the changeOrderStatus to ensure the order status is updated before proceeding
       await changeOrderStatus(orderId, "ready");
     }
 
@@ -192,4 +225,3 @@ export async function ChangeItemStatus(orderId: number, itemId: number, status: 
     throw new Error('Failed to update item status');
   }
 }
-

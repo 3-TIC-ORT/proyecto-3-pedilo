@@ -33,7 +33,7 @@ export default async function TablesPage() {
 
     // Unassign user from their current table if they have one
     if (initialData.userTables.length > 0) {
-      await unassignTable(initialData.userTables[0], user.id);
+      await unassignTable(initialData.userTables[0].tableNumber, user.id);
     }
 
     if (selectedTable) {

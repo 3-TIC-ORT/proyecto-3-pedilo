@@ -11,6 +11,7 @@ async function getSession(): Promise<Session> {
   }
   return session;
 }
+
 export async function getTables() {
   return await prisma.table.findMany({
     include: {
@@ -31,26 +32,54 @@ export async function getTables() {
           name: true,
           email: true
         }
+      },
+      Cart: {
+        include: {
+          CartItems: {
+            include: {
+              Item: true
+            }
+          }
+        }
       }
     }
   })
 }
 
 export async function assignTable(tableNumber: number, userId: string) {
-  const table = await prisma.table.findUnique({ where: { tableNumber } });
+  const table = await prisma.table.findUnique({
+    where: { tableNumber },
+    include: { Cart: true }
+  });
+
   if (!table) throw new Error("Table not found");
 
   const assignment = await prisma.$transaction(async (prisma) => {
+    // Handle previous table assignment
     const existingAssignment = await prisma.tableUser.findFirst({ where: { userId } });
     if (existingAssignment) {
       await prisma.tableUser.delete({
         where: { userId_tableNumber: { userId, tableNumber: existingAssignment.tableNumber } },
       });
     }
-    return await prisma.tableUser.create({ data: { userId, tableNumber } });
+
+    // Create new table assignment
+    const newAssignment = await prisma.tableUser.create({ data: { userId, tableNumber } });
+
+    // If table doesn't have a cart, create one
+    if (!table.Cart) {
+      await prisma.cart.create({
+        data: {
+          tableNumber,
+          waiterId: table.waiterId || '', // Ensure waiterId is handled appropriately
+          status: 'active'
+        }
+      });
+    }
+
+    return newAssignment;
   });
 
-  // Publish table assignment to Ably channel
   await ablyClient.channels.get('table-updates').publish('table-assigned', {
     tableNumber,
     userId,
@@ -58,8 +87,13 @@ export async function assignTable(tableNumber: number, userId: string) {
 
   return assignment;
 }
+
 export async function unassignTable(tableNumber: number, userId: string) {
-  const table = await prisma.table.findUnique({ where: { tableNumber } });
+  const table = await prisma.table.findUnique({
+    where: { tableNumber },
+    include: { Users: true }
+  });
+
   if (!table) throw new Error("Table not found");
 
   const assignment = await prisma.tableUser.findUnique({
@@ -68,9 +102,24 @@ export async function unassignTable(tableNumber: number, userId: string) {
 
   if (!assignment) throw new Error("User is not assigned to this table");
 
-  await prisma.tableUser.delete({ where: { userId_tableNumber: { userId, tableNumber } } });
+  await prisma.$transaction(async (prisma) => {
+    // Remove user from table
+    await prisma.tableUser.delete({
+      where: { userId_tableNumber: { userId, tableNumber } }
+    });
 
-  // Publish table unassignment to Ably channel
+    // If this was the last user at the table, clear the cart
+    if (table.Users.length === 1) {
+      await prisma.cartItem.deleteMany({
+        where: { Cart: { tableNumber } }
+      });
+
+      await prisma.cart.delete({
+        where: { tableNumber }
+      });
+    }
+  });
+
   await ablyClient.channels.get('table-updates').publish('table-unassigned', {
     tableNumber,
     userId,
@@ -78,6 +127,7 @@ export async function unassignTable(tableNumber: number, userId: string) {
 
   return true;
 }
+
 export async function getTableUsers(tableNumber: number) {
   return await prisma.tableUser.findMany({
     where: { tableNumber },
@@ -96,25 +146,57 @@ export async function getTableUsers(tableNumber: number) {
 export async function getUserTables(userId?: string) {
   const session = await getSession();
   const user = userId || session.user.id;
-
   const tableUsers = await prisma.tableUser.findMany({
     where: { userId: user },
-    select: { tableNumber: true },
+    select: {
+      tableNumber: true,
+      Table: {
+        include: {
+          Cart: {
+            include: {
+              CartItems: {
+                include: {
+                  Item: true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
   });
-
-  return tableUsers.map(tu => tu.tableNumber);
+  return tableUsers.map(tu => ({
+    tableNumber: tu.tableNumber,
+    cart: tu.Table.Cart
+  }));
 }
 
 export async function assignWaiter(tableNumber: number, waiterId: string) {
-  const table = await prisma.table.findUnique({ where: { tableNumber } });
-  if (!table) throw new Error("Table not found");
-
-  const updatedTable = await prisma.table.update({
+  const table = await prisma.table.findUnique({
     where: { tableNumber },
-    data: { waiterId },
+    include: { Cart: true }
   });
 
-  // Publish waiter assignment to Ably channel
+  if (!table) throw new Error("Table not found");
+
+  const updatedTable = await prisma.$transaction(async (prisma) => {
+    // Update table with new waiter
+    const tableUpdate = await prisma.table.update({
+      where: { tableNumber },
+      data: { waiterId },
+    });
+
+    // If there's an active cart, update its waiter as well
+    if (table.Cart) {
+      await prisma.cart.update({
+        where: { tableNumber },
+        data: { waiterId }
+      });
+    }
+
+    return tableUpdate;
+  });
+
   await ablyClient.channels.get('table-updates').publish('waiter-assigned', {
     tableNumber,
     waiterId,
@@ -124,15 +206,31 @@ export async function assignWaiter(tableNumber: number, waiterId: string) {
 }
 
 export async function unassignWaiter(tableNumber: number) {
-  const table = await prisma.table.findUnique({ where: { tableNumber } });
-  if (!table) throw new Error("Table not found");
-
-  const updatedTable = await prisma.table.update({
+  const table = await prisma.table.findUnique({
     where: { tableNumber },
-    data: { waiterId: null },
+    include: { Cart: true }
   });
 
-  // Publish waiter unassignment to Ably channel
+  if (!table) throw new Error("Table not found");
+
+  const updatedTable = await prisma.$transaction(async (prisma) => {
+    // Remove waiter from table
+    const tableUpdate = await prisma.table.update({
+      where: { tableNumber },
+      data: { waiterId: null },
+    });
+
+    // If there's an active cart, remove waiter from it as well
+    if (table.Cart) {
+      await prisma.cart.update({
+        where: { tableNumber },
+        data: { waiterId: undefined }
+      });
+    }
+
+    return tableUpdate;
+  });
+
   await ablyClient.channels.get('table-updates').publish('waiter-unassigned', {
     tableNumber,
   });
