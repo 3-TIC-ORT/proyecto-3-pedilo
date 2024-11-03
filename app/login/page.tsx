@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { auth, signIn, providerMap } from "@/auth";
 import { AuthError } from "next-auth";
 import { cookies } from 'next/headers'
-
 import "./login.css"
+import Link from "next/link";
 
 interface SignInPageProps {
   searchParams: { verifyRequest?: string; callbackUrl?: string };
@@ -75,9 +75,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               </button>
             </form>
             <div className="otherActions">
-              <a href="/" className="backBtn">
-                Cancelar
-              </a>
+              <Link href="/" className="backBtn">Cancelar</Link>
             </div> 
         </div>
         )}
@@ -85,7 +83,6 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     );
   } else {
     return redirect("/");
-
   }
 }
 

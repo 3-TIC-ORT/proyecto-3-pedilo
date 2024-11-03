@@ -1,15 +1,26 @@
 "use client";
-import Image from "next/image";
+import { auth } from '@/auth';
+import Link from 'next/link';
 
-export default function App() {
+export default async function App() {
+  const session = await auth();
   return (
     <>
       <main>
-        <h1><a href="https://www.pedilo.tech/">Pedilo</a></h1>
-        <ul>
-          <li><a href="/menu">Menu</a></li>
-          <li><a href="/profile">Perfil</a></li>
-        </ul>
+        <div className="text">
+          <h1><a href="/">Pedilo</a></h1>
+          <h2>Bienvenido!</h2>
+          <p>Te damos la bienvenida a Pedilo</p>
+        </div>
+        <div className="buttons">
+          {!session && (
+            <>
+              <Link className='aLinkBtn' href="/login">Iniciar sesion</Link>
+              <p>o</p>
+            </>
+          )}
+          <Link className='aLinkBtn' href="/menu">Ver el menu</Link>
+        </div>
       </main>
       <style>
         {`
@@ -20,16 +31,48 @@ export default function App() {
             height: 100%;
             width: 100%;
           }
-          h1 {
-            font-size: 2rem;
-            font-weight: 900;
+
+          .text {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: .5rem;
           }
-          ul {
+
+          h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            padding: 1rem 0;
+          }
+
+          h2 {
+            font-size: 2rem;
+            font-weight: 600;
+          }
+
+          p {
+            font-size: 1.5rem;
+            font-weight: 400;
+          }
+
+          .buttons {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            list-style-type: none;
+            gap: 1rem;
+            width: 50%;
+            padding: 2rem 0;
+
+            .aLinkBtn {
+              background-color: var(--light-blue);
+              color: var(--white);
+              padding: 1rem 2rem;
+              border-radius: 8px;
+              font-weight: 600;
+              cursor: pointer;
+              width: 100%;
+              text-align: center;
+            }
           }
         `}
       </style>

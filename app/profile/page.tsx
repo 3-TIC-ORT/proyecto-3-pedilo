@@ -3,12 +3,13 @@ import "./profile.css"
 import LogoutButton from '@/components/LogoutButton';
 import { auth } from '@/auth';
 import { getOrders } from '@/actions/order';
+import Link from 'next/link';
 
 export default async function Profile() {
   const session = await auth();
   if (!session) {
     return (
-      <div>Not authenticated</div>
+      <main>Not authenticated</main>
     )
   } else {
     const user = session.user;
@@ -36,7 +37,7 @@ export default async function Profile() {
                 </div>
             </div>
         </div>
-        <a href='/orders' className='viewOrdersBtn'>Tus pedidos</a>
+        <Link href={`/orders`} className='viewOrdersBtn'>Tus ordenes</Link>
         <LogoutButton />
       </main>
     )

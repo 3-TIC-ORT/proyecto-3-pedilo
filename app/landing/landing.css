@@ -1,0 +1,513 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+header, footer {
+    display: none;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.body {
+    width: 100%;
+    height: 100dvh;
+    overflow-y: scroll;
+    background: url(/media/gradientBackground.svg) no-repeat center center fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    scroll-snap-align: start; /* Activa el sticky scroll */
+    
+    .header {
+        display: flex;
+        width: 100%;
+        height: 6rem;
+        padding: 1rem 1.5rem;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        background: rgba(255, 255, 255, 0.25) url('/media/noise.png') repeat;
+        backdrop-filter: blur(.25rem);
+        position: absolute;
+        z-index: 1000;
+
+        .logo {
+            display: flex;
+            width: 4rem;
+            height: 4rem;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+
+            img {
+                width: auto;
+                height: 100%;
+                flex-shrink: 0;
+            }
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+
+            a {
+                color: var(--white);
+                text-align: center;
+                font-family: Inter;
+                font-size: 2.25rem;
+                font-style: normal;
+                font-weight: 700;
+                line-height: normal;
+                text-decoration: none;
+            }
+        }
+    }
+
+    section {
+        display: flex;
+        height: 100dvh;
+        padding: 64px;
+        align-items: center;
+        gap: 4rem;
+        flex-shrink: 0;
+        align-self: stretch;
+        position: relative;
+        scroll-snap-type: y mandatory; /* Activa el sticky scroll */
+
+        /*Inicio*/
+
+        &.inicio {
+            padding: 0;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+        }
+
+        .title {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+
+            h1 {
+                color: rgba(255, 255, 255, 0.50);
+                text-align: start;
+                font-family: Inter;
+                font-size: 12rem;
+                font-style: normal;
+                font-weight: 700;
+                line-height: normal;
+                backdrop-filter: blur(.25rem);
+            }
+
+            p {
+                color: rgba(255, 255, 255, 0.50);
+                text-align: start;
+                font-family: Inter;
+                font-size: 4rem;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+                backdrop-filter: blur(.25rem);
+            }
+        }
+        
+        .scrollButton {
+            display: flex;
+            width: 4rem;
+            height: 4rem;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 1rem;
+            border-radius: 50%;
+            border: 2px solid var(--white);
+            background: rgba(255, 255, 255, 0.25) url('/media/noise.png') repeat;
+
+            img {
+                width: auto;
+                height: 50%;
+                flex-shrink: 0;
+                stroke-width: 5px;
+                stroke: var(--white);
+            }
+        }
+
+        /*Section*/
+
+        .leftSide {
+            display: flex;
+            max-width: 40%;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2rem;
+            align-self: stretch;
+
+            .title {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                align-self: stretch;
+
+                h1 {
+                    color: rgba(255, 255, 255, 0.75);
+                    text-align: start;
+                    font-family: Inter;
+                    font-size: 8rem;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: normal;
+                    backdrop-filter: blur(4px);
+                }
+
+                p {
+                    color: rgba(255, 255, 255, 0.75);
+                    text-align: start;
+                    font-family: Inter;
+                    font-size: 3rem;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: normal;
+                    backdrop-filter: blur(4px);
+                }
+            }
+
+            .aplicacionesUsadas {
+                display: flex;
+                align-items: center;
+                align-content: center;
+                gap: 1.5rem;
+                align-self: stretch;
+                flex-wrap: wrap;
+
+                .aplicacion {
+                    display: flex;
+                    width: 6rem;
+                    height: 6rem;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50%;
+                    border: 2px solid var(--white);
+                    background: rgba(255, 255, 255, 0.5) url('/media/noise.png') repeat;
+                    backdrop-filter: blur(.25rem);
+                    padding: 1rem;
+
+                    .imgText {
+                        opacity: 0;
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        transform: translate(-50%, -50%);
+                        width: 6rem;
+                        height: 6rem;
+                        border-radius: 50%;
+                        background: rgba(0, 0, 0, 0.5);
+                        backdrop-filter: blur(.25rem);
+                        border: 2px solid var(--white);
+                        color: var(--white);
+                        transition: ease all .25s;
+                        text-align: center;
+                    }
+
+                    img {
+                        flex: 1 0 0;
+                        align-self: stretch;
+                    }
+
+                    &:hover {
+                        .imgText {
+                            opacity: 1;
+                        }
+                    }
+
+                    &.black {
+                        background: rgba(0, 0, 0, 0.5) url('/media/noise.png') repeat;
+                    }
+                }
+            }
+        }
+
+        .rightSide {
+            display: flex;
+            padding: 2rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4rem;
+            flex: 1 0 0;
+            align-self: stretch;
+            border-radius: 1rem;
+            overflow-y: scroll;
+            scroll-snap-align: start; /* Activa el sticky scroll */
+
+            .etapa {
+                display: flex;
+                height: 100%;
+                min-height: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2rem;
+                flex: 1 0 0;
+                align-self: stretch;
+                scroll-snap-type: y mandatory; /* Activa el sticky scroll */
+
+                .text {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                    align-items: flex-start;
+                    height: auto;
+
+                    h1 {
+                        color: rgba(255, 255, 255, 0.75);
+                        text-align: start;
+                        font-family: Inter;
+                        font-size: 4rem;
+                        font-style: normal;
+                        font-weight: 400;
+                        line-height: normal;
+                        backdrop-filter: blur(.25rem);
+                    }
+
+                    p {
+                        color: rgba(255, 255, 255, 0.75);
+                        text-align: start;
+                        font-family: Inter;
+                        font-size: 2rem;
+                        font-style: normal;
+                        font-weight: 400;
+                        line-height: normal;
+                        backdrop-filter: blur(.25rem);
+                    }
+                }
+
+                &.textOnly {
+                    justify-content: center;
+                    background: rgba(255, 255, 255, 0.50);
+                    border-radius: 2rem;
+                    padding: 2rem;
+                    gap: 3rem;
+
+                    h1 {
+                        color: rgba(255, 255, 255, 0.75);
+                        text-align: start;
+                        font-family: Inter;
+                        font-size: 6rem;
+                        font-style: normal;
+                        font-weight: 400;
+                        line-height: normal;
+                        backdrop-filter: blur(.25rem);
+                        margin-bottom: auto;
+                    }
+
+                    .text {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-end;
+                        align-items: flex-start;
+                        height: auto;
+    
+                        h1 {
+                            color: rgba(255, 255, 255, 0.75);
+                            text-align: start;
+                            font-family: Inter;
+                            font-size: 4rem;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: normal;
+                            backdrop-filter: blur(.25rem);
+                        }
+    
+                        p {
+                            color: rgba(255, 255, 255, 0.75);
+                            text-align: start;
+                            font-family: Inter;
+                            font-size: 2rem;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: normal;
+                            backdrop-filter: blur(.25rem);
+                        }
+                    }
+                }
+
+                /* Contenido predeterminda */
+                .content {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    flex-wrap: wrap;
+                    padding: 2rem;
+                    gap: 2rem;
+                    border-radius: 2rem;
+                    background: rgba(255, 255, 255, 0.50);
+                    backdrop-filter: blur(.25rem);
+                    min-height: calc(100% - 7.25rem);
+                    width: 100%;
+
+                    .img {
+                        flex: 1;
+                        width: calc(50% - 1rem);
+                        background-color: var(--white);
+                        border-radius: 1rem;
+                        min-height: calc(50% - 1rem);
+                        min-width: calc(50% - 1rem);
+                        height: calc(50% - 1rem);
+                        overflow: hidden;
+                        padding: 0;
+
+                        img {
+                            object-fit: cover;
+                            max-height: 100%;
+                            height: 100%;
+                            width: 100%;
+                            object-position: center;
+                        }
+                    }
+
+                    &.type1 {
+                        flex-direction: row;
+                    }
+    
+                    &.type2 {
+                        flex-wrap: wrap-reverse;
+                    }
+    
+                    &.type3 {
+                        flex-direction: row;
+                        flex-wrap: wrap-reverse;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 1366px) {
+    .body {
+        
+        .header {
+            height: 4rem;
+            padding: 1rem;
+            justify-content: center;
+    
+            .logo {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+    
+            .buttons {
+                display: none;
+            }
+        }
+    
+        section {
+            flex-direction: column;
+            gap: 2rem;
+    
+            /*Inicio*/
+    
+            .title {
+    
+                h1 {
+                    font-size: 6rem;
+                }
+    
+                p {
+                    font-size: 2rem;
+                }
+            }
+    
+            /*Secciones*/
+    
+            .leftSide {
+                max-width: none;
+                width: 100%;
+                gap: 1rem;
+
+                .title {
+    
+                    h1 {
+                        font-size: 4rem;
+                    }
+    
+                    p {
+                        font-size: 1.5rem;
+                    }
+                }
+    
+                .aplicacionesUsadas {
+                    gap: .5rem;
+    
+                    .aplicacion {
+                        width: 4rem;
+                        height: 4rem;
+                        position: relative;
+                    }
+                }
+            }
+    
+            .rightSide {
+                padding: 0;
+    
+                .etapa {
+                    gap: 1rem;
+    
+                    .text {
+    
+                        h1 {
+                            font-size: 2rem;
+                        }
+    
+                        p {
+                            font-size: 1rem;
+                        }
+                    }  
+
+                    &.textOnly {
+                        padding: 2rem;
+                        gap: 1rem;
+    
+                        h1 {
+                            font-size: 4rem;
+                        }
+    
+                        .text {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: flex-end;
+                            align-items: flex-start;
+                            height: auto;
+        
+                            h1 {
+                                font-size: 2rem;
+                            }
+        
+                            p {
+                                font-size: 1rem;
+                            }
+                        }
+                    }
+    
+                    .content {
+                        padding: 1rem;
+                        gap: 1rem;
+                    }
+                }
+            }
+        }
+    }    
+}
