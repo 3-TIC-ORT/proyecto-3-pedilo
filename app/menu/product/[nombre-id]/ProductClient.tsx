@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Import navigation hook
 import { addToCart } from '@/actions/cart'; // Import the addToCart function
 import './product.css';
-import Link from 'next/link';
 
 interface Product {
   id: number;
@@ -60,7 +59,7 @@ function ProductClient({ product, userRole }: ProductClientProps) {
 
   return (
     <main>
-      <Link href='/menu' className="backArrowBtn"><img src="/media/arrowIcon.svg" alt="arrowIcon" ></img></Link>
+      <a href='/menu' className="backArrowBtn"><img src="/media/arrowIcon.svg" alt="arrowIcon" /></a>
       <div className="productContainer">
         <h1 className="name">{product.title}</h1>
         <div className="price-tag">
