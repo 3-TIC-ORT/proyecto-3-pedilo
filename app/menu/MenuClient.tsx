@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'; // Import navigation hook
 import { addToCart } from '@/actions/cart'; // Import the addToCart function
 import { usePopup } from '@/context/PopupContext';
 import './menu.css';
+import { getTables } from '@/actions/tables';
 
 interface MenuItem {
   id: number;
@@ -50,7 +51,11 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
     const quantity = quantities[item.id] || 1;
     if (quantity > 0) {
       try {
-        await addToCart(item.id, quantity); // Llama a la función addToCart para agregar el producto al carrito
+        if (userRole === "waiter") {
+          await addToCart(item.id, quantity, Number((document.getElementById('tableNumber') as HTMLSelectElement).value));
+        } else {
+          await addToCart(item.id, quantity);
+        } // Llama a la función addToCart para agregar el producto al carrito
         if (quantity > 1) {
           addPopup(`Se agregaron ${quantity} ${item.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
         } else {
@@ -65,6 +70,15 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
 
   return (
     <>
+      {userRole === "waiter" && (
+        <select name="tableNumber" id="tableNumber">
+          <option value="" selected disabled>Seleccionar mesa</option>
+          <option value="11">Mesa 11</option>
+          <option value="10">Mesa 10</option>
+          <option value="9">Mesa 9</option>
+          <option value="5">Mesa 5</option>
+        </select>
+      )}
       <div className="sectionsScroller">
         {Object.keys(categories).map((categoryName, index) => (
           <button
@@ -99,7 +113,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
                     <p className="price">${item.price.toFixed(2)}</p>
                     <p className="tag">{item.category}</p>
                   </div>
-                  {userRole === "user" && (
+                  {userRole === "user" || userRole === "waiter" && (
                     <div className="btns">
                       <div className="quantitySelector">
                         <p>{quantities[item.id] || 1}</p>
