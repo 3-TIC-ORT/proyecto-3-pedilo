@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Import navigation hook
 import { addToCart } from '@/actions/cart'; // Import the addToCart function
+import { usePopup } from '@/context/PopupContext';
 import './product.css';
 import Link from 'next/link';
 
@@ -22,39 +23,21 @@ interface ProductClientProps {
 
 function ProductClient({ product, userRole }: ProductClientProps) {
   const [quantity, setQuantity] = useState(1);
-  const [showPopup, setShowPopup] = useState(false); // State for popup visibility
-  const [popupClass, setPopupClass] = useState('popup'); // State for popup class
-  const [popupCount, setPopupCount] = useState(0); // State for popup count
-  const [popupMessage, setPopupMessage] = useState(''); // State for popup message
   const router = useRouter(); // Navigation hook
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (showPopup) {
-      timer = setTimeout(() => {
-        setPopupClass('popup-exit'); // Set exit animation
-        setTimeout(() => {
-          setShowPopup(false);
-          setPopupCount(0); // Reset count
-        }, 500); // Hide popup after exit animation
-      }, 4500); // Show popup for 5 seconds (4.5s + 0.5s exit animation)
-    }
-    return () => clearTimeout(timer);
-  }, [showPopup]);
+  const { addPopup } = usePopup();
 
   const handleOrder = async () => {
     try {
       await addToCart(product.id, quantity);
       console.log(`Pidiendo ${quantity} de ${product.title}`);
-      setPopupCount(prev => prev + 1); // Increment count
-      setPopupMessage('Producto agregado al carrito'); // Set success message
-      setShowPopup(true); // Show popup
-      setPopupClass('popup'); // Set entry animation
+      if (quantity > 1) {
+        addPopup(`Se agregaron ${quantity} ${product.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
+      } else {
+      addPopup(`Se agregego ${product.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
+      }
     } catch (error) {
       console.error('Error adding item to cart:', error);
-      setPopupMessage(error instanceof Error ? error.message : 'Error desconocido'); // Set error message
-      setShowPopup(true); // Show popup
-      setPopupClass('popup'); // Set entry animation
+      addPopup(`Ocurrio un error al agregar ${product.title} al carrito`, true);
     }
   };
 
@@ -100,11 +83,6 @@ function ProductClient({ product, userRole }: ProductClientProps) {
           </div>
         )}
       </div>
-      {showPopup && (
-        <div className={popupClass} onClick={() => setPopupCount(prev => prev + 1)}>
-          {popupMessage} ({popupCount})
-        </div>
-      )}
     </main>
   );
 }

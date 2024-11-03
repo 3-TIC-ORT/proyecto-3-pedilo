@@ -14,19 +14,11 @@ interface CartItem {
   price: string;
 }
 
-interface Popup {
-  message: string;
-  count: number;
-  id: number;
-  exit: boolean;
-}
-
 function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [orderNotes, setOrderNotes] = useState('');
   const [loading, setLoading] = useState(true); // Estado de carga
   const [showConfirmation, setShowConfirmation] = useState(false); // Estado para mostrar confirmación
-  const [popups, setPopups] = useState<Popup[]>([]); // Estado para popups
   const itemNameRefs = useRef<HTMLParagraphElement[]>([]);
   const itemPriceRefs = useRef<HTMLParagraphElement[]>([]);
   const [isOrderBtnDisabled, setIsOrderBtnDisabled] = useState(false);
@@ -53,7 +45,6 @@ function Cart() {
         setCartItems(items);
       } catch (error) {
         console.error('Failed to fetch cart items:', error);
-        addPopup('Ocurrio un error al cargar el carrito. Por favor, intente nuevamente.');
       } finally {
         setLoading(false); // Finalizar carga
       }
@@ -85,7 +76,6 @@ function Cart() {
         }
       } catch (error) {
         console.error('Failed to fetch table number:', error);
-        addPopup('Ocurrió un error al cargar el número de mesa. Por favor, intente nuevamente.');
       }
     };
 
@@ -103,53 +93,21 @@ function Cart() {
     });
   }, [cartItems]);
 
-  useEffect(() => {
-    let timers: NodeJS.Timeout[] = [];
-    popups.forEach((popup, index) => {
-      timers.push(setTimeout(() => {
-        setPopups(prev => prev.map(p => p.id === popup.id ? { ...p, exit: true } : p));
-        setTimeout(() => {
-          setPopups(prev => prev.filter(p => p.id !== popup.id));
-        }, 500); // Duration of exit animation
-      }, 2500)); // Show popup for 2.5 seconds
-    });
-    return () => timers.forEach(timer => clearTimeout(timer));
-  }, [popups]);
-
-  const addPopup = (message: string) => {
-    setPopups(prev => {
-      const existingPopup = prev.find(popup => popup.message === message);
-      if (existingPopup) {
-        return prev.map(popup =>
-          popup.message === message
-            ? { ...popup, count: popup.count + 1 }
-            : popup
-        );
-      } else {
-        return [...prev, { message, count: 1, id: Date.now(), exit: false }];
-      }
-    });
-  };
-
   const handleQuantityChange = async (itemId: number, delta: number) => {
     try {
       if (tableNumber === null) {
-        addPopup('Número de mesa no asignado. Por favor, seleccione una mesa.');
         return; // Exit the function if tableNumber is null
       }
 
       if (delta > 0) {
-        await addToCart(tableNumber, itemId); // Pass tableNumber and itemId
-        addPopup('Cantidad aumentada');
+        await addToCart(itemId, 1, tableNumber); // Pass tableNumber and itemId
       } else {
-        await removeFromCart(tableNumber, itemId); // Pass tableNumber and itemId
-        addPopup('Cantidad disminuida');
+        await removeFromCart(itemId, 1, tableNumber); // Pass tableNumber and itemId
       }
       const { items } = await getCart();
       setCartItems(items);
     } catch (error) {
       console.error('Failed to update item quantity:', error);
-      addPopup('Ocurrió un error al actualizar la cantidad. Por favor, intente nuevamente.');
     }
   };
 
@@ -160,19 +118,16 @@ function Cart() {
         await removeFromCart(itemId, item.amount); // Pasar la cantidad total del artículo
         const { items } = await getCart();
         setCartItems(items);
-        addPopup('Producto eliminado');
       } else {
-        addPopup('El artículo no se encontró en el carrito.');
+        throw new Error('Item not found in cart');
       }
     } catch (error) {
       console.error('Failed to remove item from cart:', error);
-      addPopup('Ocurrio un error al eliminar el producto. Por favor, intente nuevamente.');
     }
   };
 
   const handleOrder = () => {
     if (tableNumber === null) {
-      addPopup('Por favor, seleccione una mesa. Te estamos redirigiendo...');
       setTimeout(() => {
         window.location.href = '/tables';
       }, 3000);
@@ -191,7 +146,6 @@ function Cart() {
       setIsConfirmOrderBtnDisabled(true);
       const result = await createOrder(undefined, orderNotes); // Pasar orderNotes a createOrder
       if (result.orderId) {
-        addPopup(`Orden creada exitosamente. Número de orden: ${result.orderId}. Te redirigiremos a tus órdenes.`);
         await clearCart();
         setCartItems([]);
         setOrderNotes('');
@@ -204,7 +158,6 @@ function Cart() {
       }
     } catch (error) {
       console.error('Error creating order:', error);
-      addPopup('Error al crear la orden. Por favor, intente nuevamente.');
     } finally {
       setIsConfirmOrderBtnDisabled(false);
     }
@@ -290,13 +243,6 @@ function Cart() {
           )}
         </>
       )}
-      <div className="popups">
-        {popups.map((popup, index) => (
-          <div key={popup.id} className={`popup ${popup.exit ? 'popup-exit' : ''}`}>
-            {popup.message} ({popup.count})
-          </div>
-        ))}
-      </div>
     </main>
   );
 }

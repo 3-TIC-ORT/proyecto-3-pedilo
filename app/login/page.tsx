@@ -26,7 +26,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
           <div className="container">
             <div className="textInfo">
               <h1>Hola! Que alegría volver a verte!</h1>
-              <p>Ingresá tu email y contraseña para que sepamos quién sos.</p>
+              <p>Ingresá tu email o continua con Google para que sepamos quién sos.</p>
             </div>
             {/* Resend Provider (Email Magic Link) */}
             <form
@@ -76,8 +76,8 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
             </form>
             <div className="otherActions">
               <Link href="/" className="backBtn">Cancelar</Link>
-            </div> 
-        </div>
+            </div>
+          </div>
         )}
       </main>
     );

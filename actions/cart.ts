@@ -128,7 +128,7 @@ export async function addToCart(itemId: number, quantity: number = 1, tableNumbe
 }
 
 // Remove an item from the cart for a specific table
-export async function removeFromCart(tableNumber: number, itemId: number, quantity: number = 1) {
+export async function removeFromCart(itemId: number, quantity: number = 1, tableNumber?: number) {
   try {
     const session = await getSession();
 
