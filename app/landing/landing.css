@@ -132,7 +132,7 @@ header, footer {
             border: 2px solid var(--white);
             background: rgba(255, 255, 255, 0.25) url('/media/noise.png') repeat;
 
-            svg {
+            img {
                 width: auto;
                 height: 50%;
                 flex-shrink: 0;

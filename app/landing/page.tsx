@@ -18,24 +18,160 @@ function Landing() {
         </svg>
         </div>
         <div className="buttons">
-           <a href="">Inicio</a>
+           <a href="#inicio">Inicio</a>
            <a href="#timi">Timi</a>
-           <a href="">Frontend</a>
-           <a href="">Backend</a>
+           <a href="#frontend">Frontend</a>
+           <a href="#backend">Backend</a>
         </div>
       </div>
-      <section className='inicio'>
+      <section className='inicio' id='inicio'>
         <div className="title">
             <h1>Pedilo</h1>
             <p>.tech</p>
         </div>
         <a href='#timi' className="scrollButton">
-            <svg xmlns="http://www.w3.org/2000/svg" width="46" height="54" viewBox="0 0 46 54" fill="none">
-                <path d="M23 3V51M23 51L3 31M23 51L43 31" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img src="/media/arrowDown.svg" alt="" />
         </a>
       </section>
       <section id='timi'>
+        <div className="leftSide">
+            <div className="title">
+                <h1>T.I.M.I</h1>
+                <p>Nicolás Krymkiewicz</p>
+            </div>
+            <div className="aplicacionesUsadas">
+                <div className="aplicacion">
+                    <img src="/images/landing/logo-googleDrive.svg" alt="" />
+                </div>
+                <div className="aplicacion black">
+                    <img src="/images/landing/logo-figma.svg" alt="" />
+                </div>
+                <div className="aplicacion">
+                    <img src="/images/landing/logo-behance.svg" alt="" />
+                </div>
+                <div className="aplicacion">
+                    <img src="/images/landing/logo-coolors.svg" alt="" />
+                </div>
+                <div className="aplicacion black">
+                    <img src="/images/landing/logo-chatgpt.svg" alt=""/>
+                </div>
+                <div className="aplicacion">
+                    <img src="/images/landing/logo-looka.svg" alt=""/>
+                </div>
+            </div>
+        </div>
+        <div className="rightSide">
+            <div className="etapa">
+                <div className="text">
+                    <h1>Etapa 1</h1>
+                    <p>Wireframes v1</p>
+                </div>
+                <div className="content">
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-1-img-1.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-1-img-2.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-1-img-3.png" alt="" />
+                    </div>
+                </div>
+            </div>
+            <div className="etapa">
+                <div className="text">
+                    <h1>Etapa 2</h1>
+                    <p>Wireframes v2</p>
+                </div>
+                <div className="content type1">
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-2-img-1.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-2-img-2.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-2-img-3.png" alt="" />
+                    </div>
+                </div>
+            </div>
+            <div className="etapa">
+                <div className="text">
+                    <h1>Etapa 3</h1>
+                    <p>Referentes Visuales</p>
+                </div>
+                <div className="content">
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-3-img-1.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-3-img-2.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-3-img-3.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-3-img-4.png" alt="" />
+                    </div>
+                </div>
+            </div>
+            <div className="etapa">
+                <div className="text">
+                    <h1>Etapa 4</h1>
+                    <p>Componentes en Figma</p>
+                </div>
+                <div className="content type2">
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-4-img-1.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-4-img-2.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-4-img-3.png" alt="" />
+                    </div>
+                </div>
+            </div>
+            <div className="etapa">
+                <div className="text">
+                    <h1>Etapa 5</h1>
+                    <p>Diseño Final</p>
+                </div>
+                <div className="content">
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-5-img-1.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-5-img-2.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-5-img-3.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-5-img-4.png" alt="" />
+                    </div>
+                </div>
+            </div>
+            <div className="etapa">
+                <div className="text">
+                    <h1>Etapa 6</h1>
+                    <p>Naming y Logo</p>
+                </div>
+                <div className="content type3">
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-6-img-1.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-6-img-2.png" alt="" />
+                    </div>
+                    <div className="img">
+                        <img src="/images/landing/timi-etapa-6-img-3.png" alt="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+      </section>
+      <section id='frontend'>
         <div className="leftSide">
             <div className="title">
                 <h1>T.I.M.I</h1>
