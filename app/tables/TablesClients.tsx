@@ -50,18 +50,7 @@ export default function TablesClient({
 }: TablesClientProps) {
   const [tables, setTables] = useState(initialTables);
   const [userTables, setUserTables] = useState(initialUserTables);
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupClass, setPopupClass] = useState('popup');
-  const [popupMessage, setPopupMessage] = useState('');
-  const [popupCount, setPopupCount] = useState(0);
   const router = useRouter();
-
-  const showPopupMessage = (message: string) => {
-    setPopupMessage(message);
-    setPopupCount(prev => prev + 1);
-    setShowPopup(true);
-    setPopupClass('popup');
-  };
 
   const fetchTables = async () => {
     try {
@@ -69,7 +58,6 @@ export default function TablesClient({
       setTables(updatedTables);
     } catch (error) {
       console.error('Error fetching tables:', error);
-      showPopupMessage('Error al actualizar la información de las mesas.');
     }
   };
 
@@ -128,11 +116,9 @@ export default function TablesClient({
 
         ably.connection.on('failed', () => {
           console.error('Failed to connect to Ably');
-          showPopupMessage('Error de conexión con el servidor');
         });
       } catch (error) {
         console.error('Error setting up Ably:', error);
-        showPopupMessage('Error al inicializar la conexión en tiempo real');
       }
     };
 
@@ -149,20 +135,6 @@ export default function TablesClient({
     };
   }, [currentUser?.id, userRole]);
 
-  // Add popup timeout effect
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (showPopup) {
-      timer = setTimeout(() => {
-        setPopupClass('popup-exit');
-        setTimeout(() => {
-          setShowPopup(false);
-          setPopupCount(0);
-        }, 500);
-      }, 2500);
-    }
-    return () => clearTimeout(timer);
-  }, [showPopup]);
 
   const handleTableClick = async (tableNumber: number) => {
     try {
@@ -170,38 +142,31 @@ export default function TablesClient({
         if (isAuthenticated) {
           const table = tables.find(t => t.tableNumber === tableNumber);
           if (table && table.Users.length >= 99) {
-            showPopupMessage(`Mesa ${tableNumber} ya tiene 99 usuarios.`);
             return;
           }
           if (userTables.includes(tableNumber)) {
             await unassignTable(tableNumber, currentUser!.id);
             setUserTables(userTables.filter(t => t !== tableNumber));
-            showPopupMessage(`Mesa ${tableNumber} desasignada.`);
           } else {
             await assignTable(tableNumber, currentUser!.id);
             setUserTables([...userTables, tableNumber]);
-            showPopupMessage(`Mesa ${tableNumber} asignada.`);
             setTimeout(() => router.push('/'), 1500);
           }
         } else {
           sessionStorage.setItem('selectedTable', tableNumber.toString());
           localStorage.setItem('selectedTable', tableNumber.toString());
-          showPopupMessage(`Mesa ${tableNumber} seleccionada. Por favor, inicia sesión para continuar.`);
           setTimeout(() => router.push('/login'), 1500);
         }
       } else if (userRole === 'waiter' && isAuthenticated) {
         const table = tables.find(t => t.tableNumber === tableNumber);
         if (table?.Waiter?.id === currentUser!.id) {
           await unassignWaiter(tableNumber);
-          showPopupMessage(`Mesa ${tableNumber} desasignada.`);
         } else {
           await assignWaiter(tableNumber, currentUser!.id);
-          showPopupMessage(`Mesa ${tableNumber} asignada.`);
         }
       }
     } catch (error) {
       console.error('Error al manejar el clic en la mesa:', error);
-      showPopupMessage('Ocurrió un error. Por favor, intente nuevamente.');
     }
   };
 
@@ -211,10 +176,8 @@ export default function TablesClient({
       for (const tableUser of tableUsers) {
         await unassignTable(tableNumber, tableUser.userId);
       }
-      showPopupMessage(`Todos los usuarios de la Mesa ${tableNumber} han sido desasignados.`);
     } catch (error) {
       console.error('Error al desasignar todos los usuarios de la mesa:', error);
-      showPopupMessage('Ocurrió un error. Por favor, intente nuevamente.');
     }
   };
 
@@ -281,11 +244,6 @@ export default function TablesClient({
           </React.Fragment>
         ))}
       </section>
-      {showPopup && (
-        <div className={popupClass} onClick={() => setPopupCount(prev => prev + 1)}>
-          {popupMessage} ({popupCount})
-        </div>
-      )}
     </main>
   );
 }

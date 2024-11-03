@@ -31,11 +31,6 @@ export default async function TablesPage() {
     const userRole = user.role as 'user' | 'waiter' || 'user';
     const initialData = await getInitialData(user.id);
 
-    // Unassign user from their current table if they have one
-    if (initialData.userTables.length > 0) {
-      await unassignTable(initialData.userTables[0].tableNumber, user.id);
-    }
-
     if (selectedTable) {
       await assignTable(parseInt(selectedTable), user.id);
       if (typeof window !== 'undefined') {
