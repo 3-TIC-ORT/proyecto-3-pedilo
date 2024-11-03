@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Import navigation hook
 import { addToCart } from '@/actions/cart'; // Import the addToCart function
+import { usePopup } from '@/context/PopupContext';
 import './product.css';
 import Link from 'next/link';
 
@@ -23,13 +24,20 @@ interface ProductClientProps {
 function ProductClient({ product, userRole }: ProductClientProps) {
   const [quantity, setQuantity] = useState(1);
   const router = useRouter(); // Navigation hook
+  const { addPopup } = usePopup();
 
   const handleOrder = async () => {
     try {
       await addToCart(product.id, quantity);
       console.log(`Pidiendo ${quantity} de ${product.title}`);
+      if (quantity > 1) {
+        addPopup(`Se agregaron ${quantity} ${product.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
+      } else {
+      addPopup(`Se agregego ${product.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
+      }
     } catch (error) {
       console.error('Error adding item to cart:', error);
+      addPopup(`Ocurrio un error al agregar ${product.title} al carrito`, true);
     }
   };
 

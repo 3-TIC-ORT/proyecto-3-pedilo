@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getTables, assignTable, unassignTable, assignWaiter, unassignWaiter, getTableUsers } from '@/actions/tables';
 import * as Ably from 'ably';
+import { usePopup } from '@/context/PopupContext';
 import "./tables.css";
 
 interface User {
@@ -51,6 +52,7 @@ export default function TablesClient({
   const [tables, setTables] = useState(initialTables);
   const [userTables, setUserTables] = useState(initialUserTables);
   const router = useRouter();
+  const { addPopup } = usePopup();
 
   const fetchTables = async () => {
     try {
@@ -58,6 +60,7 @@ export default function TablesClient({
       setTables(updatedTables);
     } catch (error) {
       console.error('Error fetching tables:', error);
+      addPopup('Ocurrio un errror al obtener las mesas', true);
     }
   };
 
@@ -137,36 +140,39 @@ export default function TablesClient({
 
 
   const handleTableClick = async (tableNumber: number) => {
+    
     try {
       if (userRole === 'user') {
         if (isAuthenticated) {
           const table = tables.find(t => t.tableNumber === tableNumber);
           if (table && table.Users.length >= 99) {
+            addPopup('Esta mesa esta ocupada por muchos usuarios', true);
             return;
-          }
-          if (userTables.includes(tableNumber)) {
-            await unassignTable(tableNumber, currentUser!.id);
-            setUserTables(userTables.filter(t => t !== tableNumber));
           } else {
             await assignTable(tableNumber, currentUser!.id);
             setUserTables([...userTables, tableNumber]);
-            setTimeout(() => router.push('/'), 1500);
+            setTimeout(() => router.push('/menu'), 1000);
+            addPopup(`Haz seleccionado la mesa ${tableNumber} . Te estaremos redirigiendo al menu.`, false);
           }
         } else {
           sessionStorage.setItem('selectedTable', tableNumber.toString());
           localStorage.setItem('selectedTable', tableNumber.toString());
-          setTimeout(() => router.push('/login'), 1500);
+          setTimeout(() => router.push('/login'), 1000);
+          addPopup(`Haz seleccionado la mesa ${tableNumber} . Te estaremos redirigiendo al inicio.`, true);
         }
       } else if (userRole === 'waiter' && isAuthenticated) {
         const table = tables.find(t => t.tableNumber === tableNumber);
         if (table?.Waiter?.id === currentUser!.id) {
           await unassignWaiter(tableNumber);
+          addPopup(`Dejaste de atender la mesa ${tableNumber}.`, false);
         } else {
           await assignWaiter(tableNumber, currentUser!.id);
+          addPopup(`Estas atendiendo la mesa ${tableNumber}.`, false);
         }
       }
     } catch (error) {
       console.error('Error al manejar el clic en la mesa:', error);
+      addPopup('Ocurrio un errror al seleccionar la mesa', true);
     }
   };
 
@@ -176,8 +182,10 @@ export default function TablesClient({
       for (const tableUser of tableUsers) {
         await unassignTable(tableNumber, tableUser.userId);
       }
+      addPopup(`Se a liberado la mesa ${tableNumber}`, false);
     } catch (error) {
       console.error('Error al desasignar todos los usuarios de la mesa:', error);
+      addPopup('Ocurrio un errror al liberar la mesa', true);
     }
   };
 

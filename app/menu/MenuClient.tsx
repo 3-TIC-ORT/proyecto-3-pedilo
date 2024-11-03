@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Import navigation hook
 import { addToCart } from '@/actions/cart'; // Import the addToCart function
+import { usePopup } from '@/context/PopupContext';
 import './menu.css';
 
 interface MenuItem {
@@ -23,6 +24,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const router = useRouter(); // Navigation hook
+  const { addPopup } = usePopup();
 
   const categories = menuItems.reduce<Record<string, MenuItem[]>>((acc, item) => {
     if (!acc[item.category]) {
@@ -49,8 +51,14 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
     if (quantity > 0) {
       try {
         await addToCart(item.id, quantity); // Llama a la función addToCart para agregar el producto al carrito
+        if (quantity > 1) {
+          addPopup(`Se agregaron ${quantity} ${item.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
+        } else {
+        addPopup(`Se agregego ${item.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
+        }
       } catch (error) {
         console.error('Error adding item to cart:', error);
+        addPopup(`Ocurrio un error al agregar ${item.title} al carrito`, true); // Puedes cambiar el mensaje y si es un error
       }
     }
   };

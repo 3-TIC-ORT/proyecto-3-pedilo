@@ -6,6 +6,8 @@ import { auth } from "@/auth";
 import { getUserTables } from "@/actions/tables"; // Importa la función
 import { hasPendingCall } from "@/actions/calls";
 import Link from "next/link";
+import { PopupProvider } from '@/context/PopupContext';
+import Popups from '@/components/Popups';
 
 export const metadata: Metadata = {
   title: "Pedilo",
@@ -33,10 +35,18 @@ export default async function RootLayout({
       pendingCall = await hasPendingCall(userTables[0].tableNumber);
     }
   }
+
+  const popupMessages = [
+    { message: 'Este es un mensaje de información', isError: false },
+    { message: 'Este es un mensaje de error', isError: true },
+    { message: 'Otro mensaje de información', isError: false },
+  ];
   
   return (
     <html lang="en">
+      <PopupProvider>
       <body>
+        <Popups />
         <header>
           <img
             src="/images/logo.svg"
@@ -107,6 +117,7 @@ export default async function RootLayout({
           </nav>
         </footer>
       </body>
+      </PopupProvider>
     </html>
   );
 }
