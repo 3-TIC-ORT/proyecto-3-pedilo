@@ -32,6 +32,7 @@ header, footer {
         background: rgba(255, 255, 255, 0.25) url('/media/noise.png') repeat;
         backdrop-filter: blur(.25rem);
         position: absolute;
+        z-index: 1000;
 
         .logo {
             display: flex;
