@@ -81,7 +81,7 @@ function Cart() {
       try {
         const tables = await getUserTables();
         if (tables.length > 0) {
-          setTableNumber(tables[0]); // Asigna el primer número de mesa encontrado
+          setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
         }
       } catch (error) {
         console.error('Failed to fetch table number:', error);
@@ -133,18 +133,23 @@ function Cart() {
 
   const handleQuantityChange = async (itemId: number, delta: number) => {
     try {
+      if (tableNumber === null) {
+        addPopup('Número de mesa no asignado. Por favor, seleccione una mesa.');
+        return; // Exit the function if tableNumber is null
+      }
+
       if (delta > 0) {
-        await addToCart(itemId);
+        await addToCart(tableNumber, itemId); // Pass tableNumber and itemId
         addPopup('Cantidad aumentada');
       } else {
-        await removeFromCart(itemId);
+        await removeFromCart(tableNumber, itemId); // Pass tableNumber and itemId
         addPopup('Cantidad disminuida');
       }
       const { items } = await getCart();
       setCartItems(items);
     } catch (error) {
       console.error('Failed to update item quantity:', error);
-      addPopup('Ocurrio un error al actualizar la cantidad. Por favor, intente nuevamente.');
+      addPopup('Ocurrió un error al actualizar la cantidad. Por favor, intente nuevamente.');
     }
   };
 
@@ -152,7 +157,7 @@ function Cart() {
     try {
       const item = cartItems.find(item => item.itemId === itemId);
       if (item) {
-        await removeFromCart(itemId, undefined, item.amount); // Pasar la cantidad total del artículo
+        await removeFromCart(itemId, item.amount); // Pasar la cantidad total del artículo
         const { items } = await getCart();
         setCartItems(items);
         addPopup('Producto eliminado');

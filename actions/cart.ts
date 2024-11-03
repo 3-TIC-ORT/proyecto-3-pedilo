@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from 'next-auth';
@@ -12,26 +12,44 @@ async function getSession(): Promise<Session> {
   return session;
 }
 
-export async function getCart(userId?: string) {
+// Retrieve the cart for a specific table
+export async function getCart(tableNumber?: number) {
   try {
-    const session = await getSession(); // Ensure user is authenticated
-    userId = userId || session.user.id;
+    const session = await getSession();
+    if (!session) throw new Error('User is not authenticated.');
 
-    const items = await prisma.cart.findMany({
-      where: { userId },
-      include: { Item: true },
+    // Retrieve the user's table number if not provided as a parameter
+    if (!tableNumber) {
+      const userTable = await prisma.tableUser.findFirst({
+        where: { userId: session.user.id },
+        select: { tableNumber: true },
+      });
+      if (!userTable || !userTable.tableNumber) throw new Error('Table number not found for user.');
+      tableNumber = userTable.tableNumber;
+    }
+    const cart = await prisma.cart.findUnique({
+      where: { tableNumber },
+      include: {
+        CartItems: {
+          include: {
+            Item: true
+          }
+        }
+      }
     });
 
+    if (!cart) throw new Error('Carrito no encontrado para esta mesa');
+
     let total = 0;
-    const formattedItems = items.map((item) => {
-      const itemTotal = item.Item.price * (item.amount || 0);
+    const formattedItems = cart.CartItems.map((cartItem) => {
+      const itemTotal = cartItem.Item.price * (cartItem.quantity || 0);
       total += itemTotal;
       return {
-        itemId: item.itemId,
-        title: item.Item.title,
-        amount: item.amount,
+        itemId: cartItem.itemId,
+        title: cartItem.Item.title,
+        amount: cartItem.quantity,
         total: formatUSD(itemTotal),
-        price: formatUSD(item.Item.price),
+        price: formatUSD(cartItem.Item.price),
       };
     });
 
@@ -41,79 +59,151 @@ export async function getCart(userId?: string) {
   }
 }
 
-export async function addToCart(itemId: number, userId?: string, quantity: number = 1) {
+// Add an item to the cart for a specific table
+export async function addToCart(itemId: number, quantity: number = 1, tableNumber?: number,) {
   try {
     const session = await getSession();
-    userId = userId || session.user.id;
+    if (!session) throw new Error('User is not authenticated.');
+
+    // Retrieve the user's table number if not provided as a parameter
+    if (!tableNumber) {
+      const userTable = await prisma.tableUser.findFirst({
+        where: { userId: session.user.id },
+        select: { tableNumber: true },
+      });
+      if (!userTable || !userTable.tableNumber) throw new Error('Table number not found for user.');
+      tableNumber = userTable.tableNumber;
+    }
 
     const item = await prisma.item.findUnique({ where: { id: itemId } });
     if (!item) throw new Error('Invalid item');
 
-    const cartItem = await prisma.cart.findFirst({ where: { userId, itemId } });
-    const newAmount = cartItem ? cartItem.amount + quantity : quantity;
+    // Find or create the cart for this table
+    const cart = await prisma.cart.upsert({
+      where: { tableNumber },
+      update: {},
+      create: {
+        tableNumber,
+        waiterId: session.user.id,  // Assigned waiter based on current user
+      }
+    });
 
-    if (newAmount > 99) throw new Error('Cannot add more than 99 items to the cart');
+    // Find existing CartItem or create a new one
+    const cartItem = await prisma.cartItem.findFirst({
+      where: { cartId: cart.id, itemId }
+    });
+
+    const newQuantity = cartItem ? cartItem.quantity + quantity : quantity;
+
+    if (newQuantity > 99) throw new Error('Cannot add more than 99 items to the cart');
 
     if (cartItem) {
-      await prisma.cart.update({ where: { itemId_userId: { itemId, userId } }, data: { amount: { increment: quantity } } });
+      await prisma.cartItem.update({
+        where: { id: cartItem.id },
+        data: { quantity: newQuantity }
+      });
     } else {
-      await prisma.cart.create({ data: { itemId, userId, amount: quantity } });
+      await prisma.cartItem.create({
+        data: {
+          cartId: cart.id,
+          itemId,
+          quantity
+        }
+      });
     }
 
-    // Publish Ably event when an item is added to the cart
+    // Publish Ably event for cart updates
     await ablyClient.channels.get('cart-updates').publish('item-updated', {
-      userId,
+      tableNumber,
       action: 'add',
       itemId,
-      newAmount
+      newQuantity
     });
 
     return { message: 'Item added to cart' };
   } catch (error) {
-    throw new Error('Error adding item to cart: ');
+    console.log(error);
+    throw new Error('Error adding item to cart');
   }
 }
-export async function removeFromCart(itemId: number, userId?: string, quantity: number = 1) {
+
+// Remove an item from the cart for a specific table
+export async function removeFromCart(tableNumber: number, itemId: number, quantity: number = 1) {
   try {
     const session = await getSession();
-    userId = userId || session.user.id;
 
-    const cartItem = await prisma.cart.findFirst({ where: { itemId, userId } });
+    const cart = await prisma.cart.findUnique({
+      where: { tableNumber },
+      include: { CartItems: true }
+    });
+
+    if (!cart) throw new Error('Cart not found for this table');
+
+    const cartItem = await prisma.cartItem.findFirst({
+      where: { cartId: cart.id, itemId }
+    });
+
     if (!cartItem) throw new Error('Item not found in cart');
 
-    const newAmount = cartItem.amount - quantity;
+    const newQuantity = cartItem.quantity - quantity;
 
-    if (newAmount < 1) {
-      await prisma.cart.delete({ where: { itemId_userId: { itemId, userId } } });
+    if (newQuantity < 1) {
+      await prisma.cartItem.delete({ where: { id: cartItem.id } });
     } else {
-      await prisma.cart.update({ where: { itemId_userId: { itemId, userId } }, data: { amount: { decrement: quantity } } });
+      await prisma.cartItem.update({
+        where: { id: cartItem.id },
+        data: { quantity: newQuantity }
+      });
     }
 
-    // Publish Ably event when an item is removed or updated in the cart
+    // Publish Ably event for cart updates
     await ablyClient.channels.get('cart-updates').publish('item-updated', {
-      userId,
+      tableNumber,
       action: 'remove',
       itemId,
-      newAmount: Math.max(newAmount, 0)
+      newQuantity: Math.max(newQuantity, 0)
     });
 
     return { message: 'Item removed from cart' };
   } catch (error) {
-    throw new Error('Error removing item from cart: ');
+    throw new Error('Error removing item from cart');
   }
 }
-export async function clearCart(userId?: string) {
-  try {
-    const session = await getSession(); // Ensure user is authenticated
-    userId = userId || session.user.id;
 
-    await prisma.cart.deleteMany({ where: { userId } });
+// Clear all items from the cart for a specific table
+export async function clearCart(tableNumber?: number) {
+  try {
+    const session = await getSession();
+    if (!session) throw new Error('User is not authenticated.');
+
+    // Retrieve the user's table number if not provided as a parameter
+    if (!tableNumber) {
+      const userTable = await prisma.tableUser.findFirst({
+        where: { userId: session.user.id },
+        select: { tableNumber: true },
+      });
+      if (!userTable || !userTable.tableNumber) throw new Error('Table number not found for user.');
+      tableNumber = userTable.tableNumber;
+    }
+
+
+    const cart = await prisma.cart.findUnique({ where: { tableNumber } });
+    if (!cart) throw new Error('Cart not found for this table');
+
+    await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
+
+    // Publish Ably event for cart clearance
+    await ablyClient.channels.get('cart-updates').publish('cart-cleared', {
+      tableNumber,
+    });
+
     return { message: 'Carrito vaciado' };
   } catch (error) {
     throw new Error('Error al vaciar el carrito');
   }
 }
 
+// Helper function to format USD
 function formatUSD(amount: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',

@@ -66,7 +66,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
     const quantity = quantities[item.id] || 1;
     if (quantity > 0) {
       try {
-        await addToCart(item.id, undefined, quantity); // Llama a la función addToCart para agregar el producto al carrito
+        await addToCart(item.id, quantity); // Llama a la función addToCart para agregar el producto al carrito
         setPopupCount(prev => prev + 1); // Increment count
         setPopupMessage('Producto agregado al carrito'); // Set success message
         setShowPopup(true); // Show popup

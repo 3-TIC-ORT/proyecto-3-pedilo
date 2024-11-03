@@ -1,7 +1,7 @@
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 generator client {
@@ -15,18 +15,18 @@ model User {
   surname       String?
   email         String          @unique
   emailVerified DateTime?
-  password      String?         // Optional: If storing passwords
+  password      String?
   image         String?
-  role          String          @default("user") // Now includes roles like "chef", "waiter", "manager"
+  role          String          @default("user")
   accounts      Account[]
   sessions      Session[]
-  Cart          Cart[]
   Orders        Order[]
-  Tables        TableUser[]     // Changed: Now relates to TableUser model
-  AssignedTables Table[]        @relation("WaiterTables") // Tables assigned to the waiter (optional)
-  Authenticator Authenticator[] // Optional for WebAuthn support
+  Tables        TableUser[]
+  AssignedTables Table[]        @relation("WaiterTables")
+  Authenticator Authenticator[]
   CallsMade     Call[]          @relation("UserCalls")
   CallsReceived Call[]          @relation("WaiterCalls")
+  AssignedCarts Cart[]          @relation("WaiterTables")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -71,7 +71,6 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
-// Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @unique
   userId               String
@@ -88,26 +87,46 @@ model Authenticator {
 }
 
 model Item {
-  id          Int         @id @default(autoincrement())
-  title       String      @unique
+  id          Int           @id @default(autoincrement())
+  title       String        @unique
   description String
   ingredients String
   photo       String?
   price       Float
   category    String
-  Cart        Cart[]
+  CartItems   CartItem[]
   OrderItems  OrderItem[]
 }
 
+// Modified: Cart is now associated with a table instead of users
 model Cart {
-  itemId Int
-  userId String
-  amount Int @default(1)
+  id          String      @id @default(cuid())
+  tableNumber Int         @unique  // One cart per table
+  waiterId    String      // Assigned waiter
+  status      String      @default("active")
+  CartItems   CartItem[]
+  Table       Table       @relation(fields: [tableNumber], references: [tableNumber])
+  Waiter      User        @relation("WaiterTables", fields: [waiterId], references: [id])
 
-  User User @relation(fields: [userId], references: [id])
-  Item Item @relation(fields: [itemId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
 
-  @@id([itemId, userId])
+// New: CartItem model to store items in the shared cart
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  itemId    Int
+  quantity  Int      @default(1)
+  addedBy   String?  // Optional: track which user added the item
+
+  Cart      Cart     @relation(fields: [cartId], references: [id])
+  Item      Item     @relation(fields: [itemId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, itemId])
 }
 
 model OrderItem {
@@ -129,23 +148,25 @@ model Order {
   totalAmount Float
   status      String   @default("Pending")
   tableNumber Int?
-  orderNote   String?  // Added this field as optional
+  orderNote   String?
 
   User       User        @relation(fields: [userId], references: [id])
   OrderItems OrderItem[]
 
   @@map("orders")
 }
+
 model Table {
   tableNumber Int         @id @unique @default(autoincrement())
-  Users       TableUser[] // Changed: Now relates to TableUser model
+  Users       TableUser[]
   Waiter      User?       @relation("WaiterTables", fields: [waiterId], references: [id])
   waiterId    String?
+  Cart        Cart?       // One-to-one relation with Cart
   Calls       Call[]
 
   @@map("tables")
 }
-// New model to represent the many-to-many relationship between User and Table
+
 model TableUser {
   id          String   @id @default(cuid())
   userId      String
@@ -157,13 +178,14 @@ model TableUser {
 
   @@unique([userId, tableNumber])
 }
+
 model Call {
   id          String   @id @default(cuid())
-  userId      String   // The user who made the call
-  waiterId    String   // The waiter who received the call
+  userId      String
+  waiterId    String
   tableNumber Int
-  reason        String
-  status      String   @default("Pending") // e.g., "Pending", "Answered", "Completed"
+  reason      String
+  status      String   @default("Pending")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
