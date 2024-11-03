@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { auth } from "@/auth";
 import { getUserTables } from "@/actions/tables"; // Importa la función
 import { hasPendingCall } from "@/actions/calls";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Pedilo",
@@ -46,51 +47,59 @@ export default async function RootLayout({
             <CallWaiterBtn />
           )}
           {role === "waiter" && (
-            <a className="callsBtn" href="/calls">
+            <Link className="callsBtn" href={`/calls`}>
               Llamados
-            </a>
+            </Link>
           )}
           <nav>
-            <a href="/menu">
-              <img src="/media/homeIcon.svg" alt="homeIcon" />
-              <p>Inicio</p>
-            </a>
+              <Link className="aLink" href={`/menu`}>
+                <img src="/media/homeIcon.svg" alt="homeIcon" />
+                <p>Menu</p>
+              </Link>
             {role === "user" && (
               <>
-                <a href="/cart">
+                <Link className="aLink" href={`/cart`}>
                   <img src="/media/cartIcon.svg" alt="cartIcon" />
                   <p>Carrito</p>
-                </a>
+                </Link>
               </>
             )}
             {role === "admin" && (
-              <a href="/dashboard">
-                <img src="/media/customizeIcon.svg" alt="customizeIcon" />
-                <p>Personalizar</p>
-              </a>
+              <>
+                <Link className="aLink" href={`/dashboard`}>
+                  <img src="/media/customizeIcon.svg" alt="customizeIcon" />
+                  <p>Personalizar</p>
+                </Link>
+              </>
             )}
             {role === "waiter" && (
-              <a href="/calls">
-                <img src="/media/callsIcon.svg" alt="callsIcon" />
-                <p>Llamados</p>
-              </a>
+              <>
+                <Link className="aLink" href={`/calls`}>
+                  <img src="/media/callsIcon.svg" alt="callsIcon" />
+                  <p>Llamados</p>
+                </Link>
+              </>
             )}
             {(role === "waiter" || (role === "user" && !hasTableAssigned)) && (
-              <a href="/tables">
-                <img src="/media/tableIcon.svg" alt="callsIcon" />
-                <p>Mesas</p>
-              </a>
+              <>
+                <Link className="aLink" href={`/tables`}>
+                  <img src="/media/tableIcon.svg" alt="callsIcon" />
+                  <p>Mesas</p>
+                </Link>
+              </>
             )}
             {(role === "waiter" || (role === "chef")) && (
-              <a href="/orders">
-                <img src="/media/ordersIcon.svg" alt="ordersIcon" />
-                <p>Ordenes</p>
-              </a>
+              <>
+                <Link className="aLink" href={`/orders`}>
+                  <img src="/media/ordersIcon.svg" alt="ordersIcon" />
+                  <p>Ordenes</p>
+                </Link>
+              </>
             )}
-            <a href="/profile">
+            <Link className="aLink" href={`/profile`}>
               <img src="/media/profileIcon.svg" alt="profileIcon" />
               <p>Perfil</p>
-            </a>
+            </Link>
           </nav>
         </footer>
       </body>

@@ -22,7 +22,7 @@ section {
     overflow-y: scroll;
     border-radius: .5rem;
 
-    a {
+    .aLinkBtnDash {
         min-width: calc(50% - .5rem);
         flex: 1;
         height: auto;

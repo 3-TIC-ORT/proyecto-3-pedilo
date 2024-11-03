@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function notFound (){
     return(
         <main className="not-found">
@@ -7,7 +9,7 @@ export default function notFound (){
                     <h2>Pagina no encontrada</h2>
                     <p>Ops.. parece que estas perdido. No encontramos la bandeja que estabas buscando</p>
                 </div>
-                <a href="/" className="back2MenuButton">Volver al inicio</a>
+                <Link href="/" className="back2MenuButton">Volver al inicio</Link>
             </div>
         </main>
 )

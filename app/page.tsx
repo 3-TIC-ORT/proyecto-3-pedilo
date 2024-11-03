@@ -1,5 +1,6 @@
 "use client";
 import { auth } from '@/auth';
+import Link from 'next/link';
 
 export default async function App() {
   const session = await auth();
@@ -14,11 +15,11 @@ export default async function App() {
         <div className="buttons">
           {!session && (
             <>
-              <a href="/login">Iniciar sesion</a>
+              <Link className='aLinkBtn' href="/login">Iniciar sesion</Link>
               <p>o</p>
             </>
           )}
-          <a href="/menu">Ver el menu</a>
+          <Link className='aLinkBtn' href="/menu">Ver el menu</Link>
         </div>
       </main>
       <style>
@@ -62,7 +63,7 @@ export default async function App() {
             width: 50%;
             padding: 2rem 0;
 
-            a {
+            .aLinkBtn {
               background-color: var(--light-blue);
               color: var(--white);
               padding: 1rem 2rem;
