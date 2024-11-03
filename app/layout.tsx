@@ -8,7 +8,7 @@ import { hasPendingCall } from "@/actions/calls";
 
 export const metadata: Metadata = {
   title: "Pedilo",
-  description: "Descripcion",
+  description: "La mejor forma de pedir comida en un restaurante",
 };
 
 export default async function RootLayout({
