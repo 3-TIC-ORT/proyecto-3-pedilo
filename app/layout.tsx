@@ -6,7 +6,6 @@ import { auth } from "@/auth";
 import { getUserTables } from "@/actions/tables"; // Importa la función
 import { hasPendingCall } from "@/actions/calls";
 import Link from "next/link";
-import Popups from "@/components/Popups";
 
 export const metadata: Metadata = {
   title: "Pedilo",
@@ -38,7 +37,6 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Popups/>
         <header>
           <img
             src="/images/logo.svg"
