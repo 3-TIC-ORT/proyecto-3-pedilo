@@ -4,6 +4,12 @@ header, footer {
     display: none;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .body {
     width: 100%;
     height: 100dvh;
@@ -192,12 +198,17 @@ header, footer {
                     align-items: center;
                     border-radius: 50%;
                     border: 2px solid var(--white);
-                    background: rgba(255, 255, 255, 0.25) url('/media/noise.png') repeat;
+                    background: rgba(255, 255, 255, 0.5) url('/media/noise.png') repeat;
                     backdrop-filter: blur(.25rem);
+                    padding: 1rem;
 
                     img {
                         flex: 1 0 0;
                         align-self: stretch;
+                    }
+
+                    &.black {
+                        background: rgba(0, 0, 0, 0.5) url('/media/noise.png') repeat;
                     }
                 }
             }
@@ -208,7 +219,7 @@ header, footer {
             padding: 2rem;
             flex-direction: column;
             align-items: flex-start;
-            gap: 2rem;
+            gap: 4rem;
             flex: 1 0 0;
             align-self: stretch;
             border-radius: 1rem;
@@ -217,7 +228,7 @@ header, footer {
 
             .etapa {
                 display: flex;
-                min-height: 100%;
+                height: 100%;
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 2rem;
@@ -266,36 +277,41 @@ header, footer {
                     border-radius: 2rem;
                     background: rgba(255, 255, 255, 0.50);
                     backdrop-filter: blur(.25rem);
-                    height: 100%;
+                    min-height: calc(100% - 7.25rem);
                     width: 100%;
 
                     .img {
                         flex: 1;
-                        min-width: calc(50% - 1rem);
+                        width: calc(50% - 1rem);
                         background-color: var(--white);
                         border-radius: 1rem;
                         min-height: calc(50% - 1rem);
+                        min-width: calc(50% - 1rem);
+                        height: calc(50% - 1rem);
+                        overflow: hidden;
+                        padding: 0;
 
                         img {
-                            width: 100%;
-                            height: 100%;
                             object-fit: cover;
+                            max-height: 100%;
+                            height: 100%;
+                            width: 100%;
                             object-position: center;
                         }
                     }
-                }
 
-                .type1 {
-                    flex-direction: row;
-                }
-
-                .type2 {
-                    flex-wrap: wrap-reverse;
-                }
-
-                .type3 {
-                    flex-direction: row;
-                    flex-wrap: wrap-reverse;
+                    &.type1 {
+                        flex-direction: row;
+                    }
+    
+                    &.type2 {
+                        flex-wrap: wrap-reverse;
+                    }
+    
+                    &.type3 {
+                        flex-direction: row;
+                        flex-wrap: wrap-reverse;
+                    }
                 }
             }
         }
