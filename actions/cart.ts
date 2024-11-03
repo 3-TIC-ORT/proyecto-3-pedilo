@@ -60,9 +60,20 @@ export async function getCart(tableNumber?: number) {
 }
 
 // Add an item to the cart for a specific table
-export async function addToCart(tableNumber: number, itemId: number, quantity: number = 1) {
+export async function addToCart(itemId: number, quantity: number = 1, tableNumber?: number,) {
   try {
     const session = await getSession();
+    if (!session) throw new Error('User is not authenticated.');
+
+    // Retrieve the user's table number if not provided as a parameter
+    if (!tableNumber) {
+      const userTable = await prisma.tableUser.findFirst({
+        where: { userId: session.user.id },
+        select: { tableNumber: true },
+      });
+      if (!userTable || !userTable.tableNumber) throw new Error('Table number not found for user.');
+      tableNumber = userTable.tableNumber;
+    }
 
     const item = await prisma.item.findUnique({ where: { id: itemId } });
     if (!item) throw new Error('Invalid item');
@@ -111,6 +122,7 @@ export async function addToCart(tableNumber: number, itemId: number, quantity: n
 
     return { message: 'Item added to cart' };
   } catch (error) {
+    console.log(error);
     throw new Error('Error adding item to cart');
   }
 }

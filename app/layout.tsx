@@ -22,11 +22,15 @@ export default async function RootLayout({
 
   let hasTableAssigned = false;
   let pendingCall = false;
-  if (role === "user" && userId) {
+
+  if (role === "user") {
     const userTables = await getUserTables(userId);
     hasTableAssigned = userTables.length > 0;
     console.log("hasTableAssigned", userTables);
-    pendingCall = await hasPendingCall(userTables[0].tableNumber);
+
+    if (hasTableAssigned) {
+      pendingCall = await hasPendingCall(userTables[0].tableNumber);
+    }
   }
 
   return (
