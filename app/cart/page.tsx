@@ -139,10 +139,10 @@ function Cart() {
       }
 
       if (delta > 0) {
-        await addToCart(tableNumber, itemId); // Pass tableNumber and itemId
+        await addToCart(itemId, 1, tableNumber); // Pass tableNumber and itemId
         addPopup('Cantidad aumentada');
       } else {
-        await removeFromCart(tableNumber, itemId); // Pass tableNumber and itemId
+        await removeFromCart(itemId, 1, tableNumber); // Pass tableNumber and itemId
         addPopup('Cantidad disminuida');
       }
       const { items } = await getCart();
