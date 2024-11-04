@@ -15,17 +15,22 @@ export async function getAllOrders() {
   const orders = await prisma.order.findMany({
     include: {
       OrderItems: {
-        include: { Item: true }
+        include: {
+          Item: true // Include all details about the item
+        }
       },
-      User: {
-        select: {
-          name: true,
-          email: true
+      Users: { // Access users through the OrderUser join table
+        include: {
+          User: {
+            select: {
+              name: true,
+              email: true
+            }
+          }
         }
       }
-    },
+    }
   });
-
   const formattedOrders = orders.map((order) => ({
     orderId: order.orderId,
     totalAmount: order.totalAmount,
@@ -34,7 +39,6 @@ export async function getAllOrders() {
     status: order.status,
     orderNote: order.orderNote,
     orderStatus: order.status,
-    orderedBy: order.User.name || order.User.email,
     items: order.OrderItems.map((orderItem) => ({
       itemId: orderItem.itemId,
       title: orderItem.Item.title,
@@ -46,15 +50,17 @@ export async function getAllOrders() {
   return formattedOrders;
 }
 
+
+
 export async function orderItemStatus(itemId: number, status: string, orderId: number) {
   await prisma.orderItem.update({
     where: {
       orderId_itemId: {
-        orderId: orderId,
-        itemId: itemId,
+        orderId,
+        itemId,
       },
     },
-    data: { status: status },
+    data: { status },
   });
 
   const orderItems = await prisma.orderItem.findMany({
@@ -77,7 +83,13 @@ export async function getOrders(userId?: string) {
   const user = userId || session.user.id;
 
   const orders = await prisma.order.findMany({
-    where: { userId: user },
+    where: {
+      Users: {
+        some: {
+          userId: user
+        }
+      }
+    },
     orderBy: { orderDate: 'desc' },
     include: {
       OrderItems: {
@@ -86,30 +98,32 @@ export async function getOrders(userId?: string) {
     },
   });
 
-  const formattedOrders = orders.map((order) => ({
+  return orders.map(order => ({
     orderId: order.orderId,
     totalAmount: order.totalAmount,
     orderDate: order.orderDate,
     tableNumber: order.tableNumber,
     status: order.status,
     orderNote: order.orderNote,
-    items: order.OrderItems.map((orderItem) => ({
+    items: order.OrderItems.map(orderItem => ({
       itemId: orderItem.itemId,
       title: orderItem.Item.title,
       quantity: orderItem.quantity,
       status: orderItem.status
     })),
   }));
-  return formattedOrders;
 }
 
-export async function createOrder(userId?: string, orderNote?: string, tableNumber?: number) {
+export async function createOrder(tableNumber: number, orderNote?: string) {
   const session = await getSession();
-  const user = userId || session.user.id;
 
-  // First, find the table the user is assigned to
-  const tableUser = await prisma.tableUser.findFirst({
-    where: { userId: user },
+  if (!session || !session.user?.id) {
+    throw new Error("User not authenticated");
+  }
+
+  // Find users assigned to the specified table
+  const tableUsers = await prisma.tableUser.findMany({
+    where: { tableNumber },
     include: {
       Table: {
         include: {
@@ -125,35 +139,39 @@ export async function createOrder(userId?: string, orderNote?: string, tableNumb
     }
   });
 
-  if (!tableUser) {
+  if (tableUsers.length === 0) {
     throw new Error('Table not selected');
   }
 
-  const cart = tableUser.Table.Cart;
-  if (!cart || !cart.CartItems.length) {
+  const table = tableUsers[0].Table;
+  const cart = table?.Cart;
+
+  if (!cart || cart.CartItems.length === 0) {
     throw new Error('Cart is empty');
   }
 
-  // Calculate the total amount for the order
   const totalAmount = cart.CartItems.reduce((acc, cartItem) => {
-    return acc + (cartItem.quantity * cartItem.Item.price);
+    return acc + cartItem.quantity * cartItem.Item.price;
   }, 0);
 
-  // Create the order within a transaction
   const order = await prisma.$transaction(async (prisma) => {
-    // Create the order
     const newOrder = await prisma.order.create({
       data: {
-        userId: user,
         totalAmount,
         orderDate: new Date(),
-        tableNumber: tableUser.tableNumber,
+        tableNumber,
         orderNote,
-        status: 'Pending'
-      },
+        status: 'Pending',
+      }
     });
 
-    // Create order items from cart items
+    await prisma.orderUser.createMany({
+      data: tableUsers.map((tableUser) => ({
+        orderId: newOrder.orderId,
+        userId: tableUser.userId
+      }))
+    });
+
     for (const cartItem of cart.CartItems) {
       await prisma.orderItem.create({
         data: {
@@ -165,7 +183,6 @@ export async function createOrder(userId?: string, orderNote?: string, tableNumb
       });
     }
 
-    // Clear the cart items
     await prisma.cartItem.deleteMany({
       where: { cartId: cart.id }
     });
@@ -181,47 +198,38 @@ export async function createOrder(userId?: string, orderNote?: string, tableNumb
 
 export async function changeOrderStatus(orderId: number, status: string) {
   await prisma.order.update({
-    where: { orderId: orderId },
+    where: { orderId },
     data: { status },
   });
 
   await prisma.orderItem.updateMany({
-    where: { orderId: orderId },
+    where: { orderId },
     data: { status },
   });
 
-  return { message: 'Order status updated successfully', orderId: orderId };
+  return { message: 'Order status updated successfully', orderId };
 }
 
 export async function ChangeItemStatus(orderId: number, itemId: number, status: string) {
-  try {
-    const updatedItem = await prisma.orderItem.update({
-      where: {
-        orderId_itemId: {
-          orderId: orderId,
-          itemId: itemId,
-        },
+  const updatedItem = await prisma.orderItem.update({
+    where: {
+      orderId_itemId: {
+        orderId,
+        itemId,
       },
-      data: { status },
-    });
+    },
+    data: { status },
+  });
 
-    if (!updatedItem) {
-      throw new Error('Item not found in the order');
-    }
+  const orderItems = await prisma.orderItem.findMany({
+    where: { orderId },
+  });
 
-    const orderItems = await prisma.orderItem.findMany({
-      where: { orderId },
-    });
-
-    const allItemsPrepared = orderItems.every((item) => item.status === 'prepared');
-
-    if (allItemsPrepared) {
-      await changeOrderStatus(orderId, "ready");
-    }
-
-    return { message: `Item status updated to ${status}` };
-  } catch (error) {
-    console.error('Error updating item status:', error);
-    throw new Error('Failed to update item status');
+  const allItemsPrepared = orderItems.every((item) => item.status === 'prepared');
+  if (allItemsPrepared) {
+    await changeOrderStatus(orderId, "ready");
   }
+
+  return { message: `Item status updated to ${status}` };
 }
+

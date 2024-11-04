@@ -10,26 +10,53 @@ generator client {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  surname       String?
-  email         String          @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  role          String          @default("user")
-  accounts      Account[]
-  sessions      Session[]
-  Orders        Order[]
-  Tables        TableUser[]
-  AssignedTables Table[]        @relation("WaiterTables")
-  Authenticator Authenticator[]
-  CallsMade     Call[]          @relation("UserCalls")
-  CallsReceived Call[]          @relation("WaiterCalls")
-  AssignedCarts Cart[]          @relation("WaiterTables")
+  id              String          @id @default(cuid())
+  name            String?
+  surname         String?
+  email           String          @unique
+  emailVerified   DateTime?
+  password        String?
+  image           String?
+  role            String          @default("user")
+  accounts        Account[]
+  sessions        Session[]
+  Orders          OrderUser[]     // Relation to the OrderUser junction table
+  Tables          TableUser[]
+  AssignedTables  Table[]         @relation("WaiterTables")
+  Authenticator   Authenticator[]
+  CallsMade       Call[]          @relation("UserCalls")
+  CallsReceived   Call[]          @relation("WaiterCalls")
+  AssignedCarts   Cart[]          @relation("WaiterTables")
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Order {
+  orderId     Int         @id @default(autoincrement())
+  orderDate   DateTime    @default(now())
+  totalAmount Float
+  status      String      @default("Pending")
+  tableNumber Int?
+  orderNote   String?
+  Users       OrderUser[] // Relation to the OrderUser junction table
+  OrderItems  OrderItem[]
+
+  @@map("orders")
+}
+
+// Junction table to establish a many-to-many relationship between User and Order
+model OrderUser {
+  id       String @id @default(cuid())
+  userId   String
+  orderId  Int
+  User     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Order    Order  @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, orderId]) // Ensure each User-Order pair is unique
 }
 
 model Account {
@@ -98,7 +125,6 @@ model Item {
   OrderItems  OrderItem[]
 }
 
-// Modified: Cart is now associated with a table instead of users
 model Cart {
   id          String      @id @default(cuid())
   tableNumber Int         @unique  // One cart per table
@@ -112,7 +138,6 @@ model Cart {
   updatedAt   DateTime    @updatedAt
 }
 
-// New: CartItem model to store items in the shared cart
 model CartItem {
   id        String   @id @default(cuid())
   cartId    String
@@ -139,21 +164,6 @@ model OrderItem {
   Item  Item  @relation(fields: [itemId], references: [id])
 
   @@id([orderId, itemId])
-}
-
-model Order {
-  orderId     Int      @id @default(autoincrement())
-  userId      String
-  orderDate   DateTime @default(now())
-  totalAmount Float
-  status      String   @default("Pending")
-  tableNumber Int?
-  orderNote   String?
-
-  User       User        @relation(fields: [userId], references: [id])
-  OrderItems OrderItem[]
-
-  @@map("orders")
 }
 
 model Table {

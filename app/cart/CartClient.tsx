@@ -155,7 +155,12 @@ function CartClient() {
   const handleConfirmOrder = async () => {
     try {
       setIsConfirmOrderBtnDisabled(true);
-      const result = await createOrder(undefined, orderNotes); // Pasar orderNotes a createOrder
+      if (!tableNumber) {
+        addPopup('Primero debes seleccionar una mesa', true);
+        router.push('/tables');
+        return;
+      }
+      const result = await createOrder(tableNumber, orderNotes); // Pasar orderNotes a createOrder
       if (result.orderId) {
         await clearCart();
         setCartItems([]);

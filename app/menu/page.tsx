@@ -1,44 +1,99 @@
-import { getItems } from '@/actions/item'; // Import server action
-import MenuClient from './MenuClient'; // Client Component for interactions
-import { auth } from "@/auth"; // Import auth function
-import { Item } from '@prisma/client'; // Ensure this import matches your project setup
-import { cookies } from 'next/headers'; // Import cookies from next/headers
-import { assignTable } from '@/actions/tables';
-import { getTables } from '@/actions/tables';
+import { getItems } from '@/actions/item';
+import MenuClient from './MenuClient';
+import { auth } from "@/auth";
+import { Item } from '@prisma/client';
+import { cookies } from 'next/headers';
+import { assignTable, getTables } from '@/actions/tables';
+
+// Define interfaces based on your Prisma query structure
+interface User {
+  id: string;
+  name: string | null;
+  email: string;
+}
+
+interface TableUser {
+  User: User;
+}
+
+interface CartItem {
+  Item: {
+    id: number;
+    title: string;
+    price: number;
+  };
+  quantity: number;
+}
+
+interface Cart {
+  CartItems: CartItem[];
+}
+
+interface Table {
+  tableNumber: number;
+  waiterId: string | null;
+  Users: TableUser[];
+  Waiter: User | null;
+  Cart: Cart | null;
+}
+
+// Transform function to match MenuClient expectations
+function transformTableData(table: Table) {
+  return {
+    tableNumber: table.tableNumber,
+    waiterId: table.waiterId || '',
+    Cart: table.Cart ? {
+      CartItems: table.Cart.CartItems.map(item => ({
+        Item: {
+          id: item.Item.id,
+          title: item.Item.title,
+          price: item.Item.price.toString()
+        },
+        amount: item.quantity
+      }))
+    } : undefined
+  };
+}
 
 export default async function Menu() {
   try {
     // Fetch menu items using the server action
-    const menuItems = await getItems() as Item[]; // Assert the type to Item[]
-    
-    // Fetch user role using the server action
+    const menuItems = await getItems() as Item[];
+
+    // Fetch user role and handle table assignment
     const session = await auth();
     const userRole = session?.user?.role || null;
     const userId = session?.user?.id || null;
 
+    // Handle table assignment for logged-in users
     if (userId) {
       const cookieStore = cookies();
       const tableNumber = cookieStore.get('tableNumber')?.value;
-
       if (tableNumber) {
         await assignTable(Number(tableNumber), userId);
       }
     }
 
-    let filteredTables = null
-
-    if (userRole === 'waiter') {
-      const waiterTables = await getTables();
-      filteredTables = waiterTables.filter(table => table.Waiter?.id === userId);
+    // Handle waiter tables
+    let waiterTables = null;
+    if (userRole === 'waiter' && userId) {
+      const tables = await getTables();
+      const filteredTables = tables
+        .filter(table => table.Waiter?.id === userId)
+        .map(transformTableData);
+      waiterTables = filteredTables;
     }
 
     return (
       <main>
-        <MenuClient menuItems={menuItems} userRole={userRole} waiterTables={filteredTables}/>
+        <MenuClient
+          menuItems={menuItems}
+          userRole={userRole}
+          waiterTables={waiterTables}
+        />
       </main>
     );
   } catch (error) {
-    // Handle error (e.g., show an error message)
     console.error('Failed to load menu items or user role:', error);
     return (
       <main>

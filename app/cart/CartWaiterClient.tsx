@@ -10,31 +10,31 @@ import "./cart.css";
 import { auth } from '@/auth';
 
 interface Table {
-    tableNumber: number;
-    waiterId: string;
-    Cart?: {
-      CartItems: Array<{
-        Item: {
-          id: number;
-          title: string;
-          price: string;
-        };
-        amount: number;
-      }>;
-    };
-  }
+  tableNumber: number;
+  waiterId: string;
+  Cart?: {
+    CartItems: Array<{
+      Item: {
+        id: number;
+        title: string;
+        price: string;
+      };
+      amount: number;
+    }>;
+  };
+}
 
 interface CartItem {
-    itemId: number;
-    title: string;
-    amount: number;
-    total: string;
-    price: string;
+  itemId: number;
+  title: string;
+  amount: number;
+  total: string;
+  price: string;
 }
 
 interface CartWaiterClientProps {
-    userRole: string | null;
-    waiterTables: Table[];
+  userRole: string | null;
+  waiterTables: Table[];
 }
 
 function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
@@ -65,7 +65,7 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
   useEffect(() => {
     const fetchCartItems = async () => {
       if (!selectedTable) return;
-      
+
       try {
         setLoading(true);
         const { items } = await getCart(selectedTable); // Modify getCart to accept tableNumber
@@ -79,13 +79,14 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
     };
 
     fetchCartItems();
-    
+
     const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
     const channel = ably.channels.get('cart-updates');
-    
+
     channel.subscribe('item-updated', async (message) => {
       if (message.data.tableNumber === selectedTable) {
-        const { items } = await getCart(selectedTable);
+        if (!selectedTable) return;
+        const { items } = await getCart(selectedTable); // Modify getCart to accept tableNumber
         setCartItems(items);
       }
     });
@@ -167,7 +168,12 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
   const handleConfirmOrder = async () => {
     try {
       setIsConfirmOrderBtnDisabled(true);
-      const result = await createOrder(undefined, orderNotes,); // Pasar orderNotes a createOrder
+      if (!selectedTable) {
+        addPopup('Primero debes seleccionar una mesa', true);
+        router.push('/tables');
+        throw new Error('Table not selected');
+      }
+      const result = await createOrder(selectedTable, orderNotes,); // Pasar orderNotes a createOrder
       if (result.orderId) {
         await clearCart();
         setCartItems([]);
@@ -209,13 +215,13 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
         </div>
       ) : (
         <>
-            <select name="tableNumber" id="tableNumber" value={selectedTable || "tableSelect"} onChange={handleTableChange} className='tableNumberSelect'>
-                <option value="tableSelect" disabled>Seleccionar mesa</option>
-                {waiterTables.map(table => (
-                <option key={table.tableNumber} value={table.tableNumber}>
-                    Mesa {table.tableNumber}
-                </option>
-                ))}
+          <select name="tableNumber" id="tableNumber" value={selectedTable || "tableSelect"} onChange={handleTableChange} className='tableNumberSelect'>
+            <option value="tableSelect" disabled>Seleccionar mesa</option>
+            {waiterTables.map(table => (
+              <option key={table.tableNumber} value={table.tableNumber}>
+                Mesa {table.tableNumber}
+              </option>
+            ))}
           </select>
           {loading ? (
             <div className='container'>Cargando carrito...</div>
