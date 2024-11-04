@@ -60,11 +60,6 @@ export default async function RootLayout({
             (role === "user" && hasTableAssigned && !pendingCall)) && (
               <CallWaiterBtn />
             )}
-          {role === "waiter" && (
-            <Link className="callsBtn" href={`/calls`}>
-              Llamados
-            </Link>
-          )}
           <nav>
               <Link className="aLink" href={`/menu`}>
                 <img src="/media/homeIcon.svg" alt="homeIcon" />
