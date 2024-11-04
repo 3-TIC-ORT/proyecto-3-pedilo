@@ -43,7 +43,7 @@ function ProductClient({ product, userRole }: ProductClientProps) {
 
   return (
     <main className='productMenuMain'>
-      <Link href='/menu' className="backArrowBtn"><img src="/media/arrowIcon.svg" alt="arrowIcon" ></img></Link>
+      <a href='/menu' className="backArrowBtn"><img src="/media/arrowIcon.svg" alt="arrowIcon" ></img></a>
       <div className="productContainer">
         <h1 className="name">{product.title}</h1>
         <div className="price-tag">

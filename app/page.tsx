@@ -15,11 +15,11 @@ export default async function App() {
       <div className={styles.buttons}>
         {!session && (
           <>
-            <Link className={styles.aLinkBtn} href="/login">Iniciar sesion</Link>
+            <a className={styles.aLinkBtn} href="/login">Iniciar sesion</a>
             <p>o</p>
           </>
         )}
-        <Link className={styles.aLinkBtn} href="/menu">Ver el menu</Link>
+        <a className={styles.aLinkBtn} href="/menu">Ver el menu</a>
       </div>
     </main>
   );

@@ -75,7 +75,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               </button>
             </form>
             <div className="otherActions">
-              <Link href="/" className="backBtn">Cancelar</Link>
+              <a href="/" className="backBtn">Cancelar</a>
             </div>
           </div>
         )}

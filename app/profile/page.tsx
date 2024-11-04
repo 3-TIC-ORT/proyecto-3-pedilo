@@ -37,7 +37,8 @@ export default async function Profile() {
                 </div>
             </div>
         </div>
-        <Link href={`/orders`} className='viewOrdersBtn'>Tus ordenes</Link>
+        <a href={`/orders`} className='viewOrdersBtn'>Tus ordenes</a>
+        <a href={`/tables`} className='viewOrdersBtn'>Cambiar de mesa</a>
         <LogoutButton />
       </main>
     )

@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react';
-import { getCart, addToCart, removeFromCart } from '@/actions/cart';
+import { getCart, addToCart, removeFromCart, clearCart } from '@/actions/cart';
 import { createOrder } from '@/actions/order';
 import { getUserTables } from '@/actions/tables';
 import { usePopup } from '@/context/PopupContext';
@@ -205,7 +205,7 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
   };
 
   return (
-    <main>
+    <main className='cartMain'>
       {showConfirmation ? (
         <div className="container">
           <div className='confirmationContainer'>
@@ -279,8 +279,15 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
                   onChange={(e) => setOrderNotes(e.target.value)}
                 ></textarea>
               </div>
-              <div className="orderBtn">
-                <button onClick={handleOrder} disabled={isOrderBtnDisabled}>Ordenar</button>
+              <div className="cartOrder-ClearBtns">
+                <div className="orderBtn">
+                  <button onClick={handleOrder} disabled={isOrderBtnDisabled}>Ordenar</button>
+                </div>
+                {(selectedTable && cartItems) && (
+                  <div className="clearCartBtn">
+                    <button onClick={() => clearCart(selectedTable)}>Vaciar carrito</button>
+                  </div>
+                )}
               </div>
             </>
           )}

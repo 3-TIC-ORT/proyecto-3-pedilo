@@ -61,51 +61,51 @@ export default async function RootLayout({
               <CallWaiterBtn />
             )}
           {role === "waiter" && (
-            <Link className="callsBtn" href={`/calls`}>
+            <a className="callsBtn" href={`/calls`}>
               Llamados
-            </Link>
+            </a>
           )}
           <nav>
-              <Link className="aLink" href={`/menu`}>
+              <a className="aLink" href={`/menu`}>
                 <img src="/media/homeIcon.svg" alt="homeIcon" />
                 <p>Menu</p>
-              </Link>
+              </a>
             {(role === "user" || role === "waiter") && (
               <>
-                <Link className="aLink" href={`/cart`}>
+                <a className="aLink" href={`/cart`}>
                   <img src="/media/cartIcon.svg" alt="cartIcon" />
                   <p>Carrito</p>
-                </Link>
+                </a>
               </>
             )}
             {role === "admin" && (
               <>
-                <Link className="aLink" href={`/dashboard`}>
+                <a className="aLink" href={`/dashboard`}>
                   <img src="/media/customizeIcon.svg" alt="customizeIcon" />
                   <p>Personalizar</p>
-                </Link>
+                </a>
               </>
             )}
             {(role === "waiter" || (role === "user" && !hasTableAssigned)) && (
               <>
-                <Link className="aLink" href={`/tables`}>
+                <a className="aLink" href={`/tables`}>
                   <img src="/media/tableIcon.svg" alt="callsIcon" />
                   <p>Mesas</p>
-                </Link>
+                </a>
               </>
             )}
             {(role === "waiter" || (role === "chef")) && (
               <>
-                <Link className="aLink" href={`/orders`}>
+                <a className="aLink" href={`/orders`}>
                   <img src="/media/ordersIcon.svg" alt="ordersIcon" />
                   <p>Ordenes</p>
-                </Link>
+                </a>
               </>
             )}
-            <Link className="aLink" href={`/profile`}>
+            <a className="aLink" href={`/profile`}>
               <img src="/media/profileIcon.svg" alt="profileIcon" />
               <p>Perfil</p>
-            </Link>
+            </a>
           </nav>
         </footer>
       </body>
