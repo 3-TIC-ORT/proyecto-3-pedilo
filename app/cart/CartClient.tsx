@@ -89,8 +89,14 @@ function CartClient() {
     });
 
     channel.subscribe('cart-cleared', async (message) => {
-      const { items } = await getCart();
-      setCartItems(items);
+      setTimeout(() => {
+        router.push('/orders');
+      }, 1500);
+      addPopup('Otro usuario ha hecho el pedido', false);
+      setCartItems([]);
+      setOrderNotes('');
+      setShowConfirmation(false);
+
     });
     // Clean up on unmount
     return () => {
@@ -177,7 +183,6 @@ function CartClient() {
       }
       const result = await createOrder(tableNumber, orderNotes); // Pasar orderNotes a createOrder
       if (result.orderId) {
-        await clearCart();
         setCartItems([]);
         setOrderNotes('');
         setShowConfirmation(false);
