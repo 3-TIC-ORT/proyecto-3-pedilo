@@ -43,16 +43,33 @@ function CartClient() {
   };
 
   useEffect(() => {
-    const fetchCartItems = async () => {
+    const fetchTableNumber = async () => {
       try {
-        if (tableNumber === null) {
-          addPopup("Primero debes seleccionar una mesa.", true)
-          router.push("/tables");
+        const tables = await getUserTables();
+        if (tables.length > 0) {
+          setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
         } else {
+          setTableNumber(null)
+        }
+      } catch (error) {
+        console.error('Failed to fetch table number:', error);
+        addPopup('Ocurrio un error al cargar la informacion de la mesa.', true);
+      }
+    };
+
+    fetchTableNumber();
+  }, []);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      if (tableNumber === null) {
+        addPopup("Primero debes seleccionar una mesa.", true)
+        router.push("/tables");
+      }
+      try {
           setLoading(true); // Iniciar carga
           const { items } = await getCart();
           setCartItems(items);
-        }
 
       } catch (error) {
         console.error('Failed to fetch cart items:', error);
@@ -77,24 +94,6 @@ function CartClient() {
       channel.unsubscribe();
       ably.close();
     };
-  }, []);
-
-  useEffect(() => {
-    const fetchTableNumber = async () => {
-      try {
-        const tables = await getUserTables();
-        if (tables.length > 0) {
-          setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
-        } else {
-          setTableNumber(null)
-        }
-      } catch (error) {
-        console.error('Failed to fetch table number:', error);
-        addPopup('Ocurrio un error al cargar la informacion de la mesa.', true);
-      }
-    };
-
-    fetchTableNumber();
   }, []);
 
   useEffect(() => {
