@@ -91,6 +91,11 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
             addPopup("Primero necesitas seleccionar una mesa para poder agregar productos a la orden.")
           } else {
             await addToCart(item.id, quantity, Number((document.getElementById('tableNumber') as HTMLSelectElement).value));
+            if (quantity > 1) {
+              addPopup(`Se agregaron ${quantity} ${item.title} al carrito de la mesa ${Number((document.getElementById('tableNumber') as HTMLSelectElement).value)}`, false); // Puedes cambiar el mensaje y si es un error
+            } else {
+            addPopup(`Se agregego ${item.title} al carrito de la mesa ${Number((document.getElementById('tableNumber') as HTMLSelectElement).value)}`, false); // Puedes cambiar el mensaje y si es un error
+            }
           }
         } else if (tableNumber === null){
           addPopup("Primero necesitas seleccionar una mesa.")
