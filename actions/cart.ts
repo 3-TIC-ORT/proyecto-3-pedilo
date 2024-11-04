@@ -193,7 +193,7 @@ export async function clearCart(tableNumber?: number) {
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
 
     // Publish Ably event for cart clearance
-    await ablyClient.channels.get('cart-updates').publish('cart-cleared', {
+    await ablyClient.channels.get('cart-updates').publish('cart-cleared-user', {
       tableNumber,
     });
 
