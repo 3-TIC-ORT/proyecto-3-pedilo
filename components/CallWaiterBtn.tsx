@@ -1,6 +1,7 @@
 "use client";
 
 export default function CallWaiterBtn() {
+    
 
     return (
         <>

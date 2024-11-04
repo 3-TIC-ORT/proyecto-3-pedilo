@@ -35,12 +35,6 @@ export default async function RootLayout({
       pendingCall = await hasPendingCall(userTables[0].tableNumber);
     }
   }
-
-  const popupMessages = [
-    { message: 'Este es un mensaje de información', isError: false },
-    { message: 'Este es un mensaje de error', isError: true },
-    { message: 'Otro mensaje de información', isError: false },
-  ];
   
   return (
     <html lang="en">

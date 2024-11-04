@@ -106,7 +106,7 @@ const Orders: React.FC = () => {
 
   if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') { // Verifica si el usuario tiene acceso a la sección
     // Ordenar las órdenes para que las que están en estado "ready" aparezcan al final
-    const sortedOrders = [...orders].sort((a, b) => a.status === 'ready' ? 1 : -1);
+    let sortedOrders = [...orders].sort((a, b) => a.status === 'ready' ? 1 : -1);
 
     return (
       <main className='ordersMain'>
