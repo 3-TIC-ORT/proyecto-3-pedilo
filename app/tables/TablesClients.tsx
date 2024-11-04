@@ -99,17 +99,13 @@ export default function TablesClient({
         // Handle waiter assignments
         channel.subscribe('waiter-assigned', async (message) => {
           const { tableNumber, waiterId } = message.data;
-          if (userRole === 'waiter') {
-            await fetchTables();
-          }
+          await fetchTables();
         });
 
         // Handle waiter unassignments
         channel.subscribe('waiter-unassigned', async (message) => {
           const { tableNumber } = message.data;
-          if (userRole === 'waiter') {
-            await fetchTables();
-          }
+          await fetchTables();
         });
 
         // Handle connection state
