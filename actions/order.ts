@@ -179,23 +179,13 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
       }
     });
 
-    // If the requester is a waiter, link the order to all users assigned to the table
-    if (isWaiter) {
-      await prisma.orderUser.createMany({
-        data: tableUsers.map((tableUser) => ({
-          orderId: newOrder.orderId,
-          userId: tableUser.userId
-        }))
-      });
-    } else {
-      // If a regular user creates the order, link only their user ID
-      await prisma.orderUser.create({
-        data: {
-          orderId: newOrder.orderId,
-          userId
-        }
-      });
-    }
+    // Always assign the order to all users at the table
+    await prisma.orderUser.createMany({
+      data: tableUsers.map((tableUser) => ({
+        orderId: newOrder.orderId,
+        userId: tableUser.userId
+      }))
+    });
 
     // Create order items based on the cart
     for (const cartItem of cart.CartItems) {
