@@ -109,7 +109,12 @@ const Orders: React.FC = () => {
 
     const channel = ably.channels.get('order-updates');
     channel.subscribe('order-created', async (message) => {
-      const newOrder = await getOrders();
+      let newOrder;
+      if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') {
+          newOrder = await getAllOrders();
+      } else {
+          newOrder = await getOrders();
+      }
       setOrders(newOrder);
     });
 
