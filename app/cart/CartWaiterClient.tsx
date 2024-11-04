@@ -144,7 +144,12 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
     try {
       const item = cartItems.find(item => item.itemId === itemId);
       if (item) {
-        await removeFromCart(itemId, item.amount); // Pasar la cantidad total del artículo
+        const quantity = item.amount;
+        if (selectedTable === null) {
+          addPopup('Primero debes seleccionar una mesa', true);
+          return; // Exit the function if tableNumber is null
+        }
+        await removeFromCart(itemId, quantity, selectedTable); // Pasar la cantidad total del artículo
         const { items } = await getCart();
         setCartItems(items);
         addPopup('Artículo eliminado del carrito', false);

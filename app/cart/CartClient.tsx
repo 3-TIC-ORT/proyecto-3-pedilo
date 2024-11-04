@@ -147,7 +147,8 @@ function CartClient() {
           router.push('/tables');
           return; // Exit the function if tableNumber is null
         }
-        await removeFromCart(itemId, item.amount, tableNumber); // Pasar la cantidad total del artículo
+        const quantity = item.amount;
+        await removeFromCart(itemId, quantity, tableNumber); // Pasar la cantidad total del artículo
         const { items } = await getCart();
         setCartItems(items);
         addPopup('Artículo eliminado del carrito', false);
