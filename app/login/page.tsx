@@ -6,17 +6,18 @@ import "./login.css"
 import Link from "next/link";
 
 interface SignInPageProps {
-  searchParams: { verifyRequest?: string; callbackUrl?: string };
+  searchParams: Promise<{ verifyRequest?: string; callbackUrl?: string }>;
 }
 
-export default async function SignInPage({ searchParams }: SignInPageProps) {
+export default async function SignInPage(props: SignInPageProps) {
+  const searchParams = await props.searchParams;
 
   const session = await auth();
   if (!session) {
     const isVerifyRequest = searchParams.verifyRequest === "true";
     const callbackUrl = searchParams.callbackUrl || "/";
     return (
-      <main className="loginMain">
+      (<main className="loginMain">
         {isVerifyRequest ? (
           <div className="container">
             <h1>Verifica tu correo electrónico</h1>
@@ -33,7 +34,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
               action={async (formData) => {
                 "use server";
                 const email = formData.get("email");
-                const cookieStore = cookies();
+                const cookieStore = await cookies();
                 try {
                   await signIn("resend", {
                     email,
@@ -79,7 +80,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
             </div>
           </div>
         )}
-      </main>
+      </main>)
     );
   } else {
     return redirect("/");

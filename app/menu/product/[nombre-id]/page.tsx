@@ -5,10 +5,11 @@ import { Item } from '@prisma/client';
 import { auth } from '@/auth';
 
 interface ProductPageProps {
-  params: { 'nombre-id': string }; // URL parameters
+  params: Promise<{ 'nombre-id': string }>; // URL parameters
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage(props: ProductPageProps) {
+  const params = await props.params;
   const productId = parseInt(params['nombre-id'].split('-').pop() || '0', 10); // Extract and parse the product ID
   const product = await getItems(productId) as Item;
   const session = await auth();

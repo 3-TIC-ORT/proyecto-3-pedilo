@@ -67,7 +67,7 @@ export default async function Menu() {
 
     // Handle table assignment for logged-in users
     if (userId) {
-      const cookieStore = cookies();
+      const cookieStore = await cookies();
       const tableNumber = cookieStore.get('tableNumber')?.value;
       if (tableNumber) {
         await assignTable(Number(tableNumber), userId);

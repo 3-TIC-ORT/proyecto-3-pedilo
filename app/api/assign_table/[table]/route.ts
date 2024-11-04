@@ -4,10 +4,8 @@ import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { table: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ table: string }> }) {
+  const params = await props.params;
   const session = await auth();
   const table = params.table;
   console.log("table", table);
@@ -24,7 +22,7 @@ export async function GET(
     }
   } else {
     // Set cookie for non-authenticated users
-    cookies().set({
+    (await cookies()).set({
       name: 'tableNumber',
       value: table,
       httpOnly: true,
