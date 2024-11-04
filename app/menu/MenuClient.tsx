@@ -57,8 +57,10 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
   useEffect(() => {
     const fetchTableNumber = async () => {
       try {
-        const tables = await getUserTables();
-        setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
+        if (userRole === "user") {
+          const tables = await getUserTables();
+          setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
+        }
       } catch (error) {
         console.error('Failed to fetch table number:', error);
         addPopup('Ocurrio un error al cargar la informacion de la mesa.', true);
