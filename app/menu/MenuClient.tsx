@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation'; // Import navigation hook
 import { addToCart } from '@/actions/cart'; // Import the addToCart function
 import { usePopup } from '@/context/PopupContext';
+import { getUserTables } from '@/actions/tables';
 import './menu.css';
 import { getTables } from '@/actions/tables';
 
@@ -43,6 +44,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const router = useRouter(); // Navigation hook
   const { addPopup } = usePopup();
+  const [tableNumber, setTableNumber] = useState<number | null>(null); // Estado para el número de mesa
 
   const categories = menuItems.reduce<Record<string, MenuItem[]>>((acc, item) => {
     if (!acc[item.category]) {
@@ -51,6 +53,20 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
     acc[item.category].push(item);
     return acc;
   }, {});
+
+  useEffect(() => {
+    const fetchTableNumber = async () => {
+      try {
+        const tables = await getUserTables();
+        setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
+      } catch (error) {
+        console.error('Failed to fetch table number:', error);
+        addPopup('Ocurrio un error al cargar la informacion de la mesa.', true);
+      }
+    };
+
+    fetchTableNumber();
+  }, []);
 
   const handleProductClick = (item: MenuItem) => {
     const productUrl = `/menu/product/${item.title}-${item.id}`;
@@ -70,20 +86,24 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
       try {
         if (userRole === "waiter") {
           await addToCart(item.id, quantity, Number((document.getElementById('tableNumber') as HTMLSelectElement).value));
+        } else if (tableNumber === null){
+          addPopup("Primero necesitas seleccionar una mesa.")
+          router.push("/tables")
         } else {
           await addToCart(item.id, quantity);
+
+          if (quantity > 1) {
+            addPopup(`Se agregaron ${quantity} ${item.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
+          } else {
+          addPopup(`Se agregego ${item.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
+          }
         } // Llama a la función addToCart para agregar el producto al carrito
-        if (quantity > 1) {
-          addPopup(`Se agregaron ${quantity} ${item.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
-        } else {
-        addPopup(`Se agregego ${item.title} al carrito`, false); // Puedes cambiar el mensaje y si es un error
-        }
       } catch (error) {
         console.error('Error adding item to cart:', error);
         addPopup(`Ocurrio un error al agregar ${item.title} al carrito`, true); // Puedes cambiar el mensaje y si es un error
       }
     }
-  };
+  }
 
   return (
     <>
