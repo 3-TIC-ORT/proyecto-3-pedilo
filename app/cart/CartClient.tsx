@@ -77,8 +77,10 @@ function CartClient() {
     const fetchTableNumber = async () => {
       try {
         const tables = await getUserTables();
-        if (tables.length > 0) {
-          setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
+        setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
+        if (tableNumber === null) {
+          addPopup("Primero debes seleccionar una mesa.", true)
+          router.push("/tables");
         }
       } catch (error) {
         console.error('Failed to fetch table number:', error);

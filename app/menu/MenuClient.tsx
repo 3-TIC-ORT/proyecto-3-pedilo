@@ -88,7 +88,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
       try {
         if (userRole === "waiter") {
           if ((document.getElementById('tableNumber') as HTMLSelectElement).value === "NoTable") {
-            addPopup("Primero necesitas seleccionar una mesa para poder agregar productos a la orden.")
+            addPopup("Primero necesitas seleccionar una mesa para poder agregar productos a la orden.", true)
           } else {
             await addToCart(item.id, quantity, Number((document.getElementById('tableNumber') as HTMLSelectElement).value));
             if (quantity > 1) {
@@ -98,7 +98,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
             }
           }
         } else if (tableNumber === null){
-          addPopup("Primero necesitas seleccionar una mesa.")
+          addPopup("Primero necesitas seleccionar una mesa.", true)
           router.push("/tables")
         } else {
           await addToCart(item.id, quantity);
