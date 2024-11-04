@@ -45,9 +45,14 @@ function CartClient() {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
+        if (tableNumber === null) {
+          addPopup("Primero debes seleccionar una mesa.", true)
+          router.push("/tables");
+        }
         setLoading(true); // Iniciar carga
         const { items } = await getCart();
         setCartItems(items);
+
       } catch (error) {
         console.error('Failed to fetch cart items:', error);
         addPopup('Ocurrio un error al cargar la informacion del carrito.', true);
@@ -81,10 +86,6 @@ function CartClient() {
           setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
         } else {
           setTableNumber(null)
-        }
-        if (tableNumber === null) {
-          addPopup("Primero debes seleccionar una mesa.", true)
-          router.push("/tables");
         }
       } catch (error) {
         console.error('Failed to fetch table number:', error);
