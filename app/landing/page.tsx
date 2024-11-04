@@ -30,6 +30,10 @@ function Landing() {
                 <p>Nicolás Krymkiewicz</p>
             </div>
             <div className="aplicacionesUsadas">
+                <div className="aplicacion black">
+                    <p className="imgText">Figma</p>
+                    <img src="/images/landing/logo-figma.svg" alt="" />
+                </div>
                 <div className="aplicacion">
                     <p className="imgText">Notion</p>
                     <img src="/images/landing/logo-notion.svg" alt="" />
@@ -182,6 +186,10 @@ function Landing() {
                 </p>
             </div>
             <div className="aplicacionesUsadas">
+                <div className="aplicacion black">
+                    <p className="imgText">VsCode</p>
+                    <img src="/images/landing/logo-vscode.svg" alt="" />
+                </div>
                 <div className="aplicacion">
                     <p className="imgText">Notion</p>
                     <img src="/images/landing/logo-notion.svg" alt="" />
