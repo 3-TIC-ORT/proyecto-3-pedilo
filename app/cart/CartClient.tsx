@@ -66,9 +66,9 @@ function CartClient() {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-          setLoading(true); // Iniciar carga
-          const { items } = await getCart();
-          setCartItems(items);
+        setLoading(true); // Iniciar carga
+        const { items } = await getCart();
+        setCartItems(items);
 
       } catch (error) {
         console.error('Failed to fetch cart items:', error);
@@ -134,7 +134,12 @@ function CartClient() {
     try {
       const item = cartItems.find(item => item.itemId === itemId);
       if (item) {
-        await removeFromCart(itemId, item.amount); // Pasar la cantidad total del artículo
+        if (tableNumber === null) {
+          addPopup('Primero debes seleccionar una mesa', true);
+          router.push('/tables');
+          return; // Exit the function if tableNumber is null
+        }
+        await removeFromCart(itemId, item.amount, tableNumber); // Pasar la cantidad total del artículo
         const { items } = await getCart();
         setCartItems(items);
         addPopup('Artículo eliminado del carrito', false);
