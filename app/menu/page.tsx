@@ -85,7 +85,7 @@ export default async function Menu() {
     }
 
     return (
-      <main>
+      <main className='menuMain'>
         <MenuClient
           menuItems={menuItems}
           userRole={userRole}

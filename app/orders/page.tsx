@@ -98,7 +98,7 @@ const Orders: React.FC = () => {
 
   if (isLoading) {
     return (
-      <main>
+      <main className='ordersMain'>
         <div className='container'>Cargando ordenes...</div>
       </main>
     );
@@ -109,7 +109,7 @@ const Orders: React.FC = () => {
     const sortedOrders = [...orders].sort((a, b) => a.status === 'ready' ? 1 : -1);
 
     return (
-      <main>
+      <main className='ordersMain'>
         <h1>Ordenes</h1>
         <div className="waiterOrders">
           {sortedOrders.map((order) => (
@@ -154,14 +154,14 @@ const Orders: React.FC = () => {
 
   if (orders.length === 0) {
     return (
-      <main>
+      <main className='ordersMain'>
         <div className='container'>No tienes ordenes.</div>
       </main>
     );
   }
 
   return (
-    <main>
+    <main className='ordersMain'>
       <h1>Tus ordenes</h1>
       <div className="orders">
         <div 

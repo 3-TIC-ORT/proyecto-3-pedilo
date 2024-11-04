@@ -16,7 +16,7 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
     const isVerifyRequest = searchParams.verifyRequest === "true";
     const callbackUrl = searchParams.callbackUrl || "/";
     return (
-      <main>
+      <main className="loginMain">
         {isVerifyRequest ? (
           <div className="container">
             <h1>Verifica tu correo electrónico</h1>

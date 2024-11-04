@@ -3,7 +3,7 @@ import "./users.css"
 
 function Users() {
   return (
-    <main>
+    <main className='dashboardUsersMain'>
         <h1>Gestion de usuarios</h1>
         <section>
             <input type="search" name="searchField" id="searchField" placeholder='Buscar usuarios'/>

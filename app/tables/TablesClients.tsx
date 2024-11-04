@@ -216,9 +216,9 @@ export default function TablesClient({
   }, [tables, userRole, currentUser?.id]);
 
   return (
-    <main>
+    <main className='tablesMain'>
       <h1>Por favor selecciona una mesa {userRole === 'user' ? 'disponible' : 'para atender'}.</h1>
-      <section>
+      <section className='tablesSectionContainer'>
         {sortedTables.map((table) => (
           <React.Fragment key={table.tableNumber}>
             {userRole === 'user' ? (

@@ -5,7 +5,7 @@ import "./calls.css"
 function Calls() {
 
   return (
-    <main>
+    <main className='callsMain'>
       <h1>Tus llamados</h1>
       <section>
         <div className='callCard'>

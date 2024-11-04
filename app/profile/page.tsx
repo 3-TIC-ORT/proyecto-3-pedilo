@@ -17,7 +17,7 @@ export default async function Profile() {
     console.log("orders: " + orders);
     
     return (
-      <main>
+      <main className='profileMain'>
         <div className="info">
             <img src={user.image ? user.image : "media/defaultProfilePicture.svg"} alt="profilePicture" />
             <div className="userInfo">
