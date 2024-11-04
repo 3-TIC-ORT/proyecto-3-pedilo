@@ -277,8 +277,10 @@ function CartClient() {
                   onChange={(e) => setOrderNotes(e.target.value)}
                 ></textarea>
               </div>
-              <div className="orderBtn">
-                <button onClick={handleOrder} disabled={isOrderBtnDisabled}>Ordenar</button>
+              <div className="cartOrder-ClearBtns">
+                <div className="orderBtn">
+                  <button onClick={handleOrder} disabled={isOrderBtnDisabled}>Ordenar</button>
+                </div>
               </div>
             </>
           )}
