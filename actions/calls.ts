@@ -2,42 +2,58 @@
 import { ablyClient } from "@/lib/ably";  // Import Ably client
 import { auth } from "@/auth";
 import { prisma } from "@/prisma";
+import { Call } from "@prisma/client";
 
-export async function newCall(tableNumber: number, waiterId: string, reason: string) {
+export async function newCall(tableNumber: number, reason: string): Promise<Call | false> {
   try {
+    // Check authentication
     const session = await auth();
-    if (!session) {
+    if (!session?.user?.id) {
       throw new Error("User not authenticated");
     }
 
-    const userId = session.user.id;
+    // Get waiter ID for the table
+    const tableData = await prisma.table.findUnique({
+      where: { tableNumber },
+      select: { waiterId: true }
+    });
 
-    // Create the new call with waiterId, tableNumber, userId, and reason
+    if (!tableData?.waiterId) {
+      throw new Error("No waiter assigned to this table");
+    }
+
+    // Create the new call
     const call = await prisma.call.create({
       data: {
-        waiterId,
+        waiterId: tableData.waiterId,
         tableNumber,
-        userId,
-        reason // reason is optional (string or undefined)
+        userId: session.user.id,
+        reason: reason, // Make sure reason can be null if undefined
+        status: "pending" // Add status if it's part of your Call model
       }
     });
 
-    // Publish to Ably that a new call was created
+    // Publish to Ably
     await ablyClient.channels.get("call-updates").publish("new-call", {
       callId: call.id,
       waiterId: call.waiterId,
       tableNumber: call.tableNumber,
+      userId: call.userId,
       reason: call.reason,
-      status: "pending"  // Default status
+      status: call.status,
+      createdAt: call.createdAt
     });
 
     return call;
+
   } catch (error) {
     console.error("Error creating new call:", error);
-    return false; // Return false if there is an error
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+    }
+    return false;
   }
 }
-
 export async function getWaiterCalls() {
   try {
     const session = await auth();
