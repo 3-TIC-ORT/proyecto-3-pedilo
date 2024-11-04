@@ -59,7 +59,11 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
       try {
         if (userRole === "user") {
           const tables = await getUserTables();
-          setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
+          if (tables.length > 0) {
+            setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
+          } else {
+            setTableNumber(null)
+          }
         }
       } catch (error) {
         console.error('Failed to fetch table number:', error);
