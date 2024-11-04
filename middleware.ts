@@ -65,5 +65,4 @@ export const config = {
      */
     '/((?!api|_next/static|_next/image|media|image|favicon.ico).*)',
   ],
-  runtime: 'experimental-edge'
 };
