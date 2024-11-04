@@ -7,16 +7,15 @@ Pedilo es una aplicación web diseñada para facilitar la gestión de pedidos en
 ## Características
 
 - **Interfaz de usuario intuitiva**: Navegación fácil y accesible para todos los usuarios.
-- **Gestión de pedidos**: Los usuarios pueden realizar, modificar y cancelar pedidos.
+- **Gestión de pedidos**: Los usuarios pueden realizar pedidos directo desde el celular..
 - **Sistema de notificaciones**: Alertas en tiempo real para el estado de los pedidos.
-- **Soporte multilenguaje**: Disponible en varios idiomas para alcanzar un público más amplio.
 
 ## Tecnologías utilizadas
 
 - **Frontend**: React, HTML, CSS
-- **Backend**: Node.js, Express
-- **Base de datos**: MongoDB
-- **Autenticación**: JWT (JSON Web Tokens)
+- **Backend**: NextJS
+- **Base de datos**: PostgreSQL
+- **Autenticación**: Authjs
 
 ## Instalación
 
