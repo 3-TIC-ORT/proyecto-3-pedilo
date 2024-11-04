@@ -239,7 +239,7 @@ export default function TablesClient({
                   <p>(Asignada a otro camarero)</p>
                 )}
                 {table.Users.length > 0 && (
-                  <button onClick={() => handleUnassignAllUsers(table.tableNumber)}>
+                  <button onClick={() => handleUnassignAllUsers(table.tableNumber)} disabled={table?.Waiter?.id !== currentUser?.id}>
                     Liberar mesa
                   </button>
                 )}

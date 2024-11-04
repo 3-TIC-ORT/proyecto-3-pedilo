@@ -71,6 +71,13 @@
                 align-items: center;
                 justify-content: center;
                 border-radius: .5rem;
+
+                &:disabled {
+                    background-color: var(--gray);
+                    color: var(--white);
+                    cursor: not-allowed;
+                    border: 1px solid var(--black);
+                }
             }
         }
         
