@@ -1,173 +1,175 @@
-.productContainer {
-    display: flex;
-    flex-direction: column;
-    margin: .5rem;
-    align-items: center;
-
-    .name {
-        display: flex;
-        flex-direction: row;
-        padding: .5rem 1rem;
-        width: 100%;
-        height: auto;
-        word-break: break-all;
-        font-weight: 600;
-        font-size: 1.25rem;
-    }
-
-    .price-tag {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-end;
-        justify-content: space-between;
-        padding: .5rem 1rem;
-        width: 100%;
-        height: auto;
-
-        .price {
-            font-weight: 600;
-        }
-
-        .tag {
-            font-size: 1rem;
-        }
-    }
-
-    .details {
+.productMenuMain {
+    .productContainer {
         display: flex;
         flex-direction: column;
-        width: 90%;
-        height: auto;
-        gap: 1rem;
-
-        .productImg {
+        margin: .5rem;
+        align-items: center;
+    
+        .name {
+            display: flex;
+            flex-direction: row;
+            padding: .5rem 1rem;
             width: 100%;
-            aspect-ratio: 4/3;
-            object-fit: cover;
-            object-position: center;
-            border-radius: .25rem;
-            border: 2px solid var(--gray);
+            height: auto;
+            word-break: break-all;
+            font-weight: 600;
+            font-size: 1.25rem;
         }
-
-        .description-ingredients {
+    
+        .price-tag {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: .5rem 1rem;
             width: 100%;
+            height: auto;
+    
+            .price {
+                font-weight: 600;
+            }
+    
+            .tag {
+                font-size: 1rem;
+            }
+        }
+    
+        .details {
             display: flex;
             flex-direction: column;
-            gap: .5rem;
+            width: 90%;
             height: auto;
-
-            .ingredientsTitle {
-                display: flex;
-                flex-direction: row;
-                width: auto;
-                height: auto;
-                font-weight: 600;
+            gap: 1rem;
+    
+            .productImg {
+                width: 100%;
+                aspect-ratio: 4/3;
+                object-fit: cover;
+                object-position: center;
+                border-radius: .25rem;
+                border: 2px solid var(--gray);
             }
-
-            .descriptionTitle {
+    
+            .description-ingredients {
+                width: 100%;
                 display: flex;
-                flex-direction: row;
-                width: auto;
-                height: auto;
-                font-weight: 600;
-            }
-
-            .ingredients {
-                display: flex;
-                flex-direction: row;
-                width: auto;
-                height: auto;
-            }
-            
-            .description {
-                display: flex;
-                width: auto;
-                height: auto;
                 flex-direction: column;
                 gap: .5rem;
-            }
-        }
-    }
-
-    .btns {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 1rem;
-        width: 100%;
-        height: auto;
-        gap: 1rem;
-
-        button {
-            border: 2px solid var(--light-blue);
-            border-radius: .5rem;
-            color: var(--light-blue);
-            font-weight: 600;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            padding: .5rem;
-            width: fit-content;
-            height: fit-content;
-            gap: .5rem;
-            width: 55%;
-
-            img {
-                width: 1rem;
-                height: 1rem;
-                fill: var(--light-blue);
-            }
-        }
-
-        .quantitySelector {
-            display: flex;
-            flex-direction: row;
-            gap: 0.5rem;
-            width: 45%;
-
-            p {
-                color: var(--light-blue);
-                width: auto;
                 height: auto;
+    
+                .ingredientsTitle {
+                    display: flex;
+                    flex-direction: row;
+                    width: auto;
+                    height: auto;
+                    font-weight: 600;
+                }
+    
+                .descriptionTitle {
+                    display: flex;
+                    flex-direction: row;
+                    width: auto;
+                    height: auto;
+                    font-weight: 600;
+                }
+    
+                .ingredients {
+                    display: flex;
+                    flex-direction: row;
+                    width: auto;
+                    height: auto;
+                }
+                
+                .description {
+                    display: flex;
+                    width: auto;
+                    height: auto;
+                    flex-direction: column;
+                    gap: .5rem;
+                }
+            }
+        }
+    
+        .btns {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 1rem;
+            width: 100%;
+            height: auto;
+            gap: 1rem;
+    
+            button {
+                border: 2px solid var(--light-blue);
+                border-radius: .5rem;
+                color: var(--light-blue);
+                font-weight: 600;
                 display: flex;
                 flex-direction: row;
                 align-items: center;
                 justify-content: center;
-                font-weight: 600;
                 padding: .5rem;
+                width: fit-content;
+                height: fit-content;
+                gap: .5rem;
+                width: 55%;
+    
+                img {
+                    width: 1rem;
+                    height: 1rem;
+                    fill: var(--light-blue);
+                }
             }
-
-            .quantityBtns {
+    
+            .quantitySelector {
                 display: flex;
                 flex-direction: row;
-                border-radius: .5rem;
-                border: 2px solid var(--light-blue);
-                align-items: center;
-                justify-content: space-between;
-                height: auto;
-                position: relative;
-                width: 100%;
-
-                &::after {
-                    content: '';
-                    display: block;
-                    width: 2px;
-                    height: 100%;
-                    background-color: var(--light-blue);
-                    top: 0;
-                    left: calc(50% - 1px);
-                    position: absolute;
-                }
-
-                button {
+                gap: 0.5rem;
+                width: 45%;
+    
+                p {
+                    color: var(--light-blue);
+                    width: auto;
+                    height: auto;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: 600;
                     padding: .5rem;
-                    border: none;
-                    border-radius: 0;
-
-                    img {
-                        width: 1rem;
-                        height: 1rem;
+                }
+    
+                .quantityBtns {
+                    display: flex;
+                    flex-direction: row;
+                    border-radius: .5rem;
+                    border: 2px solid var(--light-blue);
+                    align-items: center;
+                    justify-content: space-between;
+                    height: auto;
+                    position: relative;
+                    width: 100%;
+    
+                    &::after {
+                        content: '';
+                        display: block;
+                        width: 2px;
+                        height: 100%;
+                        background-color: var(--light-blue);
+                        top: 0;
+                        left: calc(50% - 1px);
+                        position: absolute;
+                    }
+    
+                    button {
+                        padding: .5rem;
+                        border: none;
+                        border-radius: 0;
+    
+                        img {
+                            width: 1rem;
+                            height: 1rem;
+                        }
                     }
                 }
             }

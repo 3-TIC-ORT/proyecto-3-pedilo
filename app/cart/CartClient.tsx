@@ -208,7 +208,7 @@ function CartClient() {
   };
 
   return (
-    <main>
+    <main className='cartMain'>
       {showConfirmation ? (
         <div className="container">
           <div className='confirmationContainer'>

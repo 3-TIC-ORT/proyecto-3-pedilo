@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import CallWaiterBtn from "@/components/CallWaiterBtn";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+// import { SpeedInsights } from "@vercel/speed-insights/next";
 import { auth } from "@/auth";
 import { getUserTables } from "@/actions/tables"; // Importa la función
 import { hasPendingCall } from "@/actions/calls";
