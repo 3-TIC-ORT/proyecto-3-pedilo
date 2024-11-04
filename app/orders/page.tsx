@@ -71,9 +71,9 @@ const Orders: React.FC = () => {
   const scrollToOrder = (direction: 'left' | 'right') => {
     if (containerRef.current) {
       const orderWidth = containerRef.current.clientWidth;
-      const newScrollPosition = containerRef.current.scrollLeft + 
+      const newScrollPosition = containerRef.current.scrollLeft +
         (direction === 'left' ? -orderWidth : orderWidth);
-      
+
       containerRef.current.scrollTo({
         left: newScrollPosition,
         behavior: 'smooth'
@@ -103,13 +103,18 @@ const Orders: React.FC = () => {
       console.error('Error updating order status:', error);
     }
   };
-  
+
   useEffect(() => {
     const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
 
     const channel = ably.channels.get('order-updates');
     channel.subscribe('order-created', async (message) => {
-      const newOrder = await getOrders();
+      let newOrder;
+      if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') {
+        newOrder = await getAllOrders();
+      } else {
+        newOrder = await getOrders();
+      }
       setOrders(newOrder);
     });
 
@@ -177,8 +182,8 @@ const Orders: React.FC = () => {
                   </div>
                 ))}
               </div>
-              <button 
-                onClick={() => handleOrderReady(order.orderId)} 
+              <button
+                onClick={() => handleOrderReady(order.orderId)}
                 disabled={order.status === 'ready'}
               >
                 Listo
@@ -202,8 +207,8 @@ const Orders: React.FC = () => {
     <main className='ordersMain'>
       <h1>Tus ordenes</h1>
       <div className="orders">
-        <div 
-          className="ordersContainer" 
+        <div
+          className="ordersContainer"
           ref={containerRef}
           onScroll={handleScroll}
         >
@@ -221,8 +226,8 @@ const Orders: React.FC = () => {
               </div>
               {order.orderNote && (
                 <div className="orderNotes">
-                    <p>Notas:</p>
-                    <p>{order.orderNote}</p>
+                  <p>Notas:</p>
+                  <p>{order.orderNote}</p>
                 </div>
               )}
               <div className="orderItems">
@@ -269,14 +274,14 @@ const Orders: React.FC = () => {
           ) : (
             // Display arrows for more than 5 orders
             <>
-              <div 
-                className={`arrow ${currentOrderIndex === 0 ? 'disabled' : ''}`} 
+              <div
+                className={`arrow ${currentOrderIndex === 0 ? 'disabled' : ''}`}
                 onClick={() => scrollToOrder('left')}
               >
                 <img src="/media/smallArrowIcon.svg" alt="smallArrowIconLeft" />
               </div>
-              <div 
-                className={`arrow ${currentOrderIndex === orders.length - 1 ? 'disabled' : ''}`} 
+              <div
+                className={`arrow ${currentOrderIndex === orders.length - 1 ? 'disabled' : ''}`}
                 onClick={() => scrollToOrder('right')}
                 style={{ transform: 'scaleX(-1)' }}
               >
