@@ -26,11 +26,13 @@ const Orders: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null); // Estado para almacenar el rol del usuario
   const containerRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadOrders = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         const session = await getSession();
         setUserRole(session?.user?.role || null); // Establece el rol del usuario
 
@@ -40,9 +42,14 @@ const Orders: React.FC = () => {
         } else {
           userOrders = await getOrders();
         }
+        if (!Array.isArray(userOrders)) {
+          throw new Error('Invalid orders data received');
+        }
         setOrders(userOrders);
       } catch (error) {
         console.error('Error loading orders:', error);
+        setError(error instanceof Error ? error.message : 'Error al cargar las ordenes');
+        setOrders([]);
       } finally {
         setIsLoading(false);
       }
@@ -100,6 +107,16 @@ const Orders: React.FC = () => {
     return (
       <main className='ordersMain'>
         <div className='container'>Cargando ordenes...</div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className='ordersMain'>
+        <div className='container'>
+          <p>Error: {error}</p>
+        </div>
       </main>
     );
   }
