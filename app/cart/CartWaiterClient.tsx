@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useRef, useState } from 'react';
-import { getCart, addToCart, removeFromCart, clearCart } from '@/actions/cart';
+import { getCart, addToCart, removeFromCart } from '@/actions/cart';
 import { createOrder } from '@/actions/order';
 import { getUserTables } from '@/actions/tables';
 import { usePopup } from '@/context/PopupContext';
@@ -175,7 +175,6 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
       }
       const result = await createOrder(selectedTable, orderNotes,); // Pasar orderNotes a createOrder
       if (result.orderId) {
-        await clearCart();
         setCartItems([]);
         setOrderNotes('');
         setShowConfirmation(false);

@@ -116,10 +116,22 @@ export async function getOrders(userId?: string) {
 
 export async function createOrder(tableNumber: number, orderNote?: string) {
   const session = await getSession();
-
   if (!session || !session.user?.id) {
     throw new Error("User not authenticated");
   }
+
+  const userId = session.user.id;
+
+  // Check if the user is a waiter
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const isWaiter = user.role === 'waiter';
 
   // Find users assigned to the specified table
   const tableUsers = await prisma.tableUser.findMany({
@@ -139,8 +151,9 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     }
   });
 
-  if (tableUsers.length === 0) {
-    throw new Error('Table not selected');
+  // If there are no users assigned to the table and the requester is not a waiter, throw an error
+  if (tableUsers.length === 0 && !isWaiter) {
+    throw new Error('No users assigned to this table');
   }
 
   const table = tableUsers[0].Table;
@@ -155,6 +168,7 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
   }, 0);
 
   const order = await prisma.$transaction(async (prisma) => {
+    // Create the new order
     const newOrder = await prisma.order.create({
       data: {
         totalAmount,
@@ -165,13 +179,25 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
       }
     });
 
-    await prisma.orderUser.createMany({
-      data: tableUsers.map((tableUser) => ({
-        orderId: newOrder.orderId,
-        userId: tableUser.userId
-      }))
-    });
+    // If the requester is a waiter, link the order to all users assigned to the table
+    if (isWaiter) {
+      await prisma.orderUser.createMany({
+        data: tableUsers.map((tableUser) => ({
+          orderId: newOrder.orderId,
+          userId: tableUser.userId
+        }))
+      });
+    } else {
+      // If a regular user creates the order, link only their user ID
+      await prisma.orderUser.create({
+        data: {
+          orderId: newOrder.orderId,
+          userId
+        }
+      });
+    }
 
+    // Create order items based on the cart
     for (const cartItem of cart.CartItems) {
       await prisma.orderItem.create({
         data: {
@@ -183,6 +209,7 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
       });
     }
 
+    // Clear the cart after creating the order
     await prisma.cartItem.deleteMany({
       where: { cartId: cart.id }
     });

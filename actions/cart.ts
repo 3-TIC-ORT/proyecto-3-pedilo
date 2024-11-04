@@ -202,7 +202,6 @@ export async function clearCart(tableNumber?: number) {
     throw new Error('Error al vaciar el carrito');
   }
 }
-
 // Helper function to format USD
 function formatUSD(amount: number): string {
   return new Intl.NumberFormat('en-US', {
