@@ -265,3 +265,16 @@ footer {
     }
   }
 }
+
+.tableNumberSelect {
+  margin: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border-radius: .5rem;
+  border: 2px solid var(--black);
+  padding: 1rem;
+  font-weight: 600;
+  width: calc(100% - 2rem);
+}

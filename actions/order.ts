@@ -103,7 +103,7 @@ export async function getOrders(userId?: string) {
   return formattedOrders;
 }
 
-export async function createOrder(userId?: string, orderNote?: string) {
+export async function createOrder(userId?: string, orderNote?: string, tableNumber?: number) {
   const session = await getSession();
   const user = userId || session.user.id;
 

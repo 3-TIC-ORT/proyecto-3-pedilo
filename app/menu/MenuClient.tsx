@@ -19,10 +19,27 @@ interface MenuItem {
 interface MenuClientProps {
   menuItems: MenuItem[];
   userRole: string | null;
+  waiterTables: Table[] | null;
 }
 
-function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) {
+interface Table {
+  tableNumber: number;
+  waiterId: string;
+  Cart?: {
+    CartItems: Array<{
+      Item: {
+        id: number;
+        title: string;
+        price: string;
+      };
+      amount: number;
+    }>;
+  };
+}
+
+function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: MenuClientProps) {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenuItems);
+  const [tables, setTables] = useState<Table[]>(waiterTables || []);
   const [quantities, setQuantities] = useState<Record<number, number>>({});
   const router = useRouter(); // Navigation hook
   const { addPopup } = usePopup();
@@ -71,12 +88,13 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
   return (
     <>
       {userRole === "waiter" && (
-        <select name="tableNumber" id="tableNumber">
+        <select name="tableNumber" id="tableNumber" className='tableNumberSelect'>
           <option value="" selected disabled>Seleccionar mesa</option>
-          <option value="11">Mesa 11</option>
-          <option value="10">Mesa 10</option>
-          <option value="9">Mesa 9</option>
-          <option value="5">Mesa 5</option>
+          {tables.map(table => (
+            <option key={table.tableNumber} value={table.tableNumber}>
+                Mesa {table.tableNumber}
+            </option>
+          ))}
         </select>
       )}
       <div className="sectionsScroller">
@@ -113,7 +131,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole }: MenuClientProps) 
                     <p className="price">${item.price.toFixed(2)}</p>
                     <p className="tag">{item.category}</p>
                   </div>
-                  {userRole === "user" || userRole === "waiter" && (
+                  {(userRole === "user" || userRole === "waiter") && (
                     <div className="btns">
                       <div className="quantitySelector">
                         <p>{quantities[item.id] || 1}</p>

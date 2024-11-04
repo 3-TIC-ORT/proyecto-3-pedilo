@@ -4,6 +4,7 @@ import { auth } from "@/auth"; // Import auth function
 import { Item } from '@prisma/client'; // Ensure this import matches your project setup
 import { cookies } from 'next/headers'; // Import cookies from next/headers
 import { assignTable } from '@/actions/tables';
+import { getTables } from '@/actions/tables';
 
 export default async function Menu() {
   try {
@@ -14,7 +15,6 @@ export default async function Menu() {
     const session = await auth();
     const userRole = session?.user?.role || null;
     const userId = session?.user?.id || null;
-    
 
     if (userId) {
       const cookieStore = cookies();
@@ -25,9 +25,16 @@ export default async function Menu() {
       }
     }
 
+    let filteredTables = null
+
+    if (userRole === 'waiter') {
+      const waiterTables = await getTables();
+      filteredTables = waiterTables.filter(table => table.Waiter?.id === userId);
+    }
+
     return (
       <main>
-        <MenuClient menuItems={menuItems} userRole={userRole} />
+        <MenuClient menuItems={menuItems} userRole={userRole} waiterTables={filteredTables}/>
       </main>
     );
   } catch (error) {
