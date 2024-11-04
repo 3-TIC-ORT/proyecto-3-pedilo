@@ -207,6 +207,9 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     await ablyClient.channels.get('cart-updates').publish('cart-cleared', {
       tableNumber,
     });
+    await ablyClient.channels.get('order-updates').publish('order-created', {
+      tableNumber,
+    });
 
     return newOrder;
   });
@@ -226,6 +229,11 @@ export async function changeOrderStatus(orderId: number, status: string) {
   await prisma.orderItem.updateMany({
     where: { orderId },
     data: { status },
+  });
+
+  await ablyClient.channels.get('order-updates').publish('order-status-change', {
+    orderId,
+    status,
   });
 
   return { message: 'Order status updated successfully', orderId };

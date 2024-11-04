@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getOrders, getAllOrders, changeOrderStatus } from '@/actions/order';
 import { getSession } from 'next-auth/react'; // Actualiza la importación de getSession
 import "./orders.css";
+import { Realtime } from 'ably';
 
 interface OrderItem {
   itemId: number;
@@ -102,6 +103,26 @@ const Orders: React.FC = () => {
       console.error('Error updating order status:', error);
     }
   };
+  
+  useEffect(() => {
+    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
+
+    const channel = ably.channels.get('order-updates');
+    channel.subscribe('order-created', async (message) => {
+      const newOrder = await getOrders();
+      setOrders(newOrder);
+    });
+
+    channel.subscribe('order-status-change', async (message) => {
+      const updatedOrder = await getOrders();
+      setOrders(updatedOrder);
+    });
+
+    return () => {
+      channel.unsubscribe();
+      ably.close();
+    };
+  }, []);
 
   if (isLoading) {
     return (
