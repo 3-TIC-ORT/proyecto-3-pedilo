@@ -70,7 +70,7 @@ export default async function RootLayout({
                 <img src="/media/homeIcon.svg" alt="homeIcon" />
                 <p>Menu</p>
               </Link>
-            {role === "user" && (
+            {(role === "user" || role === "waiter") && (
               <>
                 <Link className="aLink" href={`/cart`}>
                   <img src="/media/cartIcon.svg" alt="cartIcon" />
