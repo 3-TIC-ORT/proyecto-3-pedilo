@@ -48,10 +48,11 @@ function CartClient() {
         if (tableNumber === null) {
           addPopup("Primero debes seleccionar una mesa.", true)
           router.push("/tables");
+        } else {
+          setLoading(true); // Iniciar carga
+          const { items } = await getCart();
+          setCartItems(items);
         }
-        setLoading(true); // Iniciar carga
-        const { items } = await getCart();
-        setCartItems(items);
 
       } catch (error) {
         console.error('Failed to fetch cart items:', error);
