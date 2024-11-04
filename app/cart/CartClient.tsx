@@ -26,7 +26,7 @@ function CartClient() {
   const itemPriceRefs = useRef<HTMLParagraphElement[]>([]);
   const [isOrderBtnDisabled, setIsOrderBtnDisabled] = useState(false);
   const [isConfirmOrderBtnDisabled, setIsConfirmOrderBtnDisabled] = useState(false);
-  const [tableNumber, setTableNumber] = useState<number | null>(null); // Estado para el número de mesa
+  const [tableNumber, setTableNumber] = useState<number | null>(); // Estado para el número de mesa
   const { addPopup } = usePopup();
   const router = useRouter();
 
