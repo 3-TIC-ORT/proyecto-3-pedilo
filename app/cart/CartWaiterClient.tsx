@@ -91,6 +91,13 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
       }
     });
 
+    channel.subscribe('cart-cleared', async (message) => {
+      addPopup('Otro usuario ha hecho el pedido.', false);
+      setCartItems([]);
+      setOrderNotes('');
+      setShowConfirmation(false);
+    });
+
     return () => {
       channel.unsubscribe();
       ably.close();

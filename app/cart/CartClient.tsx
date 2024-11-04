@@ -51,7 +51,9 @@ function CartClient() {
         } else {
           setTableNumber(null)
           addPopup("Primero debes seleccionar una mesa.", true)
-          router.push("/tables");
+          setTimeout(() => {
+            router.push("/tables");
+          }, 1500);
         }
         //si la mesa esta null, a /tables
       } catch (error) {
@@ -91,8 +93,8 @@ function CartClient() {
     channel.subscribe('cart-cleared', async (message) => {
       setTimeout(() => {
         router.push('/orders');
-      }, 1500);
-      addPopup('Otro usuario ha hecho el pedido', false);
+      }, 3000);
+      addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
       setCartItems([]);
       setOrderNotes('');
       setShowConfirmation(false);
@@ -161,7 +163,7 @@ function CartClient() {
   const handleOrder = () => {
     if (tableNumber === null) {
       setTimeout(() => {
-        window.location.href = '/tables';
+        router.push('/tables');
       }, 3000);
       return;
     }
@@ -187,9 +189,9 @@ function CartClient() {
         setOrderNotes('');
         setShowConfirmation(false);
         setTimeout(() => {
-          window.location.href = '/orders';
+          router.push('/orders');
         }, 3000);
-        addPopup('Orden creada exitosamente.', false);
+        addPopup('Orden creada exitosamente. Te estaremos redirigiendo a tus ordenes.', false);
       } else {
         throw new Error('Failed to create order');
       }
