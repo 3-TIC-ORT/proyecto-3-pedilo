@@ -100,6 +100,12 @@ function CartClient() {
       setShowConfirmation(false);
 
     });
+    channel.subscribe('cart-cleared-user', async (message) => {
+      setCartItems([]);
+      setOrderNotes('');
+      setShowConfirmation(false);
+
+    });
     // Clean up on unmount
     return () => {
       channel.unsubscribe();

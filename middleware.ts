@@ -14,8 +14,20 @@ export async function middleware(req: NextRequest) {
   const session = await auth();
   const path = req.nextUrl.pathname;
 
+  // Function to check if a path has access to a base route
+  const hasRouteAccess = (userRoutes: string[], currentPath: string): boolean => {
+    return userRoutes.some(route => {
+      // Exact match
+      if (route === currentPath) return true;
+      // Check if currentPath is a subroute of any allowed route
+      // e.g., '/profile/settings' should be allowed if '/profile' is allowed
+      if (route !== '/' && currentPath.startsWith(route + '/')) return true;
+      return false;
+    });
+  };
+
   // Allow access to unauthenticated routes regardless of session status
-  if (roleRoutes.unauthenticated.includes(path)) {
+  if (hasRouteAccess(roleRoutes.unauthenticated, path)) {
     return NextResponse.next();
   }
 
@@ -29,7 +41,7 @@ export async function middleware(req: NextRequest) {
   const userRole = session.user.role || 'user';
 
   // Check if user has permission to access the requested path
-  const hasAccess = roleRoutes[userRole as keyof typeof roleRoutes]?.includes(path);
+  const hasAccess = hasRouteAccess(roleRoutes[userRole as keyof typeof roleRoutes], path);
 
   if (!hasAccess) {
     // Redirect to home page or show forbidden error
@@ -40,7 +52,7 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-// Apply middleware to all routes except API routes and static files
+// Apply middleware to all routes except API routes, static files, and media
 export const config = {
   matcher: [
     /*
