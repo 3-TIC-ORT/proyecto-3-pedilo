@@ -87,7 +87,11 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
     if (quantity > 0) {
       try {
         if (userRole === "waiter") {
-          await addToCart(item.id, quantity, Number((document.getElementById('tableNumber') as HTMLSelectElement).value));
+          if ((document.getElementById('tableNumber') as HTMLSelectElement).value === "NoTable") {
+            addPopup("Primero necesitas seleccionar una mesa para poder agregar productos a la orden.")
+          } else {
+            await addToCart(item.id, quantity, Number((document.getElementById('tableNumber') as HTMLSelectElement).value));
+          }
         } else if (tableNumber === null){
           addPopup("Primero necesitas seleccionar una mesa.")
           router.push("/tables")
@@ -111,7 +115,7 @@ function MenuClient({ menuItems: initialMenuItems, userRole, waiterTables }: Men
     <>
       {userRole === "waiter" && (
         <select name="tableNumber" id="tableNumber" className='tableNumberSelect'>
-          <option value="" selected disabled>Seleccionar mesa</option>
+          <option value="NoTable" selected disabled>Seleccionar mesa</option>
           {tables.map(table => (
             <option key={table.tableNumber} value={table.tableNumber}>
                 Mesa {table.tableNumber}
