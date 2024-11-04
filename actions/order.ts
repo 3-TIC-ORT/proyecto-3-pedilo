@@ -2,6 +2,7 @@
 import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from "next-auth";
+import { ablyClient } from '@/lib/ably';
 
 async function getSession(): Promise<Session> {
   const session = await auth();
@@ -202,6 +203,9 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     // Clear the cart after creating the order
     await prisma.cartItem.deleteMany({
       where: { cartId: cart.id }
+    });
+    await ablyClient.channels.get('cart-updates').publish('cart-cleared', {
+      tableNumber,
     });
 
     return newOrder;

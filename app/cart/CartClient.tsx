@@ -88,6 +88,10 @@ function CartClient() {
       setCartItems(items);
     });
 
+    channel.subscribe('cart-cleared', async (message) => {
+      const { items } = await getCart();
+      setCartItems(items);
+    });
     // Clean up on unmount
     return () => {
       channel.unsubscribe();
