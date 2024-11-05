@@ -595,6 +595,10 @@ header, footer {
                     }
                 }
             }
+
+            &#videosDemo {
+                display: none;
+            }
         }
     }    
 }
@@ -732,6 +736,10 @@ header, footer {
                         gap: 1rem;
                     }
                 }
+            }
+
+            &#videosDemo {
+                display: none;
             }
         }
     }    
