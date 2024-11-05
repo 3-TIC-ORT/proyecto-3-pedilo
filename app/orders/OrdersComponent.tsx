@@ -30,6 +30,7 @@ const Orders: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const handleFullScreen = useFullScreenHandle();
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -202,15 +203,30 @@ const Orders: React.FC = () => {
       return new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
     });
 
-
+    const handleFullScreenToggle = () => {
+      if (!isFullScreen) {
+        handleFullScreen.enter();
+        setIsFullScreen(true);
+      } else {
+        handleFullScreen.exit();
+        setIsFullScreen(false);
+      }
+    };
 
     return (
       <main className='ordersMain'>
           <FullScreen handle={handleFullScreen}>
           <div className="topRow">
             <h1>Ordenes</h1>
-            <div className="fullScreenToggleButton" onClick={handleFullScreen.enter}>
-              <img src={"https://www.svgrepo.com/show/491638/fullscreen-alt.svg"} alt="" />
+            <div
+              className="fullScreenToggleButton"
+              onClick={handleFullScreenToggle}
+            >
+              {isFullScreen ? (
+                <img src="/media/exitFullscreenIcon.svg" alt="exitFullscreenIcon" />
+              ) : (
+                <img src="/media/fullscreenIcon.svg" alt="fullscreenIcon" />
+              )}
             </div>
           </div>
           <div className="waiterOrders">
