@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getOrders, getAllOrders, changeOrderStatus } from '@/actions/order';
 import { getSession } from 'next-auth/react'; // Actualiza la importación de getSession
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import "./orders.css";
 import { Realtime } from 'ably';
 
@@ -28,6 +29,28 @@ const Orders: React.FC = () => {
   const [userRole, setUserRole] = useState<string | null>(null); // Estado para almacenar el rol del usuario
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const handleFullScreen = useFullScreenHandle();
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(document.fullscreenElement !== null);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+    };
+  }, []);
+
+  const handleFullScreenToggle = () => {
+    if (!isFullScreen) {
+      handleFullScreen.enter();
+    } else {
+      handleFullScreen.exit();
+    }
+  };
 
   useEffect(() => {
     const loadOrders = async () => {
@@ -202,45 +225,59 @@ const Orders: React.FC = () => {
 
     return (
       <main className='ordersMain'>
-        <h1>Ordenes</h1>
-        <div className="waiterOrders">
-          {sortedOrders.map((order) => (
-            <section key={order.orderId} className={`waiterSection ${order.status === 'ready' ? 'ready' : ''}`}>
-              <div className="textRow">
-                <div className="textRow">
-                  <p>Mesa N°</p>
-                  <p>{order.tableNumber}</p>
-                </div>
-                <p>-</p>
-                <div className="textRow">
-                  <p>Orden</p>
-                  <p>#{order.orderId}</p>
-                </div>
-              </div>
-              {order.orderNote && (
-                <div className="orderNotes">
-                  <p>Notas:</p>
-                  <p>{order.orderNote}</p>
-                </div>
-              )}
-              <div className="itemsContainer">
-                {order.items && order.items.map((item) => ( //{order.items.map((item) => (
-                  <div key={item.itemId} className="itemRow">
-                    <p>{item.title}</p>
-                    <p>{item.quantity}x</p>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => handleOrderReady(order.orderId)}
-                disabled={order.status === 'ready'}
+          <FullScreen handle={handleFullScreen}>
+            <div className="topRow">
+              <h1>Ordenes</h1>
+              <div
+                className="fullScreenToggleButton"
+                onClick={handleFullScreenToggle}
               >
-                Listo
-              </button>
-            </section>
-          ))}
-        </div>
-      </main>
+                {isFullScreen ? (
+                  <img src="/media/exitFullscreenIcon.svg" alt="exitFullscreenIcon" />
+                ) : (
+                  <img src="/media/fullscreenIcon.svg" alt="fullscreenIcon" />
+                )}
+              </div>
+            </div>
+            <div className="waiterOrders">
+              {sortedOrders.map((order) => (
+                <section key={order.orderId} className={`waiterSection ${order.status === 'ready' ? 'ready' : ''}`}>
+                  <div className="textRow">
+                    <div className="textRow">
+                      <p>Mesa N°</p>
+                      <p>{order.tableNumber}</p>
+                    </div>
+                    <p>-</p>
+                    <div className="textRow">
+                      <p>Orden</p>
+                      <p>#{order.orderId}</p>
+                    </div>
+                  </div>
+                  {order.orderNote && (
+                    <div className="orderNotes">
+                      <p>Notas:</p>
+                      <p>{order.orderNote}</p>
+                    </div>
+                  )}
+                  <div className="itemsContainer">
+                    {order.items && order.items.map((item) => ( //{order.items.map((item) => (
+                      <div key={item.itemId} className="itemRow">
+                        <p>{item.title}</p>
+                        <p>{item.quantity}x</p>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => handleOrderReady(order.orderId)}
+                    disabled={order.status === 'ready'}
+                  >
+                    Listo
+                  </button>
+                </section>
+              ))}
+            </div>
+        </FullScreen>
+        </main>
     );
   }
 

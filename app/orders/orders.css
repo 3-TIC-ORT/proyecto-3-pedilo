@@ -1,9 +1,40 @@
+.fullscreen-enabled {
+    padding: 2rem;
+    display: flex;
+    background: var(--white);
+    gap: .5rem;
+}
+
+.fullscreen {
+    display: flex;
+    flex-direction: column;
+}
+
 .ordersMain {
+    .topRow {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+
+        .fullScreenToggleButton {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 2rem;
+            height: 2rem;
+
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
 
     h1 {
         font-size: 1.25rem;
         font-weight: 600;
-        padding: 0 1rem;
     }
     
     .container {
@@ -266,6 +297,7 @@
         height: 100%;
         width: calc(100% - 2rem);
         scroll-snap-type: x mandatory; /* Activa el sticky scroll */
+        border-radius: 1rem;
     
         .waiterSection {
             display: flex;
