@@ -94,7 +94,8 @@ const Calls = () => {
   if (isLoading) {
     return (
       <main className='callsMain'>
-        <div className="container">
+        <h1>Tus llamados</h1>
+        <div className="containerr">
           <p>Cargando tus llamados...</p>
         </div>
       </main>
