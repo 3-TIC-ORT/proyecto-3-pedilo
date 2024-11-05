@@ -231,21 +231,34 @@ async function Landing() {
           </div>
         </div>
         <div className="rightSide">
-          <div className="etapa">
+          <div className="etapa textOnly">
+            <h1>Problemas</h1>
             <div className="text">
-              <h1>Etapa</h1>
-              <p>Nombre de la etapa</p>
+              <h1>Problema 1</h1>
+              <p>Problemas en el orden</p>
             </div>
-            <div className="content">
-              <div className="img">
-                <img src="/images/landing/frontend-etapa-1-img-1.png" alt="" />
-              </div>
-              <div className="img">
-                <img src="/images/landing/frontend-etapa-1-img-2.png" alt="" />
-              </div>
-              <div className="img">
-                <img src="/images/landing/frontend-etapa-1-img-3.png" alt="" />
-              </div>
+            <div className="text">
+              <h1>Problema 2</h1>
+              <p>Problemas con el diseñador que tardó</p>
+            </div>
+            <div className="text">
+              <h1>Problema 3</h1>
+              <p>Problema con React!!!</p>
+            </div>
+          </div>
+          <div className="etapa textOnly">
+            <h1>React</h1>
+            <div className="text">
+              <h1>Etapa 1</h1>
+              <p>¿Que es, para qué sirve y qué cosas distintas al resto tiene?</p>
+            </div>
+            <div className="text">
+              <h1>Etapa 2</h1>
+              <p>Empezar a programar los wireframes que nos mandaba el diseñador.</p>
+            </div>
+            <div className="text">
+              <h1>Etapa 3</h1>
+              <p>Programar el diseño final</p>
             </div>
           </div>
         </div>
