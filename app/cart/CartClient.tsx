@@ -57,7 +57,6 @@ function CartClient() {
             router.push("/tables");
           }, 1500);
         }
-        //si la mesa esta null, a /tables
       } catch (error) {
         console.error('Failed to fetch table number:', error);
         if (showError) {

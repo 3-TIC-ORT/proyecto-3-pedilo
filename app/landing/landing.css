@@ -24,23 +24,35 @@ header, footer {
     .header {
         display: flex;
         width: 100%;
-        height: 6rem;
+        height: 4rem;
         padding: 1rem 1.5rem;
         justify-content: space-between;
         align-items: center;
         position: sticky;
         background: rgba(255, 255, 255, 0.25) url('/media/noise.png') repeat;
         backdrop-filter: blur(.25rem);
-        position: absolute;
+        position: fixed;
         z-index: 1000;
+        transition: .25s ease all;
+        overflow: hidden;
+
+        &:hover {
+            height: 6rem;
+
+            .logo {
+                width: 4rem;
+                height: 4rem;
+            }
+        }
 
         .logo {
             display: flex;
-            width: 4rem;
-            height: 4rem;
+            width: 3rem;
+            height: 3rem;
             justify-content: center;
             align-items: center;
             flex-shrink: 0;
+            transition: .25s ease all;
 
             img {
                 width: auto;
@@ -64,6 +76,23 @@ header, footer {
                 font-weight: 700;
                 line-height: normal;
                 text-decoration: none;
+
+                &::after {
+                    content: '';
+                    display: block;
+                    width: 0;
+                    height: 2px;
+                    background: var(--white);
+                    transition: ease width .25s;
+                }
+
+                &:hover::after {
+                    content: '';
+                    display: block;
+                    width: 100%;
+                    height: 2px;
+                    background: var(--white);
+                }
             }
         }
     }
@@ -142,6 +171,46 @@ header, footer {
             }
         }
 
+        &#videosDemo {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+
+            .videoContainer {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 70%;
+                gap: 0.5rem;
+                width: 25%;
+                
+                &:last-child {
+                    width: 50%;
+                }
+
+                h1 {
+                    color: rgba(255, 255, 255, 0.75);
+                    text-align: start;
+                    font-family: Inter;
+                    font-size: 4rem;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: normal;
+                }
+
+                video {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 1rem;
+                    background-color: rgba(255, 255, 255, .5);
+                    backdrop-filter: blur(.25rem);
+                }
+            }
+        }
+
         /*Section*/
 
         .leftSide {
@@ -189,6 +258,7 @@ header, footer {
                 gap: 1.5rem;
                 align-self: stretch;
                 flex-wrap: wrap;
+                user-select: none;
 
                 .aplicacion {
                     display: flex;
@@ -404,6 +474,16 @@ header, footer {
             height: 4rem;
             padding: 1rem;
             justify-content: center;
+            position: fixed;
+
+            &:hover {
+                height: 4rem;
+    
+                .logo {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                }
+            }
     
             .logo {
                 width: 2.5rem;
@@ -526,6 +606,16 @@ header, footer {
             height: 4rem;
             padding: 1rem;
             justify-content: center;
+            position: absolute;
+
+            &:hover {
+                height: 4rem;
+    
+                .logo {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                }
+            }
     
             .logo {
                 width: 2.5rem;
