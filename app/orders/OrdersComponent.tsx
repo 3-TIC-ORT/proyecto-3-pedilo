@@ -123,8 +123,6 @@ const Orders: React.FC = () => {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isFullScreen) {
-        handleFullScreen.exit();
-        setIsFullScreen(false);
         handleFullScreenToggle()
       }
     };
