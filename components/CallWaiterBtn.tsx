@@ -37,7 +37,7 @@ export default function CallWaiterBtn({ tableNumber }: CallWaiterBtnProps) {
         disabled={isLoading}
         className="callWaiterBtn"
       >
-        {isLoading ? "Calling..." : "Llamar Mozo"}
+        {isLoading ? "Llamando..." : "Llamar Mozo"}
       </button>
       <style>
         {`

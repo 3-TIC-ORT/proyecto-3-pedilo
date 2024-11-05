@@ -19,6 +19,7 @@ interface AblyCallMessage {
 const Calls = () => {
   const [calls, setCalls] = useState<Call[]>([]);
   const { addPopup } = usePopup();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -28,12 +29,15 @@ const Calls = () => {
 
     // Fetch initial calls
     const loadCalls = async () => {
+      setIsLoading(true);
       try {
         const initialCalls = await getWaiterCalls();
         console.log(initialCalls);
         setCalls(initialCalls);
       } catch (error) {
         addPopup('Error al cargar las llamadas', true);
+      } finally {
+        setIsLoading(false);
       }
     };
     loadCalls();
@@ -42,14 +46,26 @@ const Calls = () => {
     const ably = new Ably.Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY! });
     const channel = ably.channels.get('call-updates');
 
-    const onNewCall = (message: any) => {
+    const onNewCall = async (message: any) => {
       const newCall = message.data as Call;
-      setCalls(prev => [newCall, ...prev]);
+      try {
+        const initialCalls = await getWaiterCalls();
+        console.log(initialCalls);
+        setCalls(initialCalls);
+      } catch (error) {
+        addPopup('Error al cargar las llamadas', true);
+      }
     };
 
-    const onCallResolved = (message: any) => {
+    const onCallResolved = async (message: any) => {
       const resolvedCall = message.data as { callId: string };
-      setCalls(prev => prev.filter(call => call.id !== resolvedCall.callId));
+      try {
+        const initialCalls = await getWaiterCalls();
+        console.log(initialCalls);
+        setCalls(initialCalls);
+      } catch (error) {
+        addPopup('Error al cargar las llamadas', true);
+      }
     };
 
     channel.subscribe('new-call', onNewCall);
@@ -75,6 +91,16 @@ const Calls = () => {
     return new Date(date).toLocaleString();
   };
 
+  if (isLoading) {
+    return (
+      <main className='callsMain'>
+        <div className="container">
+          <p>Cargando tus llamados...</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className='callsMain'>
       <h1>Tus llamados</h1>
@@ -86,6 +112,7 @@ const Calls = () => {
             <button
               className='callBtn'
               onClick={() => handleResolve(call.id)}
+              disabled={call.status === 'resolved'}
             >
               <p>Atendida</p>
             </button>
@@ -94,9 +121,6 @@ const Calls = () => {
             </p>
           </div>
         ))}
-        {calls.length === 0 && (
-          <p>No hay llamados activos</p>
-        )}
       </section>
     </main>
   );

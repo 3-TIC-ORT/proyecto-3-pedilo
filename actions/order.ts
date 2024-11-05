@@ -246,7 +246,7 @@ export async function changeOrderStatus(orderId: number, status: string) {
   if (!updatedOrder.tableNumber) {
     throw new Error('Order does not have a table number');
   }
-  newCall(updatedOrder.tableNumber, 'Order is ready');
+  newCall(updatedOrder.tableNumber, 'La orden esta lista');
 
   await ablyClient.channels.get('order-updates').publish('order-status-change', {
     orderId,

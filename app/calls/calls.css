@@ -4,12 +4,27 @@
         font-weight: 750;
         padding: 0 1rem;
     }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin: 1rem;
+        padding: 1rem;
+        width: calc(100% - 2rem);
+        height: 100%;
+        border: 1px solid var(--black);
+        border-radius: .5rem;
+    }
     
     section {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: flex-start;
+        align-items: flex-start;
         margin: 1rem;
         padding: 1rem;
         width: calc(100% - 2rem);
