@@ -63,85 +63,59 @@ const Orders: React.FC = () => {
 
     channel.subscribe('order-created', async (message) => {
       // Verificar que el mensaje tenga datos
-      if (!message.data) {
-        console.error('Received empty message data');
-        return;
-      }
-      const newOrder = message.data;
-      
-      try {
-        const session = await getSession();
-        const userRole = session?.user?.role;
-        
-        if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') {
-          setOrders(prevOrders => {
-            if (!prevOrders) return [newOrder];
-            
-            // Evitar duplicados
-            const orderExists = prevOrders.some(order => order.orderId === newOrder.orderId);
-            if (orderExists) return prevOrders;
-            
-            const updatedOrders = [...prevOrders, newOrder];
-            return updatedOrders.sort((a, b) => {
-              if (a.status === 'ready' && b.status !== 'ready') return 1;
-              if (a.status !== 'ready' && b.status === 'ready') return -1;
-              return new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime();
-            });
-          });
-        } else if (session?.user?.id) {
-          const userOrders = await getOrders(session.user.id);
-          if (userOrders.some(order => order.orderId === newOrder.orderId)) {
-            setOrders(prevOrders => {
-              if (!prevOrders) return [newOrder];
-              
-              const orderExists = prevOrders.some(order => order.orderId === newOrder.orderId);
-              if (orderExists) return prevOrders;
-              
-              const updatedOrders = [...prevOrders, newOrder];
-              return updatedOrders.sort((a, b) => {
-                if (a.status === 'ready' && b.status !== 'ready') return 1;
-                if (a.status !== 'ready' && b.status === 'ready') return -1;
-                return new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime();
-              });
-            });
+      const loadOrders = async () => {
+        try {
+          setError(null);
+          const session = await getSession();
+          setUserRole(session?.user?.role || null); // Establece el rol del usuario
+  
+          let userOrders;
+          if (session?.user?.role === 'waiter' || session?.user?.role === 'chef' || session?.user?.role === 'admin') {
+            userOrders = await getAllOrders();
+          } else {
+            userOrders = await getOrders();
           }
+          if (!Array.isArray(userOrders)) {
+            throw new Error('Invalid orders data received');
+          }
+          setOrders(userOrders);
+        } catch (error) {
+          console.error('Error loading orders:', error);
+          setError(error instanceof Error ? error.message : 'Error al actualizar las ordenes. Intenta recargar la página.');
+          setOrders([]);
+        } finally {
         }
-      } catch (error) {
-        console.error('Error processing new order:', error);
-      }
+      };
+  
+      loadOrders();
     });
 
     channel.subscribe('order-status-change', async (message) => {
-      if (!message.data) {
-        console.error('Received empty status change data');
-        return;
-      }
-
-      const { orderId, status, items } = message.data;
-      
-      if (!orderId || !status) {
-        console.error('Invalid status change data received');
-        return;
-      }
-
-      setOrders(prevOrders => {
-        if (!prevOrders) return [];
-        
-        return prevOrders.map(order => {
-          if (order.orderId === orderId) {
-            return {
-              ...order,
-              status,
-              items: items || order.items
-            };
+      const loadOrders = async () => {
+        try {
+          setError(null);
+          const session = await getSession();
+          setUserRole(session?.user?.role || null); // Establece el rol del usuario
+  
+          let userOrders;
+          if (session?.user?.role === 'waiter' || session?.user?.role === 'chef' || session?.user?.role === 'admin') {
+            userOrders = await getAllOrders();
+          } else {
+            userOrders = await getOrders();
           }
-          return order;
-        }).sort((a, b) => {
-          if (a.status === 'ready' && b.status !== 'ready') return 1;
-          if (a.status !== 'ready' && b.status === 'ready') return -1;
-          return new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime();
-        });
-      });
+          if (!Array.isArray(userOrders)) {
+            throw new Error('Invalid orders data received');
+          }
+          setOrders(userOrders);
+        } catch (error) {
+          console.error('Error loading orders:', error);
+          setError(error instanceof Error ? error.message : 'Error al actualizar las ordenes. Intenta recargar la página.');
+          setOrders([]);
+        } finally {
+        }
+      };
+  
+      loadOrders();
     });
 
     return () => {

@@ -209,7 +209,6 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     });
     
     await ablyClient.channels.get('order-updates').publish('order-created', {
-      newOrder,
     });
 
     return newOrder;
