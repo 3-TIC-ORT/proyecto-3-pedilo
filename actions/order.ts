@@ -207,19 +207,9 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     await ablyClient.channels.get('cart-updates').publish('cart-cleared', {
       tableNumber,
     });
+    
     await ablyClient.channels.get('order-updates').publish('order-created', {
-      orderId: order.orderId,
-      totalAmount,
-      orderDate: new Date(),
-      tableNumber,
-      orderNote,
-      status: 'Pending',
-      items: cart.CartItems.map(item => ({
-        itemId: item.itemId,
-        title: item.Item.title,
-        quantity: item.quantity,
-        status: 'Pending'
-      }))
+      newOrder,
     });
 
     return newOrder;
