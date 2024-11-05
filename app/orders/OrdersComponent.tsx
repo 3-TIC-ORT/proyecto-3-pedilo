@@ -33,6 +33,26 @@ const Orders: React.FC = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(document.fullscreenElement !== null);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+    };
+  }, []);
+
+  const handleFullScreenToggle = () => {
+    if (!isFullScreen) {
+      handleFullScreen.enter();
+    } else {
+      handleFullScreen.exit();
+    }
+  };
+
+  useEffect(() => {
     const loadOrders = async () => {
       try {
         setIsLoading(true);
@@ -127,30 +147,6 @@ const Orders: React.FC = () => {
     };
   }, []);
 
-  const handleFullScreenToggle = () => {
-    if (!isFullScreen) {
-      handleFullScreen.enter();
-      setIsFullScreen(true);
-    } else {
-      handleFullScreen.exit();
-      setIsFullScreen(false);
-    }
-  };
-  
-  useEffect(() => {
-    const handleFullScreenChange = () => {
-      if (!handleFullScreen.active) {
-        setIsFullScreen(false);
-      }
-    };
-  
-    document.addEventListener('fullscreenchange', handleFullScreenChange);
-  
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullScreenChange);
-    };
-  }, [handleFullScreen]);
-  
   const handleScroll = () => {
     if (containerRef.current) {
       const scrollPosition = containerRef.current.scrollLeft;
