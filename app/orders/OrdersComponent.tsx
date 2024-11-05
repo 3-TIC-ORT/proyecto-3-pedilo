@@ -121,7 +121,17 @@ const Orders: React.FC = () => {
       loadOrders();
     });
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isFullScreen) {
+        handleFullScreen.exit();
+        setIsFullScreen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
     return () => {
+      window.removeEventListener('keydown', handleKeyDown);
       channel.unsubscribe();
       ably.close();
     };

@@ -1,5 +1,13 @@
 .fullscreen-enabled {
+    padding: 2rem;
+    display: flex;
     background: var(--white);
+    gap: .5rem;
+}
+
+.fullscreen {
+    display: flex;
+    flex-direction: column;
 }
 
 .ordersMain {
@@ -7,6 +15,8 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
 
         .fullScreenToggleButton {
             display: flex;
@@ -25,7 +35,6 @@
     h1 {
         font-size: 1.25rem;
         font-weight: 600;
-        padding: 0 1rem;
     }
     
     .container {
