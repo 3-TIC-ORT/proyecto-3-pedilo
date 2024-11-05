@@ -91,6 +91,21 @@ const Calls = () => {
     return new Date(date).toLocaleString();
   };
 
+  // Antes del return, agregamos el ordenamiento
+  const sortedCalls = [...calls].sort((a, b) => {
+    // Si uno es ready y el otro no, el ready va después
+    if (a.status === 'ready' && b.status !== 'ready') return 1;
+    if (a.status !== 'ready' && b.status === 'ready') return -1;
+    
+    // Si ambos son ready, ordenar de más nuevo a más viejo
+    if (a.status === 'ready' && b.status === 'ready') {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+    
+    // Si ninguno es ready, ordenar de más viejo a más nuevo
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  });
+
   if (isLoading) {
     return (
       <main className='callsMain'>
@@ -106,7 +121,7 @@ const Calls = () => {
     <main className='callsMain'>
       <h1>Tus llamados</h1>
       <section>
-        {calls.map(call => (
+        {sortedCalls.map(call => (
           <div key={call.id} className='callCard'>
             <p>Mesa {call.tableNumber}</p>
             <p className="reason">{call.reason}</p>
