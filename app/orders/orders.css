@@ -1,12 +1,14 @@
-.fullscreen-enabled .ordersMain {
-    background: initial;
+.fullscreen-enabled {
+    .ordersMain {
+        background: var(--white);
+    }
 }
 
 .ordersMain {
     .topRow {
         display: flex;
         flex-direction: row;
-        justify-content: space-around;
+        justify-content: space-between;
 
         .fullScreenToggleButton {
             display: flex;

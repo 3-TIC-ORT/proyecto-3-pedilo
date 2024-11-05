@@ -202,9 +202,11 @@ const Orders: React.FC = () => {
       return new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
     });
 
+
+
     return (
-      <FullScreen handle={handleFullScreen}>
-        <main className='ordersMain'>
+      <main className='ordersMain'>
+          <FullScreen handle={handleFullScreen}>
           <div className="topRow">
             <h1>Ordenes</h1>
             <div className="fullScreenToggleButton" onClick={handleFullScreen.enter}>
@@ -248,8 +250,8 @@ const Orders: React.FC = () => {
               </section>
             ))}
           </div>
+        </FullScreen>
         </main>
-      </FullScreen>
     );
   }
 
