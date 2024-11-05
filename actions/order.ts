@@ -3,6 +3,7 @@ import { prisma } from '@/prisma';
 import { auth } from '@/auth';
 import { Session } from "next-auth";
 import { ablyClient } from '@/lib/ably';
+import { newCall } from '@/actions/calls';
 
 async function getSession(): Promise<Session> {
   const session = await auth();
@@ -207,7 +208,7 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     await ablyClient.channels.get('cart-updates').publish('cart-cleared', {
       tableNumber,
     });
-    
+
     await ablyClient.channels.get('order-updates').publish('order-created', {
     });
 
@@ -242,6 +243,10 @@ export async function changeOrderStatus(orderId: number, status: string) {
       }
     }
   });
+  if (!updatedOrder.tableNumber) {
+    throw new Error('Order does not have a table number');
+  }
+  newCall(updatedOrder.tableNumber, 'Order is ready');
 
   await ablyClient.channels.get('order-updates').publish('order-status-change', {
     orderId,
