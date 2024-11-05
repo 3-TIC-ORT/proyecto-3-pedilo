@@ -164,9 +164,7 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
 
   const handleOrder = () => {
     if (selectedTable === null) {
-      setTimeout(() => {
-        window.location.href = '/tables';
-      }, 3000);
+      addPopup('Primero debes seleccionar una mesa', true);
       return;
     }
 
@@ -203,7 +201,6 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
   };
 
   const handleBackArrowClick = () => {
-    setCartItems([]);
     setShowConfirmation(false);
     setIsOrderBtnDisabled(false); // Deshabilitar botón de confirmar
     setIsConfirmOrderBtnDisabled(true);
@@ -217,17 +214,19 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
             <button className="backArrowBtn" onClick={handleBackArrowClick}><img src="/media/arrowIcon.svg" alt="arrowIcon" /></button>
             <h1>Una última confirmación por las dudas</h1>
             <p>Tocá confirmar pedido y preparate para comer</p>
-            <div className="orderBtn">
-              <button onClick={handleConfirmOrder} disabled={isConfirmOrderBtnDisabled}>
-                {isConfirmOrderBtnDisabled ? 'Procesando...' : 'Confirmar Orden'}
-              </button>
+            <div className="cartOrder-ClearBtns">
+              <div className="orderBtn">
+                <button onClick={handleConfirmOrder} disabled={isConfirmOrderBtnDisabled}>
+                  {isConfirmOrderBtnDisabled ? 'Procesando...' : 'Confirmar Orden'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       ) : (
         <>
           <select name="tableNumber" id="tableNumber" value={selectedTable || "tableSelect"} onChange={handleTableChange} className='tableNumberSelect'>
-            <option value="tableSelect" disabled>Seleccionar mesa</option>
+            <option value="tableSelect" selected disabled>Seleccionar mesa</option>
             {waiterTables.map(table => (
               <option key={table.tableNumber} value={table.tableNumber}>
                 Mesa {table.tableNumber}
