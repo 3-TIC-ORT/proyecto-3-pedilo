@@ -57,6 +57,71 @@ const Orders: React.FC = () => {
     };
 
     loadOrders();
+    
+    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
+    const channel = ably.channels.get('order-updates');
+
+    channel.subscribe('order-created', async (message) => {
+      // Verificar que el mensaje tenga datos
+      const loadOrders = async () => {
+        try {
+          setError(null);
+          const session = await getSession();
+          setUserRole(session?.user?.role || null); // Establece el rol del usuario
+  
+          let userOrders;
+          if (session?.user?.role === 'waiter' || session?.user?.role === 'chef' || session?.user?.role === 'admin') {
+            userOrders = await getAllOrders();
+          } else {
+            userOrders = await getOrders();
+          }
+          if (!Array.isArray(userOrders)) {
+            throw new Error('Invalid orders data received');
+          }
+          setOrders(userOrders);
+        } catch (error) {
+          console.error('Error loading orders:', error);
+          setError(error instanceof Error ? error.message : 'Error al actualizar las ordenes. Intenta recargar la página.');
+          setOrders([]);
+        } finally {
+        }
+      };
+  
+      loadOrders();
+    });
+
+    channel.subscribe('order-status-change', async (message) => {
+      const loadOrders = async () => {
+        try {
+          setError(null);
+          const session = await getSession();
+          setUserRole(session?.user?.role || null); // Establece el rol del usuario
+  
+          let userOrders;
+          if (session?.user?.role === 'waiter' || session?.user?.role === 'chef' || session?.user?.role === 'admin') {
+            userOrders = await getAllOrders();
+          } else {
+            userOrders = await getOrders();
+          }
+          if (!Array.isArray(userOrders)) {
+            throw new Error('Invalid orders data received');
+          }
+          setOrders(userOrders);
+        } catch (error) {
+          console.error('Error loading orders:', error);
+          setError(error instanceof Error ? error.message : 'Error al actualizar las ordenes. Intenta recargar la página.');
+          setOrders([]);
+        } finally {
+        }
+      };
+  
+      loadOrders();
+    });
+
+    return () => {
+      channel.unsubscribe();
+      ably.close();
+    };
   }, []);
 
   const handleScroll = () => {
@@ -104,31 +169,6 @@ const Orders: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
-
-    const channel = ably.channels.get('order-updates');
-    channel.subscribe('order-created', async (message) => {
-      let newOrder;
-      if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') {
-        newOrder = await getAllOrders();
-      } else {
-        newOrder = await getOrders();
-      }
-      setOrders(newOrder);
-    });
-
-    channel.subscribe('order-status-change', async (message) => {
-      const updatedOrder = await getOrders();
-      setOrders(updatedOrder);
-    });
-
-    return () => {
-      channel.unsubscribe();
-      ably.close();
-    };
-  }, []);
-
   if (isLoading) {
     return (
       <main className='ordersMain'>
@@ -149,7 +189,16 @@ const Orders: React.FC = () => {
 
   if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') { // Verifica si el usuario tiene acceso a la sección
     // Ordenar las órdenes para que las que están en estado "ready" aparezcan al final
-    let sortedOrders = [...orders].sort((a, b) => a.status === 'ready' ? 1 : -1);
+    let sortedOrders = [...orders].sort((a, b) => {
+      if (a.status === 'ready' && b.status !== 'ready') return 1;
+      if (a.status !== 'ready' && b.status === 'ready') return -1;
+      
+      if (a.status === 'ready' && b.status === 'ready') {
+        return new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime();
+      }
+      
+      return new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
+    });
 
     return (
       <main className='ordersMain'>
@@ -175,7 +224,7 @@ const Orders: React.FC = () => {
                 </div>
               )}
               <div className="itemsContainer">
-                {order.items.map((item) => (
+                {order.items && order.items.map((item) => ( //{order.items.map((item) => (
                   <div key={item.itemId} className="itemRow">
                     <p>{item.title}</p>
                     <p>{item.quantity}x</p>
@@ -203,6 +252,13 @@ const Orders: React.FC = () => {
     );
   }
 
+  let sortedClientOrders = [...orders].sort((a, b) => {
+    if (a.status === 'ready' && b.status !== 'ready') return 1;
+    if (a.status !== 'ready' && b.status === 'ready') return -1;
+    
+    return new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime();
+  });
+
   return (
     <main className='ordersMain'>
       <h1>Tus ordenes</h1>
@@ -212,7 +268,7 @@ const Orders: React.FC = () => {
           ref={containerRef}
           onScroll={handleScroll}
         >
-          {orders.map((order, index) => (
+          {sortedClientOrders.map((order, index) => (
             <section key={order.orderId}>
               <div className="textRow">
                 <div className="textRow">
@@ -265,7 +321,7 @@ const Orders: React.FC = () => {
         <div className="ordersCounter">
           {orders.length <= 5 ? (
             // Display dots for 5 or fewer orders
-            orders.map((_, index) => (
+            sortedClientOrders.map((_, index) => (
               <div
                 key={index}
                 className={`orderCount ${index === currentOrderIndex ? 'orderCountSelected' : ''}`}
