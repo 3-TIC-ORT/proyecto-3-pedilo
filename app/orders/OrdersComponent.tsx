@@ -216,56 +216,56 @@ const Orders: React.FC = () => {
     return (
       <main className='ordersMain'>
           <FullScreen handle={handleFullScreen}>
-          <div className="topRow">
-            <h1>Ordenes</h1>
-            <div
-              className="fullScreenToggleButton"
-              onClick={handleFullScreenToggle}
-            >
-              {isFullScreen ? (
-                <img src="/media/exitFullscreenIcon.svg" alt="exitFullscreenIcon" />
-              ) : (
-                <img src="/media/fullscreenIcon.svg" alt="fullscreenIcon" />
-              )}
-            </div>
-          </div>
-          <div className="waiterOrders">
-            {sortedOrders.map((order) => (
-              <section key={order.orderId} className={`waiterSection ${order.status === 'ready' ? 'ready' : ''}`}>
-                <div className="textRow">
-                  <div className="textRow">
-                    <p>Mesa N°</p>
-                    <p>{order.tableNumber}</p>
-                  </div>
-                  <p>-</p>
-                  <div className="textRow">
-                    <p>Orden</p>
-                    <p>#{order.orderId}</p>
-                  </div>
-                </div>
-                {order.orderNote && (
-                  <div className="orderNotes">
-                    <p>Notas:</p>
-                    <p>{order.orderNote}</p>
-                  </div>
+            <div className="topRow">
+              <h1>Ordenes</h1>
+              <div
+                className="fullScreenToggleButton"
+                onClick={handleFullScreenToggle}
+              >
+                {isFullScreen ? (
+                  <img src="/media/exitFullscreenIcon.svg" alt="exitFullscreenIcon" />
+                ) : (
+                  <img src="/media/fullscreenIcon.svg" alt="fullscreenIcon" />
                 )}
-                <div className="itemsContainer">
-                  {order.items && order.items.map((item) => ( //{order.items.map((item) => (
-                    <div key={item.itemId} className="itemRow">
-                      <p>{item.title}</p>
-                      <p>{item.quantity}x</p>
+              </div>
+            </div>
+            <div className="waiterOrders">
+              {sortedOrders.map((order) => (
+                <section key={order.orderId} className={`waiterSection ${order.status === 'ready' ? 'ready' : ''}`}>
+                  <div className="textRow">
+                    <div className="textRow">
+                      <p>Mesa N°</p>
+                      <p>{order.tableNumber}</p>
                     </div>
-                  ))}
-                </div>
-                <button
-                  onClick={() => handleOrderReady(order.orderId)}
-                  disabled={order.status === 'ready'}
-                >
-                  Listo
-                </button>
-              </section>
-            ))}
-          </div>
+                    <p>-</p>
+                    <div className="textRow">
+                      <p>Orden</p>
+                      <p>#{order.orderId}</p>
+                    </div>
+                  </div>
+                  {order.orderNote && (
+                    <div className="orderNotes">
+                      <p>Notas:</p>
+                      <p>{order.orderNote}</p>
+                    </div>
+                  )}
+                  <div className="itemsContainer">
+                    {order.items && order.items.map((item) => ( //{order.items.map((item) => (
+                      <div key={item.itemId} className="itemRow">
+                        <p>{item.title}</p>
+                        <p>{item.quantity}x</p>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => handleOrderReady(order.orderId)}
+                    disabled={order.status === 'ready'}
+                  >
+                    Listo
+                  </button>
+                </section>
+              ))}
+            </div>
         </FullScreen>
         </main>
     );

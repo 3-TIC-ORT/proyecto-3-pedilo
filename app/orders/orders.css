@@ -1,7 +1,5 @@
 .fullscreen-enabled {
-    .ordersMain {
-        background: var(--white);
-    }
+    background: var(--white);
 }
 
 .ordersMain {
