@@ -44,11 +44,13 @@ function CartClient() {
 
   useEffect(() => {
     const fetchTableNumber = async () => {
+      let showError = true;
       try {
         const tables = await getUserTables();
         if (tables.length > 0) {
           setTableNumber(tables[0].tableNumber); // Asigna el primer número de mesa encontrado
         } else {
+          showError = false;
           setTableNumber(null)
           addPopup("Primero debes seleccionar una mesa.", true)
           setTimeout(() => {
@@ -58,7 +60,9 @@ function CartClient() {
         //si la mesa esta null, a /tables
       } catch (error) {
         console.error('Failed to fetch table number:', error);
-        addPopup('Ocurrio un error al cargar la informacion de la mesa.', true);
+        if (showError) {
+          addPopup('Ocurrio un error al cargar la informacion de la mesa.', true);
+        }
       }
     };
 
