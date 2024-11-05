@@ -224,10 +224,12 @@ function CartClient() {
             <button className="backArrowBtn" onClick={handleBackArrowClick}><img src="/media/arrowIcon.svg" alt="arrowIcon" /></button>
             <h1>Una última confirmación por las dudas</h1>
             <p>Tocá confirmar pedido y preparate para comer</p>
-            <div className="orderBtn">
-              <button onClick={handleConfirmOrder} disabled={isConfirmOrderBtnDisabled}>
-                {isConfirmOrderBtnDisabled ? 'Procesando...' : 'Confirmar Orden'}
-              </button>
+            <div className="cartOrder-ClearBtns">
+              <div className="orderBtn">
+                <button onClick={handleConfirmOrder} disabled={isConfirmOrderBtnDisabled}>
+                  {isConfirmOrderBtnDisabled ? 'Procesando...' : 'Confirmar Orden'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
