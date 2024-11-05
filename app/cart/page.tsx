@@ -3,6 +3,7 @@ import React from 'react';
 import CartClient from './CartClient';
 import CartWaiterClient from './CartWaiterClient';
 import { getTables } from '@/actions/tables';
+import { checkAccess } from '@/lib/auth-utils';
 
 // Define interfaces based on your Prisma query structure
 interface User {
@@ -69,6 +70,7 @@ function transformTableData(table: Table): {
 }
 
 export default async function Cart() {
+  await checkAccess('/cart');
   try {
     const session = await auth();
     const userRole = session?.user?.role || null;

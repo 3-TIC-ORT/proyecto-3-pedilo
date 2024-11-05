@@ -4,6 +4,7 @@ import { AuthError } from "next-auth";
 import { cookies } from 'next/headers'
 import "./login.css"
 import Link from "next/link";
+import { checkAccess } from '@/lib/auth-utils';
 
 interface SignInPageProps {
   searchParams: { verifyRequest?: string; callbackUrl?: string };
@@ -11,6 +12,7 @@ interface SignInPageProps {
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
 
+  await checkAccess('/login');
   const session = await auth();
   if (!session) {
     const isVerifyRequest = searchParams.verifyRequest === "true";

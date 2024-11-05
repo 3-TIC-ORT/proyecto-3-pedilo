@@ -1,6 +1,7 @@
 import { getTables, getUserTables, assignTable, unassignTable } from '@/actions/tables';
 import TablesClient from './TablesClients';
 import { auth } from "@/auth";
+import { checkAccess } from '@/lib/auth-utils';
 
 interface User {
   id: string;
@@ -16,6 +17,7 @@ async function getInitialData(userId: string | null) {
 }
 
 export default async function TablesPage() {
+  await checkAccess('/tables');
   const session = await auth();
   let selectedTable: string | null = null;
 
