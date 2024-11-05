@@ -297,6 +297,7 @@
         height: 100%;
         width: calc(100% - 2rem);
         scroll-snap-type: x mandatory; /* Activa el sticky scroll */
+        border-radius: 1rem;
     
         .waiterSection {
             display: flex;

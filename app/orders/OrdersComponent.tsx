@@ -125,6 +125,7 @@ const Orders: React.FC = () => {
       if (event.key === 'Escape' && isFullScreen) {
         handleFullScreen.exit();
         setIsFullScreen(false);
+        handleFullScreenToggle()
       }
     };
 
@@ -200,6 +201,16 @@ const Orders: React.FC = () => {
     );
   }
 
+  const handleFullScreenToggle = () => {
+    if (!isFullScreen) {
+      handleFullScreen.enter();
+      setIsFullScreen(true);
+    } else {
+      handleFullScreen.exit();
+      setIsFullScreen(false);
+    }
+  };
+
   if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') { // Verifica si el usuario tiene acceso a la sección
     // Ordenar las órdenes para que las que están en estado "ready" aparezcan al final
     let sortedOrders = [...orders].sort((a, b) => {
@@ -212,16 +223,6 @@ const Orders: React.FC = () => {
       
       return new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
     });
-
-    const handleFullScreenToggle = () => {
-      if (!isFullScreen) {
-        handleFullScreen.enter();
-        setIsFullScreen(true);
-      } else {
-        handleFullScreen.exit();
-        setIsFullScreen(false);
-      }
-    };
 
     return (
       <main className='ordersMain'>
