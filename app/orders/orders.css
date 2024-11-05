@@ -1,5 +1,8 @@
-.ordersMain {
+.fullscreen-enabled .ordersMain {
+    background: initial;
+}
 
+.ordersMain {
     .topRow {
         display: flex;
         flex-direction: row;
@@ -9,6 +12,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 2rem;
+            height: 2rem;
 
             img {
                 width: 100%;
