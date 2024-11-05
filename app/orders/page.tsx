@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getOrders, getAllOrders, changeOrderStatus } from '@/actions/order';
 import { getSession } from 'next-auth/react'; // Actualiza la importación de getSession
 import "./orders.css";
+import router from 'next/router';
 import { Realtime } from 'ably';
 
 interface OrderItem {
@@ -35,6 +36,9 @@ const Orders: React.FC = () => {
         setIsLoading(true);
         setError(null);
         const session = await getSession();
+        if (!session) {
+          router.push('/login');
+        }
         setUserRole(session?.user?.role || null); // Establece el rol del usuario
 
         let userOrders;

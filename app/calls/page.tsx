@@ -1,8 +1,10 @@
 "use client"
 import React, { useState } from 'react'
 import "./calls.css"
+import { checkAccess } from '@/lib/auth-utils';
 
-function Calls() {
+async function Calls() {
+  await checkAccess('/calls');
 
   return (
     <main className='callsMain'>

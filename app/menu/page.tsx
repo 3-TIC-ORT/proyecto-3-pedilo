@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { Item } from '@prisma/client';
 import { cookies } from 'next/headers';
 import { assignTable, getTables } from '@/actions/tables';
+import { checkAccess } from '@/lib/auth-utils';
 
 // Define interfaces based on your Prisma query structure
 interface User {
@@ -56,6 +57,7 @@ function transformTableData(table: Table) {
 }
 
 export default async function Menu() {
+  await checkAccess('/menu');
   try {
     // Fetch menu items using the server action
     const menuItems = await getItems() as Item[];
