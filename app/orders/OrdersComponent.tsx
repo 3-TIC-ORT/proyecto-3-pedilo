@@ -136,21 +136,21 @@ const Orders: React.FC = () => {
       setIsFullScreen(false);
     }
   };
-
+  
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isFullScreen) {
-        handleFullScreenToggle();
+    const handleFullScreenChange = () => {
+      if (!handleFullScreen.active) {
+        setIsFullScreen(false);
       }
     };
   
-    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
   
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
     };
-  }, [isFullScreen, handleFullScreenToggle]);
-
+  }, [handleFullScreen]);
+  
   const handleScroll = () => {
     if (containerRef.current) {
       const scrollPosition = containerRef.current.scrollLeft;
