@@ -72,6 +72,8 @@ export async function getWaiterCalls() {
       where: { waiterId }
     });
 
+    console.log(calls);
+    console.log(waiterId);
     return calls; // Return the list of calls
   } catch (error) {
     console.error("Error fetching waiter calls:", error);

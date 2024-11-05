@@ -30,6 +30,7 @@ const Calls = () => {
     const loadCalls = async () => {
       try {
         const initialCalls = await getWaiterCalls();
+        console.log(initialCalls);
         setCalls(initialCalls);
       } catch (error) {
         addPopup('Error al cargar las llamadas', true);
