@@ -121,20 +121,35 @@ const Orders: React.FC = () => {
       loadOrders();
     });
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isFullScreen) {
-        handleFullScreenToggle()
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
       channel.unsubscribe();
       ably.close();
     };
   }, []);
+
+  const handleFullScreenToggle = () => {
+    if (!isFullScreen) {
+      handleFullScreen.enter();
+      setIsFullScreen(true);
+    } else {
+      handleFullScreen.exit();
+      setIsFullScreen(false);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isFullScreen) {
+        handleFullScreenToggle();
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isFullScreen, handleFullScreenToggle]);
 
   const handleScroll = () => {
     if (containerRef.current) {
@@ -198,16 +213,6 @@ const Orders: React.FC = () => {
       </main>
     );
   }
-
-  const handleFullScreenToggle = () => {
-    if (!isFullScreen) {
-      handleFullScreen.enter();
-      setIsFullScreen(true);
-    } else {
-      handleFullScreen.exit();
-      setIsFullScreen(false);
-    }
-  };
 
   if (userRole === 'waiter' || userRole === 'chef' || userRole === 'admin') { // Verifica si el usuario tiene acceso a la sección
     // Ordenar las órdenes para que las que están en estado "ready" aparezcan al final
