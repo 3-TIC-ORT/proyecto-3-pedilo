@@ -101,6 +101,8 @@ function CartClient() {
       const session = await auth()
       const userId = session?.user.id
       const user = (message.data as { user: string }).user;
+      console.log(userId)
+      console.log(user)
       if(userId != user){
         addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
       }else{
