@@ -1,8 +1,8 @@
-// import "./landing.css";
-// import { checkAccess } from '@/lib/auth-utils';
+import "./landing.css";
+import { checkAccess } from '@/lib/auth-utils';
 
-// async function Landing() {
-//   await checkAccess('/landing');
+async function Landing() {
+  await checkAccess('/landing');
 //   return (
 //     <div className='body'>
 //       <div className="header">
@@ -369,6 +369,6 @@
 //       </section>
 //     </div>
 //   )
-// }
+}
 
-// export default Landing
+export default Landing
