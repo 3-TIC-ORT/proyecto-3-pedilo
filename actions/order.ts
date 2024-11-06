@@ -207,7 +207,7 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     });
     await ablyClient.channels.get('cart-updates').publish('cart-cleared-user', {
       tableNumber,
-      user: session?.user?.id ?? null
+      user:userId 
     });
 
     await ablyClient.channels.get('order-updates').publish('order-created', {
