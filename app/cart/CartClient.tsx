@@ -6,6 +6,7 @@ import { getUserTables } from '@/actions/tables';
 import { usePopup } from '@/context/PopupContext';
 import { Realtime } from 'ably';
 import { useRouter } from 'next/navigation';
+import Head from "next/head";
 import "./cart.css";
 import { auth } from '@/auth';
 
