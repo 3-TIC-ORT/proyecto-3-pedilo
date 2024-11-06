@@ -100,7 +100,7 @@ function CartClient() {
       }, 3000);
       const session = await auth()
       const userId = session?.user.id
-      const user = (message.data as { user: string }).user;
+      const {user} = message.data
       console.log(userId)
       console.log(user)
       if(userId != user){
