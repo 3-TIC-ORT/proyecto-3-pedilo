@@ -84,7 +84,7 @@ function CartClient() {
     };
 
     fetchCartItems();
-    const ably = new Realtime({ key: process.env.ABLY_API_KEY });
+    const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
 
     // Subscribe to the cart-updates channel
     const channel = ably.channels.get('cart-updates');
