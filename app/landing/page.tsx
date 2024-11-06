@@ -11,7 +11,6 @@ async function Landing() {
         </div>
         <div className="buttons">
           <a href="#inicio">Inicio</a>
-          <a href="#videosDemo">Videos</a>
           <a href="#timi">Timi</a>
           <a href="#frontend">Frontend</a>
           <a href="#backend">Backend</a>
@@ -21,24 +20,16 @@ async function Landing() {
         <div className="title">
           <h1>Pedilo</h1>
           <p>.tech</p>
+          <div className="integrantes">
+            <p>TIMI: Nicolás Krymkiewicz</p>
+            <p>Frontend: Oliver Jones</p>
+            <p>Fullstack: Eitan Feldman</p>
+            <p>Backend: Simon Mersich</p>
+          </div>
         </div>
         <a href='#timi' className="scrollButton">
           <img src="/media/arrowDown.svg" alt="" />
         </a>
-      </section>
-      <section id="videosDemo">
-        <div className="videoContainer">
-          <h1>Usuario</h1>
-          <video src="/videos/landing/videoDemo1.mp4" autoPlay loop muted></video>
-        </div>
-        <div className="videoContainer">
-          <h1>Mozo</h1>
-          <video src="/videos/landing/videoDemo2.mp4" autoPlay loop muted></video>
-        </div>
-        <div className="videoContainer">
-          <h1>Cocina</h1>
-          <video src="/videos/landing/videoDemo3.mp4" autoPlay loop muted></video>
-        </div>
       </section>
       <section id='timi'>
         <div className="leftSide">

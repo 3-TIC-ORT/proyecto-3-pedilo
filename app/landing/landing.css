@@ -145,6 +145,19 @@ header, footer {
                 line-height: normal;
                 backdrop-filter: blur(.25rem);
             }
+
+            .integrantes {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+                gap: .5rem;
+                margin: 2rem 0;
+
+                p {
+                    font-size: 1.5rem;
+                }
+            }
         }
         
         .scrollButton {
@@ -168,46 +181,6 @@ header, footer {
                 flex-shrink: 0;
                 stroke-width: 5px;
                 stroke: var(--white);
-            }
-        }
-
-        &#videosDemo {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem;
-
-            .videoContainer {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 70%;
-                gap: 0.5rem;
-                width: 25%;
-                
-                &:last-child {
-                    width: 50%;
-                }
-
-                h1 {
-                    color: rgba(255, 255, 255, 0.75);
-                    text-align: start;
-                    font-family: Inter;
-                    font-size: 4rem;
-                    font-style: normal;
-                    font-weight: 400;
-                    line-height: normal;
-                }
-
-                video {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 1rem;
-                    background-color: rgba(255, 255, 255, .5);
-                    backdrop-filter: blur(.25rem);
-                }
             }
         }
 
@@ -510,6 +483,19 @@ header, footer {
                 p {
                     font-size: 2rem;
                 }
+
+                .integrantes {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: center;
+                    gap: .5rem;
+                    margin: 2rem 0;
+    
+                    p {
+                        font-size: 1rem;
+                    }
+                }
             }
     
             /*Secciones*/
@@ -595,10 +581,6 @@ header, footer {
                     }
                 }
             }
-
-            &#videosDemo {
-                display: none;
-            }
         }
     }    
 }
@@ -650,6 +632,19 @@ header, footer {
     
                 p {
                     font-size: 2rem;
+                }
+
+                .integrantes {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: center;
+                    gap: .5rem;
+                    margin: 2rem 0;
+    
+                    p {
+                        font-size: 1rem;
+                    }
                 }
             }
     
@@ -736,10 +731,6 @@ header, footer {
                         gap: 1rem;
                     }
                 }
-            }
-
-            &#videosDemo {
-                display: none;
             }
         }
     }    
