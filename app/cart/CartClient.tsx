@@ -95,16 +95,13 @@ function CartClient() {
     });
 
     channel2.subscribe('order-created', async (message) => {
+      const session = await auth()
+      const userId = session?.user.id
+      const {table, user} = message.data
+      if(table == tableNumber){
       setTimeout(() => {
       router.push("/orders")
       }, 3000);
-      const session = await auth()
-      const userId = session?.user.id
-      const {user} = message.data
-      alert(userId)
-      alert(user)
-      console.log(userId)
-      console.log(user)
       if(userId == user){
         addPopup('Orden creada exitosamente. Te estaremos redirigiendo a tus ordenes.', false);
       }else{
@@ -113,13 +110,16 @@ function CartClient() {
       setCartItems([]);
       setOrderNotes('');
       setShowConfirmation(false);
-
+      }
     });
     channel.subscribe('cart-cleared', async (message) => {
+      const {table} = message.data
+      if(table == tableNumber){
       addPopup('Carrito vaciado', false);
       setCartItems([]);
       setOrderNotes('');
       setShowConfirmation(false);
+      }
     });
     // Clean up on unmount
     return () => {
