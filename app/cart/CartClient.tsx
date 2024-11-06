@@ -88,26 +88,34 @@ function CartClient() {
 
     // Subscribe to the cart-updates channel
     const channel = ably.channels.get('cart-updates');
+    const channel2 = ably.channels.get('order-updates');
     channel.subscribe('item-updated', async (message) => {
       const { items } = await getCart();
       setCartItems(items);
     });
 
-    channel.subscribe('cart-cleared', async (message) => {
+    channel2.subscribe('order-created', async (message) => {
       setTimeout(() => {
-        router.push('/orders');
+      router.push("/orders")
       }, 3000);
-      addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
+      const session = await auth()
+      const userId = session?.user.id
+      const user = (message.data as { user: string }).user;
+      if(userId != user){
+        addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
+      }else{
+        addPopup('Orden creada exitosamente. Te estaremos redirigiendo a tus ordenes.', false);
+      }
       setCartItems([]);
       setOrderNotes('');
       setShowConfirmation(false);
 
     });
-    channel.subscribe('cart-cleared-user', async (message) => {
+    channel.subscribe('cart-cleared', async (message) => {
+      addPopup('Carrito vaciado', false);
       setCartItems([]);
       setOrderNotes('');
       setShowConfirmation(false);
-
     });
     // Clean up on unmount
     return () => {

@@ -205,11 +205,13 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     await prisma.cartItem.deleteMany({
       where: { cartId: cart.id }
     });
-    await ablyClient.channels.get('cart-updates').publish('cart-cleared', {
+    await ablyClient.channels.get('cart-updates').publish('cart-cleared-user', {
       tableNumber,
+      user: session?.user?.id ?? null
     });
 
     await ablyClient.channels.get('order-updates').publish('order-created', {
+      user: session?.user?.id ?? null
     });
 
     return newOrder;
