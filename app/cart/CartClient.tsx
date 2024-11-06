@@ -101,12 +101,14 @@ function CartClient() {
       const session = await auth()
       const userId = session?.user.id
       const {user} = message.data
+      alert(userId)
+      alert(user)
       console.log(userId)
       console.log(user)
-      if(userId != user){
-        addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
-      }else{
+      if(userId == user){
         addPopup('Orden creada exitosamente. Te estaremos redirigiendo a tus ordenes.', false);
+      }else{
+        addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
       }
       setCartItems([]);
       setOrderNotes('');
