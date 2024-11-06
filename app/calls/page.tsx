@@ -90,7 +90,7 @@ const Calls = () => {
     // You can implement a proper time-ago formatter here
     return new Date(date).toLocaleString();
   };
-
+  
   if (isLoading) {
     return (
       <main className='callsMain'>
@@ -105,24 +105,26 @@ const Calls = () => {
   return (
     <main className='callsMain'>
       <h1>Tus llamados</h1>
-      <section>
-        {calls.map(call => (
-          <div key={call.id} className='callCard'>
-            <p>Mesa {call.tableNumber}</p>
-            <p className="reason">{call.reason}</p>
-            <button
-              className='callBtn'
-              onClick={() => handleResolve(call.id)}
-              disabled={call.status === 'resolved'}
-            >
-              <p>Atendida</p>
-            </button>
-            <p className='timeAgo'>
-              Hace: {formatTimeAgo(call.createdAt)}
-            </p>
-          </div>
-        ))}
-      </section>
+      <div className="sectionContainer">
+        <section>
+          {calls.map(call => (
+            <div key={call.id} className='callCard'>
+              <p>Mesa {call.tableNumber}</p>
+              <p className="reason">{call.reason}</p>
+              <button
+                className='callBtn'
+                onClick={() => handleResolve(call.id)}
+                disabled={call.status === 'resolved'}
+              >
+                <p>Atendida</p>
+              </button>
+              <p className='timeAgo'>
+                Hace: {formatTimeAgo(call.createdAt)}
+              </p>
+            </div>
+          ))}
+        </section>
+      </div>
     </main>
   );
 }
