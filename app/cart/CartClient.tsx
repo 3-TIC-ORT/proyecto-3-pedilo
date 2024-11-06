@@ -41,7 +41,6 @@ function CartClient() {
       itemPriceRefs.current.push(el);
     }
   };
-
   useEffect(() => {
     const fetchTableNumber = async () => {
       let showError = true;
@@ -97,28 +96,27 @@ function CartClient() {
     channel2.subscribe('order-created', async (message) => {
       const session = await auth()
       const userId = session?.user.id
-      const {table, user} = message.data
-      if(table == tableNumber){
-      setTimeout(() => {
-      router.push("/orders")
-      }, 3000);
-      if(userId == user){
-        addPopup('Orden creada exitosamente. Te estaremos redirigiendo a tus ordenes.', false);
-      }else{
-        addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
-      }
-      setCartItems([]);
-      setOrderNotes('');
-      setShowConfirmation(false);
+      const { table, user } = message.data
+      console.log(table, tableNumber, user, userId);
+      if (table == tableNumber) {
+        setTimeout(() => {
+          router.push("/orders")
+        }, 3000);
+        if (userId != user) {
+          addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
+        }
+        setCartItems([]);
+        setOrderNotes('');
+        setShowConfirmation(false);
       }
     });
     channel.subscribe('cart-cleared', async (message) => {
-      const {table} = message.data
-      if(table == tableNumber){
-      addPopup('Carrito vaciado', false);
-      setCartItems([]);
-      setOrderNotes('');
-      setShowConfirmation(false);
+      const { table } = message.data
+      if (table == tableNumber) {
+        addPopup('Carrito vaciado', false);
+        setCartItems([]);
+        setOrderNotes('');
+        setShowConfirmation(false);
       }
     });
     // Clean up on unmount
