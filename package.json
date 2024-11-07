@@ -18,7 +18,7 @@
     "@simplewebauthn/browser": "^9.0.1",
     "@simplewebauthn/server": "^9.0.3",
     "@vercel/speed-insights": "^1.0.12",
-    "ably": "^2.4.1",
+    "ably": "^2.5.0",
     "autoprefixer": "^10.4.20",
     "next": "^14.2.5",
     "next-auth": "^5.0.0-beta.21",
