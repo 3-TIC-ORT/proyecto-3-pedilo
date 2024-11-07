@@ -154,10 +154,10 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
   });
 
   // If there are no users assigned to the table and the requester is not a waiter, throw an error
-  if (tableUsers.length === 0 && !isWaiter) {
-    throw new Error('No users assigned to this table');
-  }
-
+  // if (tableUsers.length === 0 && !isWaiter) {
+  //   throw new Error('No users assigned to this table');
+  // }
+  //
   const table = tableUsers[0].Table;
   const cart = table?.Cart;
 
