@@ -182,12 +182,14 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     });
 
     // Always assign the order to all users at the table
-    await prisma.orderUser.createMany({
-      data: tableUsers.map((tableUser) => ({
-        orderId: newOrder.orderId,
-        userId: tableUser.userId
-      }))
-    });
+    if (tableUsers.length != 0) {
+      await prisma.orderUser.createMany({
+        data: tableUsers.map((tableUser) => ({
+          orderId: newOrder.orderId,
+          userId: tableUser.userId
+        }))
+      });
+    }
 
     // Create order items based on the cart
     for (const cartItem of cart.CartItems) {
