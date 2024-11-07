@@ -83,6 +83,17 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
     const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
     const channel = ably.channels.get('cart-updates');
     const channel2 = ably.channels.get('order-updates');
+    channel2.subscribe('order-created', async (message) => {
+      const { items } = await getCart();
+      if (items.length === 0) {
+        setTimeout(() => {
+          router.push('/orders');
+        }, 3000);
+        addPopup('Order creada. Te estaremos redirigiendo a tus ordenes', false);
+        setCartItems([]);
+        setOrderNotes('');
+      }
+    });
 
     channel.subscribe('item-updated', async (message) => {
       if (message.data.tableNumber === selectedTable) {
@@ -93,25 +104,13 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
     });
 
     channel.subscribe('cart-cleared', async (message) => {
-      addPopup('Carrito vaciado', false);
-      setCartItems([]);
-      setOrderNotes('');
-      setShowConfirmation(false);
-    });
-
-
-    channel2.subscribe('order-created', async (message) => {
-      const session = await auth()
-      const userId = session?.user.id
-      const user = (message.data as { user: string }).user;
-      if(userId != user){
-        addPopup('Otro usuario ha hecho el pedido.', false);
-      }else{
-        addPopup('Orden creada exitosamente.', false);
+      const { items } = await getCart();
+      if (items.length === 0) {
+        addPopup('Carrito Vaciado', false);
+        setCartItems([]);
+        setOrderNotes('');
+        setShowConfirmation(false);
       }
-      setCartItems([]);
-      setOrderNotes('');
-      setShowConfirmation(false);
 
     });
 

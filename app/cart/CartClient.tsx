@@ -8,7 +8,6 @@ import { Realtime } from 'ably';
 import { useRouter } from 'next/navigation';
 import "./cart.css";
 import { auth } from '@/auth';
-// import { useChannel, useAbly } from 'ably/react';
 
 interface CartItem {
   itemId: number;
@@ -19,7 +18,6 @@ interface CartItem {
 }
 
 function CartClient() {
-    // const ably = useAbly();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [orderNotes, setOrderNotes] = useState('');
   const [loading, setLoading] = useState(true); // Estado de carga
@@ -31,26 +29,6 @@ function CartClient() {
   const [tableNumber, setTableNumber] = useState<number | null>(); // Estado para el número de mesa
   const { addPopup } = usePopup();
   const router = useRouter();
-    // Subscribe to the cart-updates channel
-
-// const { channel } = useChannel('order-updates', async (message) => {
-//       const session = await auth()
-//       const userId = session?.user.id
-//       const { table, user } = message.data
-//       console.log(table, tableNumber, user, userId);
-//       if (table == tableNumber) {
-//         setTimeout(() => {
-//           router.push("/orders")
-//         }, 3000);
-//         if (userId != user) {
-//           addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
-//         }
-//         setCartItems([]);
-//         setOrderNotes('');
-//         setShowConfirmation(false);
-//       }
-// });
-
 
   const setItemNameRef = (el: HTMLParagraphElement | null) => {
     if (el && !itemNameRefs.current.includes(el)) {
@@ -63,6 +41,7 @@ function CartClient() {
       itemPriceRefs.current.push(el);
     }
   };
+
   useEffect(() => {
     const fetchTableNumber = async () => {
       let showError = true;
@@ -107,25 +86,38 @@ function CartClient() {
     fetchCartItems();
     const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
 
-
-    const channel1 = ably.channels.get('cart-updates');
-    channel1.subscribe('item-updated', async (message) => {
+    // Subscribe to the cart-updates channel
+    const channel = ably.channels.get('cart-updates');
+    const channel2 = ably.channels.get('order-updates');
+    channel2.subscribe('order-created', async (message) => {
+      const { items } = await getCart();
+      if (items.length === 0) {
+        setTimeout(() => {
+          router.push('/orders');
+        }, 3000);
+        addPopup('Order creada. Te estaremos redirigiendo a tus ordenes', false);
+        setCartItems([]);
+        setOrderNotes('');
+      }
+    });
+    channel.subscribe('item-updated', async (message) => {
       const { items } = await getCart();
       setCartItems(items);
     });
 
-    channel1.subscribe('cart-cleared', async (message) => {
-      const { table } = message.data
-      if (table == tableNumber) {
-        addPopup('Carrito vaciado', false);
+    channel.subscribe('cart-cleared', async (message) => {
+      const { items } = await getCart();
+      if (items.length === 0) {
+        addPopup('Carrito Vaciado', false);
         setCartItems([]);
         setOrderNotes('');
         setShowConfirmation(false);
       }
+
     });
     // Clean up on unmount
     return () => {
-      channel1.unsubscribe();
+      channel.unsubscribe();
       ably.close();
     };
   }, []);
