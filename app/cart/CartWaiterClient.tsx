@@ -97,6 +97,7 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
 
     channel.subscribe('item-updated', async (message) => {
       if (message.data.tableNumber === selectedTable) {
+        console.log(message.data);
         if (!selectedTable) return;
         const { items } = await getCart(selectedTable); // Modify getCart to accept tableNumber
         setCartItems(items);
