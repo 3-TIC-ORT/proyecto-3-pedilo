@@ -8,7 +8,7 @@ import { Realtime } from 'ably';
 import { useRouter } from 'next/navigation';
 import "./cart.css";
 import { auth } from '@/auth';
-import { useChannel, useAbly } from 'ably/react';
+// import { useChannel, useAbly } from 'ably/react';
 
 interface CartItem {
   itemId: number;
@@ -19,7 +19,7 @@ interface CartItem {
 }
 
 function CartClient() {
-    const ably = useAbly();
+    // const ably = useAbly();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [orderNotes, setOrderNotes] = useState('');
   const [loading, setLoading] = useState(true); // Estado de carga
@@ -33,23 +33,23 @@ function CartClient() {
   const router = useRouter();
     // Subscribe to the cart-updates channel
 
-const { channel } = useChannel('order-updates', async (message) => {
-      const session = await auth()
-      const userId = session?.user.id
-      const { table, user } = message.data
-      console.log(table, tableNumber, user, userId);
-      if (table == tableNumber) {
-        setTimeout(() => {
-          router.push("/orders")
-        }, 3000);
-        if (userId != user) {
-          addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
-        }
-        setCartItems([]);
-        setOrderNotes('');
-        setShowConfirmation(false);
-      }
-});
+// const { channel } = useChannel('order-updates', async (message) => {
+//       const session = await auth()
+//       const userId = session?.user.id
+//       const { table, user } = message.data
+//       console.log(table, tableNumber, user, userId);
+//       if (table == tableNumber) {
+//         setTimeout(() => {
+//           router.push("/orders")
+//         }, 3000);
+//         if (userId != user) {
+//           addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
+//         }
+//         setCartItems([]);
+//         setOrderNotes('');
+//         setShowConfirmation(false);
+//       }
+// });
 
 
   const setItemNameRef = (el: HTMLParagraphElement | null) => {
@@ -125,7 +125,7 @@ const { channel } = useChannel('order-updates', async (message) => {
     });
     // Clean up on unmount
     return () => {
-      channel.unsubscribe();
+      channel1.unsubscribe();
       ably.close();
     };
   }, []);
