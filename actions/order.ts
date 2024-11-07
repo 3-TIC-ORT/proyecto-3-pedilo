@@ -158,8 +158,26 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
   //   throw new Error('No users assigned to this table');
   // }
   //
-  const table = tableUsers[0].Table;
-  const cart = table?.Cart;
+  let table;
+  let cart;
+  if (tableUsers.length === 0) {
+    table = await prisma.table.findUnique({
+      where: { tableNumber },
+      include: {
+        Cart: {
+          include: {
+            CartItems: {
+              include: { Item: true }
+            }
+          }
+        }
+      }
+    });
+    cart = table?.Cart;
+  } else {
+    table = tableUsers[0].Table;
+    cart = table?.Cart;
+  }
 
   if (!cart || cart.CartItems.length === 0) {
     throw new Error('Cart is empty');
