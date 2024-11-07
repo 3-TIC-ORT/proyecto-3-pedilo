@@ -10,6 +10,10 @@ import "./cart.css";
 import { auth } from '@/auth';
 import { useChannel } from 'ably/react';
 
+import * as Ably from 'ably';
+import { AblyProvider, ChannelProvider } from 'ably/react';
+
+const client = new Ably.Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
 interface CartItem {
   itemId: number;
   title: string;
@@ -233,6 +237,7 @@ const { channel } = useChannel('order-updates', async (message) => {
   };
 
   return (
+          <AblyProvider client={client}>
     <main className='cartMain'>
       {showConfirmation ? (
         <div className="container">
@@ -311,6 +316,7 @@ const { channel } = useChannel('order-updates', async (message) => {
         </>
       )}
     </main>
+</AblyProvider>
   );
 }
 

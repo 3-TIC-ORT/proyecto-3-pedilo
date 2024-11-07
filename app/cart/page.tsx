@@ -4,10 +4,6 @@ import CartClient from './CartClient';
 import CartWaiterClient from './CartWaiterClient';
 import { getTables } from '@/actions/tables';
 import { checkAccess } from '@/lib/auth-utils';
-import * as Ably from 'ably';
-import { AblyProvider, ChannelProvider } from 'ably/react';
-
-const client = new Ably.Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
 
 // Define interfaces based on your Prisma query structure
 interface User {
@@ -92,13 +88,13 @@ export default async function Cart() {
 
     }
 
-          <AblyProvider client={client}>
+          // <AblyProvider client={client}>
           {/* <ChannelProvider channelName="cart-status">
           <ChannelProvider channelName="order-status"> */}
-    return <CartClient />;
+     return <CartClient />;
 {/* </ChannelProvider>
 </ChannelProvider> */}
-      </AblyProvider>
+      // </AblyProvider>
   } catch (error) {
     console.error('Failed to load menu items or user role:', error);
     return (
