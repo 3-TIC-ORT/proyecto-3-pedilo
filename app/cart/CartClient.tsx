@@ -207,7 +207,7 @@ function CartClient() {
         setTimeout(() => {
           router.push('/orders');
         }, 3000);
-        addPopup('Orden creada exitosamente. Te estaremos redirigiendo a tus ordenes.', false);
+        // addPopup('Orden creada exitosamente. Te estaremos redirigiendo a tus ordenes.', false);
       } else {
         throw new Error('Failed to create order');
       }

@@ -69,7 +69,7 @@ export async function getWaiterCalls() {
 
     // Fetch all calls for the waiter
     const calls = await prisma.call.findMany({
-      where: { waiterId }
+      where: { waiterId },
     });
 
     console.log(calls);
