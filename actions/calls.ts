@@ -69,7 +69,11 @@ export async function getWaiterCalls() {
 
     // Fetch all calls for the waiter
     const calls = await prisma.call.findMany({
-      where: { waiterId },
+      where: {
+        waiterId,
+        status: "pending"
+      },
+
     });
 
     console.log(calls);
