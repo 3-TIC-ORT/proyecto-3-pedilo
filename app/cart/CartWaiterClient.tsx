@@ -204,7 +204,7 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
         setCartItems([]);
         setOrderNotes('');
         setShowConfirmation(false);
-        addPopup('Orden creada exitosamente.', false);
+        // addPopup('Orden creada exitosamente.', false);
       } else {
         throw new Error('Failed to create order');
       }
