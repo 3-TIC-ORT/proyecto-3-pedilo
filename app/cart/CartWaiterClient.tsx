@@ -86,10 +86,10 @@ function CartWaiterClient({ userRole, waiterTables }: CartWaiterClientProps) {
     channel2.subscribe('order-created', async (message) => {
       const { items } = await getCart();
       if (items.length === 0) {
-        setTimeout(() => {
-          router.push('/orders');
-        }, 3000);
-        addPopup('Order creada. Te estaremos redirigiendo a tus ordenes', false);
+        // setTimeout(() => {
+        //   router.push('/orders');
+        // }, 3000);
+        addPopup('Order creada', false);
         setCartItems([]);
         setOrderNotes('');
       }
