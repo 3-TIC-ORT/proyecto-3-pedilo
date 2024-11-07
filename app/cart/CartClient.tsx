@@ -6,10 +6,9 @@ import { getUserTables } from '@/actions/tables';
 import { usePopup } from '@/context/PopupContext';
 import { Realtime } from 'ably';
 import { useRouter } from 'next/navigation';
-import { cookies } from 'next/headers'
-import { headers } from 'next/headers'
 import "./cart.css";
 import { auth } from '@/auth';
+import { useChannel } from 'ably/react';
 
 interface CartItem {
   itemId: number;
@@ -31,6 +30,26 @@ function CartClient() {
   const [tableNumber, setTableNumber] = useState<number | null>(); // Estado para el número de mesa
   const { addPopup } = usePopup();
   const router = useRouter();
+    // Subscribe to the cart-updates channel
+
+const { channel } = useChannel('order-updates', async (message) => {
+      const session = await auth()
+      const userId = session?.user.id
+      const { table, user } = message.data
+      console.log(table, tableNumber, user, userId);
+      if (table == tableNumber) {
+        setTimeout(() => {
+          router.push("/orders")
+        }, 3000);
+        if (userId != user) {
+          addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
+        }
+        setCartItems([]);
+        setOrderNotes('');
+        setShowConfirmation(false);
+      }
+});
+
 
   const setItemNameRef = (el: HTMLParagraphElement | null) => {
     if (el && !itemNameRefs.current.includes(el)) {
@@ -87,32 +106,14 @@ function CartClient() {
     fetchCartItems();
     const ably = new Realtime({ key: process.env.NEXT_PUBLIC_ABLY_API_KEY });
 
-    // Subscribe to the cart-updates channel
-    const channel = ably.channels.get('cart-updates');
-    const channel2 = ably.channels.get('order-updates');
-    channel.subscribe('item-updated', async (message) => {
+
+    const channel1 = ably.channels.get('cart-updates');
+    channel1.subscribe('item-updated', async (message) => {
       const { items } = await getCart();
       setCartItems(items);
     });
 
-    channel2.subscribe('order-created', async (message) => {
-      const session = await auth()
-      const userId = session?.user.id
-      const { table, user } = message.data
-      console.log(table, tableNumber, user, userId);
-      if (table == tableNumber) {
-        setTimeout(() => {
-          router.push("/orders")
-        }, 3000);
-        if (userId != user) {
-          addPopup('Otro usuario ha hecho el pedido. Te estaremos redirigiendo a tus ordenes.', false);
-        }
-        setCartItems([]);
-        setOrderNotes('');
-        setShowConfirmation(false);
-      }
-    });
-    channel.subscribe('cart-cleared', async (message) => {
+    channel1.subscribe('cart-cleared', async (message) => {
       const { table } = message.data
       if (table == tableNumber) {
         addPopup('Carrito vaciado', false);
