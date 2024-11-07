@@ -55,6 +55,7 @@ export async function getCart(tableNumber?: number) {
 
     return { items: formattedItems, total: formatUSD(total) };
   } catch (error) {
+    console.log(error);
     throw new Error('Error al obtener el carrito');
   }
 }
