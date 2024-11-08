@@ -4,13 +4,14 @@ import Ably from 'ably';
 import { usePopup } from '@/context/PopupContext';
 
 interface RealtimeNotificationsProps {
-  userRole?: string | null;
+  userRole?: string | null
+  tablesWaiter: number[]
 }
 
 interface Message {
   data: Record<string, any>;
 }
-const RealtimeNotifications: React.FC<RealtimeNotificationsProps> = ({ userRole }) => {
+const RealtimeNotifications: React.FC<RealtimeNotificationsProps> = ({ userRole, tablesWaiter }) => {
   const { addPopup } = usePopup();
 
   useEffect(() => {
@@ -25,14 +26,18 @@ const RealtimeNotifications: React.FC<RealtimeNotificationsProps> = ({ userRole 
         reason: string;
       };
 
-      // Show popup notification
-      addPopup(`Nueva llamada de la Mesa ${call.tableNumber}: ${call.reason}`, false);
 
-      // Optional: Also show system notification
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Nueva llamada', {
-          body: `Mesa ${call.tableNumber} necesita asistencia\nRazón: ${call.reason}`,
-        });
+      if (tablesWaiter.includes(call.tableNumber)) {
+
+        // Show popup notification
+        addPopup(`Nueva llamada de la Mesa ${call.tableNumber}: ${call.reason}`, false);
+
+        // Optional: Also show system notification
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('Nueva llamada', {
+            body: `Mesa ${call.tableNumber} necesita asistencia\nRazón: ${call.reason}`,
+          });
+        }
       }
     };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 // import { SpeedInsights } from "@vercel/speed-insights/next";
 import { auth } from "@/auth";
-import { getUserTables } from "@/actions/tables"; // Importa la función
+import { getUserTables, getWaiterTables } from "@/actions/tables"; // Importa la función
 import { hasPendingCall } from "@/actions/calls";
 import Link from "next/link";
 import { PopupProvider } from '@/context/PopupContext';
@@ -27,6 +27,8 @@ export default async function RootLayout({
   let hasTableAssigned = false;
   let pendingCall = false;
 
+  let tablesWaiter: number[] = [];
+
   if (role === "user") {
     const userTables = await getUserTables(userId);
     hasTableAssigned = userTables.length > 0;
@@ -36,12 +38,17 @@ export default async function RootLayout({
       pendingCall = await hasPendingCall(userTables[0].tableNumber);
     }
   }
+  if (userId) {
+    if (role === "waiter") {
+      tablesWaiter = await getWaiterTables(userId);
+    }
+  }
 
   return (
     <html lang="en">
       <PopupProvider>
         <body>
-          <RealtimeNotifications userRole={role} />
+          <RealtimeNotifications userRole={role} tablesWaiter={tablesWaiter} />
           <Popups />
           <header>
             <img

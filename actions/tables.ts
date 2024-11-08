@@ -128,6 +128,17 @@ export async function unassignTable(tableNumber: number, userId: string) {
   return true;
 }
 
+export async function getWaiterTables(waiterId: string) {
+  const waiterTables = await prisma.table.findMany({
+    where: { waiterId },
+    select: { tableNumber: true }
+  });
+
+  // make it a list of numbers
+  return waiterTables.map(t => t.tableNumber);
+
+}
+
 export async function getTableUsers(tableNumber: number) {
   return await prisma.tableUser.findMany({
     where: { tableNumber },
