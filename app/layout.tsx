@@ -59,10 +59,9 @@ export default async function RootLayout({
           </header>
           {children}
           <footer>
-            {(role === "chef" ||
-              (role === "user" && hasTableAssigned && !pendingCall)) && (
-                <CallWaiterContainer />
-              )}
+            {(role === "user" && hasTableAssigned && !pendingCall) && (
+              <CallWaiterContainer />
+            )}
             {role === "waiter" && (
               <a className="callsBtn" href={`/calls`}>
                 Llamados
