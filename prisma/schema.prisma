@@ -33,7 +33,7 @@ model User {
 }
 
 model Order {
-  orderId     String      @id @default(cuid())
+  orderId     Int         @id @default(autoincrement())
   orderDate   DateTime    @default(now())
   totalAmount Float
   status      String      @default("Pending")
@@ -49,7 +49,7 @@ model Order {
 model OrderUser {
   id      String @id @default(cuid())
   userId  String
-  orderId String
+  orderId Int
   User    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   Order   Order  @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
 
@@ -155,7 +155,7 @@ model CartItem {
 }
 
 model OrderItem {
-  orderId  String
+  orderId  Int
   itemId   Int
   quantity Int
   status   String @default("Pending")
