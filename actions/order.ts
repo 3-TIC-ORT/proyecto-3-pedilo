@@ -187,10 +187,17 @@ export async function createOrder(tableNumber: number, orderNote?: string) {
     return acc + cartItem.quantity * cartItem.Item.price;
   }, 0);
 
+  const lastOrder = await prisma.order.findFirst({
+    select: { orderId: true },
+    orderBy: { orderId: 'desc' },
+  });
+
+
   const order = await prisma.$transaction(async (prisma) => {
     // Create the new order
     const newOrder = await prisma.order.create({
       data: {
+        orderId: lastOrder ? lastOrder.orderId + 1 : 1,
         totalAmount,
         orderDate: new Date(),
         tableNumber,
