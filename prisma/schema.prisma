@@ -1,39 +1,39 @@
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
 model User {
-  id              String          @id @default(cuid())
-  name            String?
-  surname         String?
-  email           String          @unique
-  emailVerified   DateTime?
-  password        String?
-  image           String?
-  role            String          @default("user")
-  accounts        Account[]
-  sessions        Session[]
-  Orders          OrderUser[]     // Relation to the OrderUser junction table
-  Tables          TableUser[]
-  AssignedTables  Table[]         @relation("WaiterTables")
-  Authenticator   Authenticator[]
-  CallsMade       Call[]          @relation("UserCalls")
-  CallsReceived   Call[]          @relation("WaiterCalls")
-  AssignedCarts   Cart[]          @relation("WaiterTables")
+  id             String          @id @default(cuid())
+  name           String?
+  surname        String?
+  email          String          @unique
+  emailVerified  DateTime?
+  password       String?
+  image          String?
+  role           String          @default("user")
+  accounts       Account[]
+  sessions       Session[]
+  Orders         OrderUser[] // Relation to the OrderUser junction table
+  Tables         TableUser[]
+  AssignedTables Table[]         @relation("WaiterTables")
+  Authenticator  Authenticator[]
+  CallsMade      Call[]          @relation("UserCalls")
+  CallsReceived  Call[]          @relation("WaiterCalls")
+  AssignedCarts  Cart[]          @relation("WaiterTables")
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Order {
-  orderId     Int         @id @default(autoincrement())
+  orderId     String      @id @default(cuid())
   orderDate   DateTime    @default(now())
   totalAmount Float
   status      String      @default("Pending")
@@ -47,11 +47,11 @@ model Order {
 
 // Junction table to establish a many-to-many relationship between User and Order
 model OrderUser {
-  id       String @id @default(cuid())
-  userId   String
-  orderId  Int
-  User     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Order    Order  @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
+  id      String @id @default(cuid())
+  userId  String
+  orderId String
+  User    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Order   Order  @relation(fields: [orderId], references: [orderId], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -114,8 +114,8 @@ model Authenticator {
 }
 
 model Item {
-  id          Int           @id @default(autoincrement())
-  title       String        @unique
+  id          Int         @id @default(autoincrement())
+  title       String      @unique
   description String
   ingredients String
   photo       String?
@@ -126,27 +126,27 @@ model Item {
 }
 
 model Cart {
-  id          String      @id @default(cuid())
-  tableNumber Int         @unique  // One cart per table
-  waiterId    String      // Assigned waiter
-  status      String      @default("active")
+  id          String     @id @default(cuid())
+  tableNumber Int        @unique // One cart per table
+  waiterId    String // Assigned waiter
+  status      String     @default("active")
   CartItems   CartItem[]
-  Table       Table       @relation(fields: [tableNumber], references: [tableNumber])
-  Waiter      User        @relation("WaiterTables", fields: [waiterId], references: [id])
+  Table       Table      @relation(fields: [tableNumber], references: [tableNumber])
+  Waiter      User       @relation("WaiterTables", fields: [waiterId], references: [id])
 
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CartItem {
-  id        String   @id @default(cuid())
-  cartId    String
-  itemId    Int
-  quantity  Int      @default(1)
-  addedBy   String?  // Optional: track which user added the item
+  id       String  @id @default(cuid())
+  cartId   String
+  itemId   Int
+  quantity Int     @default(1)
+  addedBy  String? // Optional: track which user added the item
 
-  Cart      Cart     @relation(fields: [cartId], references: [id])
-  Item      Item     @relation(fields: [itemId], references: [id])
+  Cart Cart @relation(fields: [cartId], references: [id])
+  Item Item @relation(fields: [itemId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -155,7 +155,7 @@ model CartItem {
 }
 
 model OrderItem {
-  orderId  Int
+  orderId  String
   itemId   Int
   quantity Int
   status   String @default("Pending")
@@ -171,7 +171,7 @@ model Table {
   Users       TableUser[]
   Waiter      User?       @relation("WaiterTables", fields: [waiterId], references: [id])
   waiterId    String?
-  Cart        Cart?       // One-to-one relation with Cart
+  Cart        Cart? // One-to-one relation with Cart
   Calls       Call[]
 
   @@map("tables")
