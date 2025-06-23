@@ -257,7 +257,7 @@ function CartClient() {
                 </div>
                 <div className="textRow">
                   <p>Total:</p>
-                  <p>${cartItems.reduce((total, item) => total + parseFloat(item.total.replace('$', '')), 0).toFixed(2)}</p>
+                  <p>${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cartItems.reduce((total, item) => total + parseFloat(item.total.replace(/\$|,/g, '')), 0))}</p>
                 </div>
               </div>
               <div className="cartItems">
